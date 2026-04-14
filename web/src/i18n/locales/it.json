@@ -1,0 +1,368 @@
+{
+  "nav": {
+    "home": "Home",
+    "search": "Cerca",
+    "scan": "Scansiona",
+    "diary": "Diario",
+    "recipes": "Ricette",
+    "favorites": "Preferiti",
+    "templates": "Template",
+    "scope": "Scopo",
+    "about": "Chi siamo",
+    "accessibility": "Accessibilità",
+    "privacy": "Privacy",
+    "terms": "Termini",
+    "cookies": "Cookie"
+  },
+  "scanner": {
+    "pageTitle": "Scansiona un codice a barre",
+    "pageIntro": "Inquadra il codice a barre del prodotto confezionato. Puoi anche inserirlo a mano qui sotto.",
+    "prompt": "Per scansionare hai bisogno di attivare la fotocamera.",
+    "promptCta": "Attiva fotocamera",
+    "prompting": "Richiesta permesso fotocamera in corso…",
+    "denied": "Permesso negato. Vai in Impostazioni › Safari › Fotocamera per abilitarlo, oppure usa l'inserimento manuale.",
+    "unavailable": "Fotocamera non disponibile su questo dispositivo. Usa l'inserimento manuale.",
+    "retry": "Riprova",
+    "torchOn": "Torcia: accendi",
+    "torchOff": "Torcia: spegni",
+    "manualLabel": "Inserisci codice a barre",
+    "manualSubmit": "Cerca",
+    "manualError": "Codice non valido. Sono ammesse 8–13 cifre.",
+    "notFound": "Prodotto non trovato — prova la ricerca testuale.",
+    "genericError": "Errore di rete. Riprova.",
+    "tryTextSearch": "Cerca per nome"
+  },
+  "sources": {
+    "loading": "Caricamento fonti in corso…",
+    "loadError": "Impossibile caricare l'elenco delle fonti.",
+    "dataPage": {
+      "title": "Fonti dei dati",
+      "intro": "Pesa mostra valori nutrizionali ricavati da fonti pubbliche italiane e internazionali. Per ciascuna riportiamo licenza, attribuzione e contatto."
+    },
+    "imagesPage": {
+      "title": "Fonti delle immagini",
+      "intro": "Le immagini dei prodotti possono provenire da Open Food Facts o Wikimedia Commons. Pesa le ospita con attribuzione visibile quando la licenza lo permette.",
+      "creaBdaNote": "Immagini CREA e BDA-IEO non sono ospitate da Pesa: quando un link esterno è disponibile, viene mostrato con attribuzione all'origine."
+    },
+    "common": {
+      "license": "Licenza",
+      "licenseUrl": "URL licenza",
+      "attribution": "Attribuzione",
+      "sourceUrl": "Sito ufficiale",
+      "scope": "Ambito",
+      "contact": "Contatto",
+      "notes": "Note"
+    }
+  },
+  "a11y": {
+    "skipToContent": "Vai al contenuto",
+    "primaryNav": "Navigazione principale",
+    "footerNav": "Collegamenti di piè di pagina",
+    "loading": "Caricamento in corso",
+    "sourceBadge": "Fonte del dato",
+    "requiredField": "campo obbligatorio"
+  },
+  "home": {
+    "title": "Quanti carboidrati in questo alimento?",
+    "tagline": "Scrivi il nome, inserisci il peso in grammi, ottieni i carboidrati. Dati da fonti italiane citate.",
+    "learnMore": "Scopri a cosa serve Pesa nella pagina",
+    "features": {
+      "grams": {
+        "title": "Calcolo al grammo",
+        "body": "Inserisci il peso esatto e leggi i carboidrati per la porzione, con contesto su fibre, zuccheri, kcal."
+      },
+      "offline": {
+        "title": "Funziona offline",
+        "body": "Una volta caricato il catalogo, puoi cercare e calcolare anche senza rete."
+      },
+      "sources": {
+        "title": "Fonti italiane citate",
+        "body": "Ogni valore mostra la fonte (CREA, BDA IEO, Open Food Facts) e il link originale."
+      }
+    }
+  },
+  "search": {
+    "label": "Cerca alimento",
+    "placeholder": "es. pane, mela, riso…",
+    "submit": "Cerca",
+    "empty": "Nessun risultato. Prova un nome diverso.",
+    "minChars": "Digita almeno {{n}} caratteri.",
+    "resultsCount_one": "{{count}} risultato",
+    "resultsCount_other": "{{count}} risultati",
+    "loading": "Ricerca in corso…",
+    "error": "Errore di rete. Riprova.",
+    "offlineNotice": "Sei offline: risultati dalla cache locale.",
+    "stateCrudo": "crudo",
+    "stateCotto": "cotto"
+  },
+  "detail": {
+    "back": "Torna ai risultati",
+    "weightLabel": "Peso in grammi",
+    "weightHelp": "Numeri interi o con virgola (es. 120,5).",
+    "stateLabel": "Stato",
+    "stateCrudo": "Crudo",
+    "stateCotto": "Cotto",
+    "per100": "Valori per 100 g",
+    "perPortion": "Valori per {{grams}} g",
+    "kcal": "Calorie (kcal)",
+    "protein": "Proteine",
+    "fat": "Grassi",
+    "carb": "Carboidrati",
+    "sugar": "di cui zuccheri",
+    "fiber": "Fibre",
+    "water": "Acqua",
+    "salt": "Sale",
+    "attribution": "Fonte",
+    "license": "Licenza",
+    "lastImported": "Ultimo aggiornamento",
+    "viewOriginal": "Vedi scheda originale",
+    "conflictTitle": "Valori divergenti tra fonti",
+    "conflictBody": "CREA e BDA IEO riportano valori diversi per questo alimento (>10%). Scegli la fonte da usare.",
+    "conflictPick": "Usa questa fonte",
+    "noData": "Dato non disponibile"
+  },
+  "scope": {
+    "pageTitle": "A cosa serve Pesa",
+    "intro": "Pesa è un calcolatore nutrizionale generico per contare i carboidrati per peso."
+  },
+  "scopeBanner": {
+    "badge": "Strumento nutrizionale generico.",
+    "body": "Pesa mostra valori nutrizionali pubblici per peso. Non sostituisce il parere del professionista sanitario di riferimento.",
+    "learnMore": "Scopri di più",
+    "dismissLabel": "Chiudi avviso"
+  },
+  "scopeFooter": {
+    "badge": "Calcolatore nutrizionale generico.",
+    "body": "Pesa non è un dispositivo medico. Per scelte alimentari legate a condizioni personali, parla con il tuo professionista sanitario di riferimento."
+  },
+  "about": {
+    "title": "Chi siamo",
+    "intro": "Pesa è un progetto open-source mantenuto da Lorenzo Di Mare, pubblicato con licenza AGPL v3.",
+    "scopeLead": "A cosa serve e a cosa non serve è spiegato nella pagina",
+    "a11yLead": "Dichiarazione di accessibilità (Legge Stanca):",
+    "openSource": "Codice sorgente pubblico, licenza {{license}}."
+  },
+  "accessibility": {
+    "pageTitle": "Dichiarazione di accessibilità",
+    "contact": "Contatto accessibilità",
+    "contactEmail": "accessibilita@pesadia.com",
+    "selfAuditTitle": "Esito autovalutazione"
+  },
+  "install": {
+    "prompt": "Installa Pesa sul tuo dispositivo",
+    "install": "Installa",
+    "notNow": "Non ora",
+    "updateAvailable": "È disponibile un aggiornamento di Pesa.",
+    "updateNow": "Aggiorna ora",
+    "updateLater": "Più tardi"
+  },
+  "footer": {
+    "rights": "Pesa — progetto open-source",
+    "language": "Lingua",
+    "sources": "Fonti",
+    "sourcesAria": "Collegamenti alle pagine delle fonti",
+    "sourcesData": "Fonti dei dati",
+    "sourcesImages": "Fonti delle immagini"
+  },
+  "offline": {
+    "indicator": "Offline",
+    "bannerTitle": "Sei offline",
+    "bannerBody": "Stiamo mostrando contenuti dalla cache locale."
+  },
+  "common": {
+    "save": "Salva",
+    "cancel": "Annulla",
+    "delete": "Elimina",
+    "edit": "Modifica",
+    "confirm": "Conferma"
+  },
+  "auth": {
+    "logout": "Esci",
+    "greeting": "Connesso come {{email}}",
+    "login": {
+      "title": "Accedi",
+      "emailLabel": "Email",
+      "passwordLabel": "Password",
+      "submit": "Accedi",
+      "error": "Credenziali non valide. Riprova.",
+      "errorNotVerified": "Email non verificata. Controlla la tua casella di posta.",
+      "noAccount": "Non hai un account?",
+      "signup": "Registrati",
+      "forgotPassword": "Password dimenticata?"
+    },
+    "register": {
+      "title": "Registrati",
+      "emailLabel": "Email",
+      "passwordLabel": "Password (almeno {{min}} caratteri)",
+      "confirmLabel": "Conferma password",
+      "privacyConsent": "Accetto la <privacy>privacy policy</privacy> e ho letto lo <scope>scopo del servizio</scope> (obbligatorio).",
+      "consentRequired": "Devi accettare la privacy policy per continuare.",
+      "submit": "Crea account",
+      "hasAccount": "Hai già un account? Accedi",
+      "success": "Account creato. Controlla l'email per verificare l'indirizzo prima di accedere.",
+      "devHint": "In sviluppo il link di verifica appare nei log del backend (SMTP disabilitato).",
+      "mismatch": "Le due password non coincidono.",
+      "weakPassword": "La password deve avere almeno {{min}} caratteri.",
+      "emailUsed": "Esiste già un account con questa email.",
+      "error": "Impossibile completare la registrazione. Riprova."
+    },
+    "passwordReset": {
+      "requestTitle": "Reimposta password",
+      "requestSubmit": "Invia link di reset",
+      "requestAck": "Se l'email esiste, riceverai un link per reimpostare la password.",
+      "confirmTitle": "Nuova password",
+      "newPasswordLabel": "Nuova password (almeno {{min}} caratteri)",
+      "confirmSubmit": "Salva nuova password",
+      "confirmSuccess": "Password aggiornata. Ora puoi accedere.",
+      "invalidToken": "Link non valido o scaduto. Richiedine uno nuovo.",
+      "missingToken": "Link mancante o incompleto.",
+      "error": "Impossibile aggiornare la password. Riprova."
+    },
+    "verifyEmail": {
+      "title": "Verifica email",
+      "verifying": "Verifica in corso…",
+      "ok": "Email verificata. Ora puoi accedere.",
+      "invalid": "Link non valido o scaduto.",
+      "missing": "Link mancante o incompleto."
+    }
+  },
+  "foodPicker": {
+    "placeholder": "Cerca un alimento…",
+    "ariaLabel": "Cerca un alimento",
+    "confirmAdd": "Aggiungi"
+  },
+  "diary": {
+    "title": "Diario alimentare",
+    "addMeal": "Aggiungi pasto",
+    "editMeal": "Modifica pasto",
+    "delete": "Elimina pasto",
+    "saved": "Pasto salvato",
+    "deleted": "Pasto eliminato",
+    "empty": "Nessun pasto registrato.",
+    "slotLabel": "Momento",
+    "notes": "Note",
+    "itemName": "Nome alimento",
+    "slots": {
+      "colazione": "Colazione",
+      "pranzo": "Pranzo",
+      "cena": "Cena",
+      "spuntino": "Spuntino",
+      "altro": "Altro"
+    },
+    "picker": {
+      "title": "Aggiungi alimento",
+      "foods": "Alimenti",
+      "recipes": "Ricette",
+      "recipesStub": "Scegli una ricetta dal selettore."
+    },
+    "totals": {
+      "ariaLabel": "Totali del giorno",
+      "kcal": "kcal",
+      "carbs": "CHO",
+      "protein": "Proteine",
+      "fat": "Grassi",
+      "fiber": "Fibre"
+    }
+  },
+  "sync": {
+    "conflict": "Versione più recente applicata",
+    "blocked": "Sync bloccato — controlla connessione",
+    "authLost": "Sessione scaduta — accedi di nuovo"
+  },
+  "recipes": {
+    "title": "Le mie ricette",
+    "new": "Nuova ricetta",
+    "edit": "Modifica ricetta",
+    "save": "Salva ricetta",
+    "delete": "Elimina ricetta",
+    "saved": "Ricetta salvata",
+    "deleted": "Ricetta eliminata",
+    "empty": "Nessuna ricetta. Creane una per riusarla nel diario.",
+    "nameLabel": "Nome",
+    "servingsLabel": "Porzioni",
+    "totalGramsLabel": "Peso totale (g)",
+    "notesLabel": "Note",
+    "itemsLabel": "Ingredienti",
+    "preview": {
+      "total": "Totale ricetta",
+      "perServing": "Per porzione",
+      "per100g": "Per 100 g"
+    },
+    "cantNestHint": "Le ricette non possono contenere altre ricette."
+  },
+  "favorites": {
+    "title": "Preferiti",
+    "add": "Aggiungi ai preferiti",
+    "remove": "Rimuovi dai preferiti",
+    "empty": "Nessun preferito ancora.",
+    "cta": "Cerca alimenti"
+  },
+  "templates": {
+    "title": "Pasti ricorrenti",
+    "new": "Nuovo template",
+    "saveFromMeal": "Salva come template",
+    "pickFromTemplate": "Da template…",
+    "saved": "Template salvato",
+    "instantiated": "Pasto creato da template",
+    "nameLabel": "Nome template",
+    "delete": "Elimina template",
+    "empty": "Nessun template salvato."
+  },
+  "privacy": {
+    "pageTitle": "Privacy e diritti dell'interessato",
+    "pageIntro": "Esporta i tuoi dati, modifica l'email, elimina l'account. Qui trovi anche le informazioni su consensi e conservazione.",
+    "contactLine": "Per domande sulla privacy scrivi a",
+    "consents": {
+      "title": "Consensi",
+      "policyLabel": "Privacy policy",
+      "policyValue": "Accettata alla registrazione (richiesta tecnica obbligatoria).",
+      "cookiesLabel": "Cookie",
+      "cookiesValue": "Solo cookie tecnici di sessione. Nessun banner perché nessun tracciamento.",
+      "analyticsLabel": "Analisi di utilizzo",
+      "analyticsValue": "Nessuna. Nessun tracker di terze parti."
+    },
+    "retention": {
+      "title": "Tempi di conservazione",
+      "categoryHeader": "Categoria",
+      "periodHeader": "Periodo",
+      "meals": { "label": "Pasti e diario", "period": "24 mesi" },
+      "recipes": { "label": "Ricette", "period": "Fino alla cancellazione dell'account" },
+      "sessions": { "label": "Sessioni di accesso", "period": "30 giorni" },
+      "audit": { "label": "Log audit di sicurezza", "period": "12 mesi" },
+      "appLog": { "label": "Log applicativo", "period": "90 giorni" },
+      "erasureLog": { "label": "Registro cancellazioni (art. 17)", "period": "12 mesi" }
+    },
+    "export": {
+      "title": "Esporta i miei dati",
+      "intro": "Prepariamo un archivio ZIP con account, pasti, ricette e preferiti. Il link di download è valido 7 giorni.",
+      "requestCta": "Esporta i miei dati",
+      "downloadCta": "Scarica archivio",
+      "jobIdLabel": "ID richiesta",
+      "status": {
+        "pending": "In coda…",
+        "running": "Preparazione in corso…",
+        "ready": "Pronto per il download.",
+        "done": "Completato.",
+        "failed": "Errore durante la preparazione.",
+        "expired": "Il link è scaduto."
+      }
+    },
+    "email": {
+      "title": "Cambia email",
+      "newEmailLabel": "Nuovo indirizzo email",
+      "passwordLabel": "Password attuale",
+      "submitCta": "Invia verifica",
+      "sentToast": "Verifica inviata alla nuova email."
+    },
+    "delete": {
+      "title": "Elimina account",
+      "intro": "L'eliminazione è irreversibile. Rimuoviamo tutti i tuoi dati e propaghiamo la cancellazione ai backup entro 30 giorni.",
+      "startCta": "Elimina account",
+      "passwordLabel": "Conferma password",
+      "continueCta": "Continua",
+      "typeConfirmHint": "Digita ELIMINA in maiuscolo per confermare.",
+      "confirmLabel": "Conferma",
+      "submitCta": "Elimina definitivamente"
+    }
+  }
+}

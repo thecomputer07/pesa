@@ -1,0 +1,4 @@
+# /etc/cron.d/pesa-backup (timezone Europe/Rome, set by timedatectl)
+CRON_TZ=Europe/Rome
+0 2  * * *  pesa  /opt/pesa/deploy/backup/mariabackup.sh full        >> /var/log/pesa-backup.log 2>&1
+0 */6 * * * pesa  /opt/pesa/deploy/backup/mariabackup.sh incremental >> /var/log/pesa-backup.log 2>&1

@@ -1,0 +1,21 @@
+{
+  "status": 1,
+  "code": "8001505005707",
+  "product": {
+    "product_name": "Baci Perugina",
+    "product_name_it": "Baci Perugina",
+    "product_name_en": "Perugina Baci Chocolates",
+    "brands": "Perugina",
+    "quantity": "200 g",
+    "categories": "Dolci, Cioccolato, Cioccolatini",
+    "image_front_small_url": "https://images.openfoodfacts.org/images/products/800/150/500/5707/front_it.4.200.jpg",
+    "nutriments": {
+      "energy-kcal_100g": 541,
+      "proteins_100g": 8.2,
+      "fat_100g": 37.1,
+      "carbohydrates_100g": 45.3,
+      "sugars_100g": 40.1,
+      "fiber_100g": 5.4
+    }
+  }
+}

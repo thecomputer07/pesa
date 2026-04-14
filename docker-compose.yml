@@ -1,0 +1,136 @@
+# Stack completo di sviluppo Pesa — un solo comando per tutto.
+#
+#   docker compose up            (foreground, logs combinati)
+#   docker compose up -d         (detached)
+#   docker compose down          (stop, mantiene i dati)
+#   docker compose down -v       (stop + cancella volumi = DB pulito)
+#   docker compose logs -f       (tail logs di tutti i servizi)
+#   docker compose exec backend sh
+#   docker compose exec db psql -U pesa -d pesa
+#
+# Servizi:
+#   db       → PostgreSQL 16 con pg_trgm (porta 5432)
+#   adminer  → UI web DB su http://localhost:8081
+#   migrate  → one-shot: applica migrations Goose, poi esce
+#   backend  → Go + air hot reload su http://localhost:8080
+#   web      → Vite dev server su http://localhost:5173
+#
+# Hot reload: backend ricompila su modifica *.go, web su modifica src/.
+# Su Windows l'I/O bind-mount è più lento — funzionale ma non istantaneo.
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: pesa-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: pesa
+      POSTGRES_USER: pesa
+      POSTGRES_PASSWORD: pesa
+      # Italiano per locale/collation di default
+      LANG: it_IT.UTF-8
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pesa -d pesa"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 10s
+
+  adminer:
+    image: adminer:4-standalone
+    container_name: pesa-adminer
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8081:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      ADMINER_DEFAULT_SERVER: db
+      ADMINER_DESIGN: dracula
+      ADMINER_DEFAULT_DRIVER: pgsql
+
+  migrate:
+    build:
+      context: .
+      target: dev
+    container_name: pesa-migrate
+    command: ["sh", "-c", "go run ./cmd/pesa migrate up"]
+    environment:
+      DATABASE_DSN: postgres://pesa:pesa@db:5432/pesa?sslmode=disable
+      PESA_ENV: dev
+      LOG_SALT: dev-log-salt-non-prod
+      PESA_ERASURE_HASH_SALT: dev-erasure-salt-non-prod
+      SESSION_SECRET: dev-session-secret-32bytes-min-len-required-pad
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - .:/app
+      - go_mod_cache:/go/pkg/mod
+      - go_build_cache:/root/.cache/go-build
+    restart: "no"
+
+  backend:
+    build:
+      context: .
+      target: dev
+    container_name: pesa-backend
+    restart: unless-stopped
+    environment:
+      DATABASE_DSN: postgres://pesa:pesa@db:5432/pesa?sslmode=disable
+      PESA_ENV: dev
+      PESA_ADDR: :8080
+      LOG_SALT: dev-log-salt-non-prod
+      PESA_ERASURE_HASH_SALT: dev-erasure-salt-non-prod
+      SESSION_SECRET: dev-session-secret-32bytes-min-len-required-pad
+      WEB_BASE_URL: http://localhost:5173
+      HTTP_BASE_URL: http://localhost:8080
+      COOKIE_DOMAIN: localhost
+      COOKIE_SECURE: "false"
+      SMTP_DISABLED: "true"
+      SMTP_FROM: dev@localhost
+      OFF_USER_AGENT: "Pesa-Dev/0.0.1 (+http://localhost)"
+      IMAGE_CACHE_DIR: /app/.cache/images
+      EXPORT_CACHE_DIR: /app/.cache/exports
+      AUTOCERT_ENABLED: "false"
+    ports:
+      - "127.0.0.1:8080:8080"
+    volumes:
+      - .:/app
+      - go_mod_cache:/go/pkg/mod
+      - go_build_cache:/root/.cache/go-build
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+  web:
+    build:
+      context: ./web
+      target: dev
+    container_name: pesa-web
+    restart: unless-stopped
+    environment:
+      VITE_API_BASE: http://localhost:8080
+      VITE_API_PROXY_TARGET: http://backend:8080
+    ports:
+      - "127.0.0.1:5173:5173"
+    volumes:
+      - ./web:/app
+      - web_node_modules:/app/node_modules
+    depends_on:
+      - backend
+
+volumes:
+  pg_data:
+    name: pesa_pg_data
+  go_mod_cache:
+    name: pesa_go_mod_cache
+  go_build_cache:
+    name: pesa_go_build_cache
+  web_node_modules:
+    name: pesa_web_node_modules

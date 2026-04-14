@@ -1,0 +1,5 @@
+PLACEHOLDER — sostituire con la chiave pubblica GPG ASCII-armored del titolare al momento del deploy (Phase 1 plan-05). Generare con:
+
+  gpg --armor --export security@pesadia.com > .well-known/pgp-key.txt
+
+Fingerprint atteso: {{GPG_FINGERPRINT}}

@@ -1,0 +1,54 @@
+# Docker Compose per ambiente di sviluppo locale.
+# NON usare in produzione (vedi deploy/docker-compose.yml).
+#
+# Avvio:    docker compose -f docker-compose.dev.yml up -d
+# Stop:     docker compose -f docker-compose.dev.yml down
+# Reset:    docker compose -f docker-compose.dev.yml down -v   (cancella i dati)
+# Log:      docker compose -f docker-compose.dev.yml logs -f mariadb
+# Shell:    docker compose -f docker-compose.dev.yml exec mariadb mariadb -uroot -proot pesa
+
+services:
+  mariadb:
+    image: mariadb:11.4
+    container_name: pesa-mariadb-dev
+    restart: unless-stopped
+    environment:
+      MARIADB_ROOT_PASSWORD: root
+      MARIADB_DATABASE: pesa
+      MARIADB_USER: pesa
+      MARIADB_PASSWORD: pesa
+    ports:
+      - "127.0.0.1:3306:3306"
+    volumes:
+      - mariadb_data:/var/lib/mysql
+      - ./deploy/mariadb/init:/docker-entrypoint-initdb.d:ro
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_uca1400_ai_ci
+      - --skip-ssl
+      - --max_connections=100
+      - --innodb_buffer_pool_size=256M
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 20s
+
+  # Adminer (UI web per ispezionare il DB) — opzionale, comodo in dev
+  adminer:
+    image: adminer:4-standalone
+    container_name: pesa-adminer-dev
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8081:8080"
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    environment:
+      ADMINER_DEFAULT_SERVER: mariadb
+      ADMINER_DESIGN: dracula
+
+volumes:
+  mariadb_data:
+    name: pesa_mariadb_dev_data

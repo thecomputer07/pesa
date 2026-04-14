@@ -1,0 +1,12 @@
+root = "."
+tmp_dir = "tmp"
+
+[build]
+bin = "tmp/pesa.exe"
+cmd = "go build -o tmp/pesa.exe ./cmd/pesa"
+include_ext = ["go", "tmpl", "html"]
+exclude_dir = ["tmp", "bin", "node_modules", "web/dist", "web/node_modules", "internal/web/dist"]
+delay = 500
+
+[log]
+time = true

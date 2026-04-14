@@ -1,0 +1,368 @@
+{
+  "nav": {
+    "home": "Home",
+    "search": "Search",
+    "scan": "Scan",
+    "diary": "Diary",
+    "recipes": "Recipes",
+    "favorites": "Favorites",
+    "templates": "Templates",
+    "scope": "Scope",
+    "about": "About",
+    "accessibility": "Accessibility",
+    "privacy": "Privacy",
+    "terms": "Terms",
+    "cookies": "Cookies"
+  },
+  "scanner": {
+    "pageTitle": "Scan a barcode",
+    "pageIntro": "Point the camera at the product's barcode. You can also type it below.",
+    "prompt": "To scan, grant camera access first.",
+    "promptCta": "Enable camera",
+    "prompting": "Requesting camera permission…",
+    "denied": "Permission denied. Open Settings › Safari › Camera to allow, or use manual entry.",
+    "unavailable": "Camera unavailable on this device. Use manual entry.",
+    "retry": "Retry",
+    "torchOn": "Torch: on",
+    "torchOff": "Torch: off",
+    "manualLabel": "Enter barcode",
+    "manualSubmit": "Search",
+    "manualError": "Invalid code. 8–13 digits only.",
+    "notFound": "Product not found — try a text search instead.",
+    "genericError": "Network error. Please retry.",
+    "tryTextSearch": "Search by name"
+  },
+  "sources": {
+    "loading": "Loading sources…",
+    "loadError": "Unable to load the sources list.",
+    "dataPage": {
+      "title": "Data sources",
+      "intro": "Pesa shows nutritional values from public Italian and international sources. We list license, attribution and contact for each."
+    },
+    "imagesPage": {
+      "title": "Image sources",
+      "intro": "Product images may come from Open Food Facts or Wikimedia Commons. Pesa hosts them with visible attribution where the license permits.",
+      "creaBdaNote": "CREA and BDA-IEO images are not hosted by Pesa: when an external link is available, it is shown with attribution to the origin."
+    },
+    "common": {
+      "license": "License",
+      "licenseUrl": "License URL",
+      "attribution": "Attribution",
+      "sourceUrl": "Official site",
+      "scope": "Scope",
+      "contact": "Contact",
+      "notes": "Notes"
+    }
+  },
+  "a11y": {
+    "skipToContent": "Skip to content",
+    "primaryNav": "Primary navigation",
+    "footerNav": "Footer links",
+    "loading": "Loading",
+    "sourceBadge": "Data source",
+    "requiredField": "required field"
+  },
+  "home": {
+    "title": "How many carbs are in this food?",
+    "tagline": "Type the name, enter the weight in grams, get the carbohydrate value. Data from cited Italian sources.",
+    "learnMore": "Read what Pesa is for on the page",
+    "features": {
+      "grams": {
+        "title": "Gram-level calculation",
+        "body": "Enter the exact weight and read the carbohydrate value for the portion, with context on fiber, sugars, kcal."
+      },
+      "offline": {
+        "title": "Works offline",
+        "body": "Once the catalog is cached, you can search and compute without a network connection."
+      },
+      "sources": {
+        "title": "Cited Italian sources",
+        "body": "Every value shows its source (CREA, BDA IEO, Open Food Facts) with a link to the original entry."
+      }
+    }
+  },
+  "search": {
+    "label": "Search food",
+    "placeholder": "e.g. bread, apple, rice…",
+    "submit": "Search",
+    "empty": "No results. Try a different name.",
+    "minChars": "Type at least {{n}} characters.",
+    "resultsCount_one": "{{count}} result",
+    "resultsCount_other": "{{count}} results",
+    "loading": "Searching…",
+    "error": "Network error. Please retry.",
+    "offlineNotice": "You are offline: results from local cache.",
+    "stateCrudo": "raw",
+    "stateCotto": "cooked"
+  },
+  "detail": {
+    "back": "Back to results",
+    "weightLabel": "Weight in grams",
+    "weightHelp": "Whole numbers or decimals (e.g. 120.5).",
+    "stateLabel": "State",
+    "stateCrudo": "Raw",
+    "stateCotto": "Cooked",
+    "per100": "Values per 100 g",
+    "perPortion": "Values per {{grams}} g",
+    "kcal": "Calories (kcal)",
+    "protein": "Protein",
+    "fat": "Fat",
+    "carb": "Carbohydrates",
+    "sugar": "of which sugars",
+    "fiber": "Fiber",
+    "water": "Water",
+    "salt": "Salt",
+    "attribution": "Source",
+    "license": "License",
+    "lastImported": "Last updated",
+    "viewOriginal": "View original entry",
+    "conflictTitle": "Sources report different values",
+    "conflictBody": "CREA and BDA IEO report different values for this food (>10%). Choose the source to use.",
+    "conflictPick": "Use this source",
+    "noData": "No data available"
+  },
+  "scope": {
+    "pageTitle": "What Pesa is for",
+    "intro": "Pesa is a generic nutritional tool that counts carbohydrates by weight."
+  },
+  "scopeBanner": {
+    "badge": "Generic nutritional tool.",
+    "body": "Pesa shows public nutritional values by weight. It does not replace the opinion of your reference health professional.",
+    "learnMore": "Read more",
+    "dismissLabel": "Dismiss notice"
+  },
+  "scopeFooter": {
+    "badge": "Generic nutritional calculator.",
+    "body": "Pesa is not a medical device. For food choices tied to personal conditions, talk to your reference health professional."
+  },
+  "about": {
+    "title": "About",
+    "intro": "Pesa is an open-source project maintained by Lorenzo Di Mare, published under AGPL v3.",
+    "scopeLead": "What Pesa is and is not for is explained on the page",
+    "a11yLead": "Accessibility statement (Italian Law Stanca):",
+    "openSource": "Public source code, {{license}} license."
+  },
+  "accessibility": {
+    "pageTitle": "Accessibility statement",
+    "contact": "Accessibility contact",
+    "contactEmail": "accessibilita@pesadia.com",
+    "selfAuditTitle": "Self-audit outcome"
+  },
+  "install": {
+    "prompt": "Install Pesa on your device",
+    "install": "Install",
+    "notNow": "Not now",
+    "updateAvailable": "A new version of Pesa is available.",
+    "updateNow": "Update now",
+    "updateLater": "Later"
+  },
+  "footer": {
+    "rights": "Pesa — open-source project",
+    "language": "Language",
+    "sources": "Sources",
+    "sourcesAria": "Sources page links",
+    "sourcesData": "Data sources",
+    "sourcesImages": "Image sources"
+  },
+  "offline": {
+    "indicator": "Offline",
+    "bannerTitle": "You are offline",
+    "bannerBody": "Showing content from the local cache."
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "confirm": "Confirm"
+  },
+  "auth": {
+    "logout": "Sign out",
+    "greeting": "Signed in as {{email}}",
+    "login": {
+      "title": "Sign in",
+      "emailLabel": "Email",
+      "passwordLabel": "Password",
+      "submit": "Sign in",
+      "error": "Invalid credentials. Please try again.",
+      "errorNotVerified": "Email not verified. Please check your inbox.",
+      "noAccount": "No account yet?",
+      "signup": "Sign up",
+      "forgotPassword": "Forgot your password?"
+    },
+    "register": {
+      "title": "Sign up",
+      "emailLabel": "Email",
+      "passwordLabel": "Password (at least {{min}} characters)",
+      "confirmLabel": "Confirm password",
+      "privacyConsent": "I accept the <privacy>privacy policy</privacy> and I have read the <scope>service scope</scope> (required).",
+      "consentRequired": "You must accept the privacy policy to continue.",
+      "submit": "Create account",
+      "hasAccount": "Already have an account? Sign in",
+      "success": "Account created. Check your email to verify the address before signing in.",
+      "devHint": "In development the verification link appears in the backend logs (SMTP disabled).",
+      "mismatch": "The two passwords do not match.",
+      "weakPassword": "Password must be at least {{min}} characters.",
+      "emailUsed": "An account with this email already exists.",
+      "error": "Could not complete sign-up. Please try again."
+    },
+    "passwordReset": {
+      "requestTitle": "Reset password",
+      "requestSubmit": "Send reset link",
+      "requestAck": "If the email exists, you will receive a link to reset your password.",
+      "confirmTitle": "New password",
+      "newPasswordLabel": "New password (at least {{min}} characters)",
+      "confirmSubmit": "Save new password",
+      "confirmSuccess": "Password updated. You can sign in now.",
+      "invalidToken": "Link invalid or expired. Request a new one.",
+      "missingToken": "Missing or incomplete link.",
+      "error": "Could not update the password. Please try again."
+    },
+    "verifyEmail": {
+      "title": "Verify email",
+      "verifying": "Verifying…",
+      "ok": "Email verified. You can sign in now.",
+      "invalid": "Link invalid or expired.",
+      "missing": "Missing or incomplete link."
+    }
+  },
+  "foodPicker": {
+    "placeholder": "Search a food…",
+    "ariaLabel": "Search a food",
+    "confirmAdd": "Add"
+  },
+  "diary": {
+    "title": "Food diary",
+    "addMeal": "Add meal",
+    "editMeal": "Edit meal",
+    "delete": "Delete meal",
+    "saved": "Meal saved",
+    "deleted": "Meal deleted",
+    "empty": "No meals logged.",
+    "slotLabel": "When",
+    "notes": "Notes",
+    "itemName": "Food name",
+    "slots": {
+      "colazione": "Breakfast",
+      "pranzo": "Lunch",
+      "cena": "Dinner",
+      "spuntino": "Snack",
+      "altro": "Other"
+    },
+    "picker": {
+      "title": "Add item",
+      "foods": "Foods",
+      "recipes": "Recipes",
+      "recipesStub": "Pick a recipe from the selector."
+    },
+    "totals": {
+      "ariaLabel": "Day totals",
+      "kcal": "kcal",
+      "carbs": "CHO",
+      "protein": "Protein",
+      "fat": "Fat",
+      "fiber": "Fiber"
+    }
+  },
+  "sync": {
+    "conflict": "Newer version applied",
+    "blocked": "Sync blocked — check your connection",
+    "authLost": "Session expired — sign in again"
+  },
+  "recipes": {
+    "title": "My recipes",
+    "new": "New recipe",
+    "edit": "Edit recipe",
+    "save": "Save recipe",
+    "delete": "Delete recipe",
+    "saved": "Recipe saved",
+    "deleted": "Recipe deleted",
+    "empty": "No recipes yet. Create one to reuse in the diary.",
+    "nameLabel": "Name",
+    "servingsLabel": "Servings",
+    "totalGramsLabel": "Total weight (g)",
+    "notesLabel": "Notes",
+    "itemsLabel": "Ingredients",
+    "preview": {
+      "total": "Recipe total",
+      "perServing": "Per serving",
+      "per100g": "Per 100 g"
+    },
+    "cantNestHint": "Recipes cannot contain other recipes."
+  },
+  "favorites": {
+    "title": "Favorites",
+    "add": "Add to favorites",
+    "remove": "Remove from favorites",
+    "empty": "No favorites yet.",
+    "cta": "Search foods"
+  },
+  "templates": {
+    "title": "Meal templates",
+    "new": "New template",
+    "saveFromMeal": "Save as template",
+    "pickFromTemplate": "From template…",
+    "saved": "Template saved",
+    "instantiated": "Meal created from template",
+    "nameLabel": "Template name",
+    "delete": "Delete template",
+    "empty": "No templates yet."
+  },
+  "privacy": {
+    "pageTitle": "Privacy & data rights",
+    "pageIntro": "Export your data, change your email, or delete your account. You can also review consents and retention here.",
+    "contactLine": "Privacy questions?",
+    "consents": {
+      "title": "Consents",
+      "policyLabel": "Privacy policy",
+      "policyValue": "Accepted at signup (mandatory to use the service).",
+      "cookiesLabel": "Cookies",
+      "cookiesValue": "Technical session cookies only. No banner — no tracking.",
+      "analyticsLabel": "Usage analytics",
+      "analyticsValue": "None. No third-party trackers."
+    },
+    "retention": {
+      "title": "Retention periods",
+      "categoryHeader": "Category",
+      "periodHeader": "Period",
+      "meals": { "label": "Meals & diary", "period": "24 months" },
+      "recipes": { "label": "Recipes", "period": "Until account deletion" },
+      "sessions": { "label": "Login sessions", "period": "30 days" },
+      "audit": { "label": "Security audit log", "period": "12 months" },
+      "appLog": { "label": "Application log", "period": "90 days" },
+      "erasureLog": { "label": "Erasure log (Art. 17)", "period": "12 months" }
+    },
+    "export": {
+      "title": "Export my data",
+      "intro": "We prepare a ZIP with your account, meals, recipes, and favorites. The download link is valid for 7 days.",
+      "requestCta": "Export my data",
+      "downloadCta": "Download archive",
+      "jobIdLabel": "Request ID",
+      "status": {
+        "pending": "Queued…",
+        "running": "Preparing…",
+        "ready": "Ready to download.",
+        "done": "Completed.",
+        "failed": "Preparation failed.",
+        "expired": "Link expired."
+      }
+    },
+    "email": {
+      "title": "Change email",
+      "newEmailLabel": "New email address",
+      "passwordLabel": "Current password",
+      "submitCta": "Send verification",
+      "sentToast": "Verification email sent to the new address."
+    },
+    "delete": {
+      "title": "Delete account",
+      "intro": "Deletion is irreversible. We remove all your data and propagate the tombstone to backups within 30 days.",
+      "startCta": "Delete account",
+      "passwordLabel": "Confirm password",
+      "continueCta": "Continue",
+      "typeConfirmHint": "Type ELIMINA (all caps) to confirm.",
+      "confirmLabel": "Confirmation",
+      "submitCta": "Delete permanently"
+    }
+  }
+}

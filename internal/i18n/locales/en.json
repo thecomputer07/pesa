@@ -1,0 +1,12 @@
+{
+  "welcome": "Welcome",
+  "error.bad_request": "Bad request",
+  "error.rate_limited": "Too many requests, try again later",
+  "error.internal": "Internal error, please retry",
+  "auth.register.ok": "Registration complete. Check your email to confirm.",
+  "auth.verify.ok": "Email confirmed.",
+  "auth.login.invalid": "Invalid credentials",
+  "auth.login.not_verified": "Email not confirmed",
+  "auth.reset.sent": "If the email is registered, we have sent the instructions.",
+  "auth.reset.ok": "Password updated."
+}

@@ -1,0 +1,304 @@
+package importer
+
+import (
+	"context"
+	"crypto/sha256"
+	"database/sql"
+	"encoding/hex"
+	"encoding/json"
+	"fmt"
+	"io"
+	"log/slog"
+	"net/http"
+	"net/url"
+	"strings"
+	"time"
+)
+
+// OFFOpts controls the Open Food Facts bulk import.
+type OFFOpts struct {
+	ImportOpts
+	Country    string        // es. "italy"
+	Limit      int           // max prodotti totali (0 = no cap)
+	PageSize   int           // default 100
+	RateDelay  time.Duration // delay tra richieste (default 1s)
+	UserAgent  string
+	MinCarb    bool // se true, scarta prodotti senza carbohydrates_100g
+	HTTPClient *http.Client
+}
+
+type offNutriments struct {
+	Energy100g  *float64 `json:"energy-kcal_100g"`
+	ProteinG    *float64 `json:"proteins_100g"`
+	FatG        *float64 `json:"fat_100g"`
+	CarbG       *float64 `json:"carbohydrates_100g"`
+	SugarG      *float64 `json:"sugars_100g"`
+	FiberG      *float64 `json:"fiber_100g"`
+	SaltG       *float64 `json:"salt_100g"`
+}
+
+type offProduct struct {
+	Code              string         `json:"code"`
+	ProductName       string         `json:"product_name"`
+	ProductNameIT     string         `json:"product_name_it"`
+	Categories        string         `json:"categories"`
+	Nutriments        *offNutriments `json:"nutriments"`
+	ImageFrontURL     string         `json:"image_front_url"`
+	ImageFrontSmall   string         `json:"image_front_small_url"`
+	ImageURL          string         `json:"image_url"`
+	// search-a-licious restituisce brands come array, l'API v1 come stringa: accettiamo entrambi.
+	Brands json.RawMessage `json:"brands"`
+}
+
+func (p offProduct) bestImageURL() string {
+	for _, u := range []string{p.ImageFrontURL, p.ImageURL, p.ImageFrontSmall} {
+		if strings.HasPrefix(u, "https://") || strings.HasPrefix(u, "http://") {
+			return u
+		}
+	}
+	return ""
+}
+
+func (p offProduct) firstBrand() string {
+	if len(p.Brands) == 0 {
+		return ""
+	}
+	var arr []string
+	if err := json.Unmarshal(p.Brands, &arr); err == nil {
+		if len(arr) > 0 {
+			return arr[0]
+		}
+		return ""
+	}
+	var s string
+	if err := json.Unmarshal(p.Brands, &s); err == nil {
+		return s
+	}
+	return ""
+}
+
+// Risposta di search-a-licious (https://search.openfoodfacts.org/docs).
+type offSearchResponse struct {
+	Count     int          `json:"count"`
+	Page      int          `json:"page"`
+	PageSize  int          `json:"page_size"`
+	PageCount int          `json:"page_count"`
+	Hits      []offProduct `json:"hits"`
+}
+
+// ImportOFF itera le pagine dell'API OFF filtrate per country e carica
+// ogni prodotto nella tabella foods con source_code='off'.
+func ImportOFF(ctx context.Context, db *sql.DB, opts OFFOpts) (*ImportReport, error) {
+	if opts.SourceCode == "" {
+		opts.SourceCode = "off"
+	}
+	if opts.Basis == "" {
+		opts.Basis = BasisEdible
+	}
+	if opts.Country == "" {
+		opts.Country = "italy"
+	}
+	if opts.PageSize <= 0 {
+		opts.PageSize = 100
+	}
+	if opts.RateDelay <= 0 {
+		opts.RateDelay = time.Second
+	}
+	if opts.UserAgent == "" {
+		opts.UserAgent = "Pesa/0.1.0 (+https://pesadia.com)"
+	}
+	if opts.HTTPClient == nil {
+		opts.HTTPClient = &http.Client{Timeout: 30 * time.Second}
+	}
+
+	sourceID, err := lookupSourceID(ctx, db, opts.SourceCode)
+	if err != nil {
+		return nil, err
+	}
+
+	report := &ImportReport{}
+	// Estrae la prima categoria e la tronca a 64 char (limite colonna foods.category).
+	firstCategoryRe := func(cats string) string {
+		for _, c := range strings.Split(cats, ",") {
+			c = strings.TrimSpace(c)
+			if c == "" {
+				continue
+			}
+			if len(c) > 64 {
+				c = c[:64]
+			}
+			return c
+		}
+		return ""
+	}
+
+	page := 1
+	fetched := 0
+	for {
+		if ctx.Err() != nil {
+			return report, ctx.Err()
+		}
+		if opts.Limit > 0 && fetched >= opts.Limit {
+			break
+		}
+		resp, err := fetchOFFPage(ctx, opts, page)
+		if err != nil {
+			return report, fmt.Errorf("page %d: %w", page, err)
+		}
+		if len(resp.Hits) == 0 {
+			break
+		}
+		for _, p := range resp.Hits {
+			if opts.Limit > 0 && fetched >= opts.Limit {
+				break
+			}
+			fetched++
+			report.TotalRows++
+
+			if p.Code == "" {
+				continue
+			}
+			name := p.ProductNameIT
+			if name == "" {
+				name = p.ProductName
+			}
+			name = strings.TrimSpace(name)
+			if name == "" {
+				continue
+			}
+			nutr := p.Nutriments
+			if nutr == nil {
+				nutr = &offNutriments{}
+			}
+			if opts.MinCarb && nutr.CarbG == nil {
+				continue
+			}
+
+			raw, _ := json.Marshal(p)
+			hash := sha256.Sum256(raw)
+			displayName := name
+			if b := p.firstBrand(); b != "" {
+				displayName = b + " — " + name
+			}
+			row := FoodRow{
+				ExternalID:  p.Code,
+				URL:         "https://world.openfoodfacts.org/product/" + p.Code,
+				NameIT:      displayName,
+				Category:    firstCategoryRe(p.Categories),
+				EdiblePct:   100.0,
+				Kcal:        nutr.Energy100g,
+				ProteinG:    nutr.ProteinG,
+				FatG:        nutr.FatG,
+				CarbG:       nutr.CarbG,
+				SugarG:      nutr.SugarG,
+				FiberG:      nutr.FiberG,
+				SaltG:       nutr.SaltG,
+				ContentHash: hex.EncodeToString(hash[:]),
+				FetchedAt:   time.Now().UTC(),
+				RawJSON:     raw,
+			}
+			if err := importOneRow(ctx, db, sourceID, row, opts.ImportOpts, report, false); err != nil {
+				report.Errors = append(report.Errors, fmt.Sprintf("%s: %v", row.ExternalID, err))
+				continue
+			}
+			if !opts.DryRun {
+				if imgURL := p.bestImageURL(); imgURL != "" {
+					if err := upsertFoodImage(ctx, db, sourceID, row.ExternalID, imgURL); err != nil {
+						slog.Warn("off image upsert", "ean", row.ExternalID, "err", err)
+					}
+				}
+			}
+		}
+		slog.Info("off page done", "page", page, "hits", len(resp.Hits),
+			"fetched", fetched, "inserted", report.InsertedFoods, "updated", report.UpdatedFoods,
+			"unchanged", report.Unchanged, "quarantined", report.Quarantined)
+
+		if resp.PageCount > 0 && page >= resp.PageCount {
+			break
+		}
+		if len(resp.Hits) < opts.PageSize {
+			break
+		}
+		page++
+		select {
+		case <-ctx.Done():
+			return report, ctx.Err()
+		case <-time.After(opts.RateDelay):
+		}
+	}
+	return report, nil
+}
+
+// upsertFoodImage inserisce (o sostituisce) l'URL immagine principale per il food
+// collegato al record (source_id, external_id). Mantiene UN SOLO record per food
+// per semplicità — la tabella food_images supporta più immagini ma il frontend
+// mostra solo la prima.
+func upsertFoodImage(ctx context.Context, db *sql.DB, sourceID int64, externalID, url string) error {
+	var foodID int64
+	err := db.QueryRowContext(ctx, `
+		SELECT f.id FROM foods f
+		JOIN food_source_records fsr ON fsr.id = f.source_record_id
+		WHERE fsr.source_id = $1 AND fsr.external_id = $2`, sourceID, externalID).Scan(&foodID)
+	if err != nil {
+		return err
+	}
+	_, err = db.ExecContext(ctx, `DELETE FROM food_images WHERE food_id = $1`, foodID)
+	if err != nil {
+		return err
+	}
+	_, err = db.ExecContext(ctx, `
+		INSERT INTO food_images (food_id, url, attribution, license, is_external)
+		VALUES ($1, $2, 'Open Food Facts contributors', 'ODbL-1.0', TRUE)`, foodID, url)
+	return err
+}
+
+func fetchOFFPage(ctx context.Context, opts OFFOpts, page int) (*offSearchResponse, error) {
+	// search-a-licious è l'endpoint OFF consigliato per bulk search (ElasticSearch-backed).
+	// Doc: https://search.openfoodfacts.org/docs
+	q := url.Values{}
+	q.Set("q", fmt.Sprintf(`countries_tags:"en:%s"`, opts.Country))
+	q.Set("sort_by", "popularity_key")
+	q.Set("fields", "code,product_name,product_name_it,categories,nutriments,brands,image_url,image_front_url,image_front_small_url")
+	q.Set("page_size", fmt.Sprintf("%d", opts.PageSize))
+	q.Set("page", fmt.Sprintf("%d", page))
+	u := "https://search.openfoodfacts.org/search?" + q.Encode()
+
+	var lastErr error
+	backoff := 2 * time.Second
+	for attempt := 1; attempt <= 4; attempt++ {
+		req, err := http.NewRequestWithContext(ctx, http.MethodGet, u, nil)
+		if err != nil {
+			return nil, err
+		}
+		req.Header.Set("User-Agent", opts.UserAgent)
+		req.Header.Set("Accept", "application/json")
+
+		resp, err := opts.HTTPClient.Do(req)
+		if err != nil {
+			lastErr = err
+		} else if resp.StatusCode == 200 {
+			var out offSearchResponse
+			dec := json.NewDecoder(resp.Body)
+			derr := dec.Decode(&out)
+			_ = resp.Body.Close()
+			if derr != nil {
+				return nil, derr
+			}
+			return &out, nil
+		} else {
+			b, _ := io.ReadAll(io.LimitReader(resp.Body, 512))
+			_ = resp.Body.Close()
+			lastErr = fmt.Errorf("OFF %d: %s", resp.StatusCode, strings.TrimSpace(string(b)))
+			if resp.StatusCode != 429 && resp.StatusCode < 500 {
+				return nil, lastErr
+			}
+		}
+		select {
+		case <-ctx.Done():
+			return nil, ctx.Err()
+		case <-time.After(backoff):
+		}
+		backoff *= 2
+	}
+	return nil, lastErr
+}

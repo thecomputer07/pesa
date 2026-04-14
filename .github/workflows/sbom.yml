@@ -1,0 +1,59 @@
+name: SBOM
+
+on:
+  release:
+    types: [created]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  go-sbom:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+      - name: Install cyclonedx-gomod
+        run: go install github.com/CycloneDX/cyclonedx-gomod/cmd/cyclonedx-gomod@latest
+      - name: Generate SBOM (Go)
+        run: cyclonedx-gomod mod -licenses -json -output sbom-go.cdx.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sbom-go
+          path: sbom-go.cdx.json
+
+  npm-sbom:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: npm ci || npm install
+      - name: Install cyclonedx-npm
+        run: npm install -g @cyclonedx/cyclonedx-npm
+      - name: Generate SBOM (npm)
+        run: cyclonedx-npm --output-file ../sbom-npm.cdx.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sbom-npm
+          path: sbom-npm.cdx.json
+
+  attach-to-release:
+    needs: [go-sbom, npm-sbom]
+    if: github.event_name == 'release'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+      - name: Upload to release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: artifacts/**/*.json

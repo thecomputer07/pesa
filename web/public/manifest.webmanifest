@@ -1,0 +1,48 @@
+{
+  "name": "Pesa — Calcolatore carboidrati",
+  "short_name": "Pesa",
+  "description": "Calcolatore nutrizionale: carboidrati per peso, con fonti italiane citate. Funziona offline.",
+  "lang": "it-IT",
+  "dir": "ltr",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f7f8fa",
+  "theme_color": "#1d4ed8",
+  "categories": ["food", "utilities", "lifestyle"],
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "type": "image/svg+xml",
+      "sizes": "any",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-maskable-512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Cerca alimento",
+      "short_name": "Cerca",
+      "url": "/cerca",
+      "description": "Apri direttamente la ricerca"
+    }
+  ]
+}

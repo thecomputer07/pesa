@@ -1,0 +1,7 @@
+[mysqld]
+ssl-cert   = /etc/mysql/tls/server-cert.pem
+ssl-key    = /etc/mysql/tls/server-key.pem
+ssl-ca     = /etc/mysql/tls/ca.pem
+require_secure_transport = ON
+character-set-server = utf8mb4
+collation-server     = utf8mb4_0900_ai_ci

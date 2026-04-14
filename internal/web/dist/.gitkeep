@@ -1,0 +1,2 @@
+# Embedded SPA dist directory.
+# The Vite build output is copied here by `make copy-dist`.

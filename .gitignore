@@ -1,0 +1,34 @@
+bin/
+tmp/
+coverage/
+*.out
+*.test
+.env
+.env.*
+!.env.example
+!.env.render.example
+
+node_modules/
+web/dist/
+internal/web/dist/*
+!internal/web/dist/.gitkeep
+web/test-results/
+web/playwright-report/
+
+sbom-*.json
+*.sig
+*.asc
+
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+deploy/secrets/
+
+# Dev artefacts
+.cache/
+data/crea/
+
+# Accidental dirs (air watching absolute Windows paths)
+C:/

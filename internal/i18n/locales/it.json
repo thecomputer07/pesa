@@ -1,0 +1,12 @@
+{
+  "welcome": "Benvenuto",
+  "error.bad_request": "Richiesta non valida",
+  "error.rate_limited": "Troppe richieste, riprova più tardi",
+  "error.internal": "Errore interno, riprova",
+  "auth.register.ok": "Registrazione completata. Controlla la tua email per confermare.",
+  "auth.verify.ok": "Email confermata.",
+  "auth.login.invalid": "Credenziali non valide",
+  "auth.login.not_verified": "Email non confermata",
+  "auth.reset.sent": "Se l'email è registrata, ti abbiamo inviato le istruzioni.",
+  "auth.reset.ok": "Password aggiornata."
+}

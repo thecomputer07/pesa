@@ -1,0 +1,100 @@
+services:
+  mariadb:
+    image: mariadb:11.4
+    container_name: pesa-mariadb
+    restart: unless-stopped
+    environment:
+      MARIADB_ROOT_PASSWORD_FILE: /run/secrets/mariadb_root
+      MARIADB_DATABASE: pesa
+      MARIADB_USER: pesa_app
+      MARIADB_PASSWORD_FILE: /run/secrets/mariadb_app
+    volumes:
+      - mariadb_data:/var/lib/mysql
+      - ./mariadb/tls:/etc/mysql/tls:ro
+      - ./mariadb/conf.d:/etc/mysql/conf.d:ro
+      - ./mariadb/init:/docker-entrypoint-initdb.d:ro
+    ports:
+      - "127.0.0.1:3306:3306"
+    networks: [backend]
+    secrets: [mariadb_root, mariadb_app]
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      retries: 5
+    security_opt: ["no-new-privileges:true"]
+
+  plausible_db:
+    image: postgres:16
+    container_name: plausible-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_PASSWORD_FILE: /run/secrets/plausible_db
+    volumes: [plausible_db_data:/var/lib/postgresql/data]
+    networks: [analytics]
+    secrets: [plausible_db]
+
+  plausible:
+    image: ghcr.io/plausible/community-edition:v2.1.4
+    container_name: plausible-ce
+    restart: unless-stopped
+    depends_on: [plausible_db]
+    environment:
+      BASE_URL: https://analytics.pesadia.com
+      SECRET_KEY_BASE_FILE: /run/secrets/plausible_secret
+      DATABASE_URL_FILE: /run/secrets/plausible_db_url
+    ports:
+      - "127.0.0.1:8000:8000"
+    networks: [analytics]
+    secrets: [plausible_secret, plausible_db_url]
+
+  glitchtip_db:
+    image: postgres:16
+    container_name: glitchtip-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_PASSWORD_FILE: /run/secrets/glitchtip_db
+    volumes: [glitchtip_db_data:/var/lib/postgresql/data]
+    networks: [errors]
+    secrets: [glitchtip_db]
+
+  glitchtip_redis:
+    image: redis:7-alpine
+    container_name: glitchtip-redis
+    restart: unless-stopped
+    networks: [errors]
+
+  glitchtip:
+    image: glitchtip/glitchtip:v4
+    container_name: glitchtip
+    restart: unless-stopped
+    depends_on: [glitchtip_db, glitchtip_redis]
+    environment:
+      DATABASE_URL_FILE: /run/secrets/glitchtip_db_url
+      SECRET_KEY_FILE: /run/secrets/glitchtip_secret
+      REDIS_URL: redis://glitchtip_redis:6379/0
+      DEFAULT_FROM_EMAIL: no-reply@pesadia.com
+      GLITCHTIP_DOMAIN: https://errors.pesadia.com
+    ports:
+      - "127.0.0.1:8001:8000"
+    networks: [errors]
+    secrets: [glitchtip_db_url, glitchtip_secret]
+
+volumes:
+  mariadb_data:
+  plausible_db_data:
+  glitchtip_db_data:
+
+networks:
+  backend:
+  analytics:
+  errors:
+
+secrets:
+  mariadb_root:      { file: ./secrets/mariadb_root }
+  mariadb_app:       { file: ./secrets/mariadb_app }
+  plausible_db:      { file: ./secrets/plausible_db }
+  plausible_db_url:  { file: ./secrets/plausible_db_url }
+  plausible_secret:  { file: ./secrets/plausible_secret }
+  glitchtip_db:      { file: ./secrets/glitchtip_db }
+  glitchtip_db_url:  { file: ./secrets/glitchtip_db_url }
+  glitchtip_secret:  { file: ./secrets/glitchtip_secret }

@@ -1,0 +1,25 @@
+name: anti-word
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_call:
+permissions:
+  contents: read
+
+jobs:
+  scan:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+      - name: Build scanner
+        run: go build -o bin/check-forbidden-words ./cmd/check-forbidden-words
+      - name: Parser smoke-test on MARKETING-RULES.md
+        run: bin/check-forbidden-words --parser-check
+      - name: Run fixtures
+        run: bash scripts/test/run-fixtures.sh
+      - name: Scan repo (HARD fail on match)
+        run: bin/check-forbidden-words
