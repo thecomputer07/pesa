@@ -47,14 +47,17 @@ func EnrichImagesFromWikipedia(ctx context.Context, db *sql.DB, opts WikiImageOp
 		opts.HTTPClient = &http.Client{Timeout: 20 * time.Second}
 	}
 
-	// Query: food senza alcuna immagine, escludendo i superseded.
+	// Query: food senza alcuna immagine, escludendo i superseded. Mai i
+	// prodotti OFF: il nome contiene la marca e Wikipedia restituisce loghi,
+	// stemmi o quadri omonimi ("Angelo Parodi" -> un angelo dipinto).
 	q := `
 		SELECT f.id, f.name_it
 		  FROM foods f
 		  LEFT JOIN food_images fi ON fi.food_id = f.id
 		  JOIN food_sources fs ON fs.id = f.source_id
 		 WHERE fi.id IS NULL
-		   AND f.superseded_by IS NULL`
+		   AND f.superseded_by IS NULL
+		   AND fs.code <> 'off'`
 	args := []interface{}{}
 	if opts.OnlySource != "" {
 		q += ` AND fs.code = $1`
@@ -213,6 +216,10 @@ func wikiSummaryThumbnail(ctx context.Context, opts WikiImageOpts, title string)
 	}
 	// Skip disambiguation and standard pages without image.
 	if s.Type == "disambiguation" || s.Thumbnail == nil {
+		return "", nil
+	}
+	// SVG thumbnails are logos, crests or diagrams, never food photos.
+	if strings.Contains(strings.ToLower(s.Thumbnail.Source), ".svg") {
 		return "", nil
 	}
 	return s.Thumbnail.Source, nil
