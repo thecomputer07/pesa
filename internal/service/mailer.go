@@ -26,7 +26,12 @@ func (m *SMTPMailer) Send(_ context.Context, to, subject, body string) error {
 	msg.SetHeader("Subject", subject)
 	msg.SetBody("text/plain; charset=utf-8", body)
 	d := gomail.NewDialer(m.Host, m.Port, m.User, m.Password)
-	return d.DialAndSend(msg)
+	// Most callers discard the error, so surface it here (no recipient: PII).
+	if err := d.DialAndSend(msg); err != nil {
+		slog.Error("smtp send failed", "host", m.Host, "subject", subject, "err", err)
+		return err
+	}
+	return nil
 }
 
 // StdoutMailer logs to slog; used in dev/test.
