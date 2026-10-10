@@ -14,7 +14,7 @@ export default function ResultCard({ food }: ResultCardProps) {
   const fmtG = useFormatGrams();
   const fmtKcal = useFormatKcal();
   const isCooked = food.state === "cooked" || food.state === "cotto";
-  const stateLabel = isCooked ? t("search.stateCotto") : t("search.stateCrudo");
+  // "Crudo" on Nutella or yogurt is noise: label only cooked items.
 
   return (
     <li className="border border-[color:var(--color-border)] rounded-[color:var(--radius-card)] bg-white hover:border-[color:var(--color-brand-500)] focus-within:border-[color:var(--color-brand-500)] transition-colors">
@@ -56,7 +56,7 @@ export default function ResultCard({ food }: ResultCardProps) {
           <Kv label={t("detail.carb")} value={fmtG(food.carb_g)} emphasise />
           <Kv label={t("detail.kcal")} value={fmtKcal(food.kcal)} />
           <Kv label={t("detail.fiber")} value={fmtG(food.fiber_g)} />
-          <Kv label={t("detail.stateLabel")} value={stateLabel} />
+          {isCooked ? <Kv label={t("detail.stateLabel")} value={t("search.stateCotto")} /> : null}
         </dl>
       </Link>
     </li>

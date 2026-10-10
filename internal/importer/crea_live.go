@@ -109,6 +109,9 @@ func ImportCREALive(ctx context.Context, db *sql.DB, opts CREALiveOpts) (*Import
 		case <-time.After(opts.RateDelay):
 		}
 	}
+	if err := RefreshCREAStates(ctx, db); err != nil {
+		return report, err
+	}
 	return report, nil
 }
 

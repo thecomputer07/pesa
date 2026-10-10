@@ -150,7 +150,22 @@ func ImportCSV(ctx context.Context, db *sql.DB, csvPath string, opts ImportOpts)
 			report.Errors = append(report.Errors, fmt.Sprintf("%s: %v", row.ExternalID, err))
 		}
 	}
+	if !opts.DryRun {
+		if err := RefreshCREAStates(ctx, db); err != nil {
+			return report, err
+		}
+	}
 	return report, nil
+}
+
+// RefreshCREAStates derives raw/cooked state from CREA names and rebuilds the
+// cooked->raw pairs behind the detail-page toggle. Rows are inserted as 'raw';
+// the rules live in the SQL function from migration 00026.
+func RefreshCREAStates(ctx context.Context, db *sql.DB) error {
+	if _, err := db.ExecContext(ctx, `SELECT pesa_refresh_crea_states()`); err != nil {
+		return fmt.Errorf("refresh crea states: %w", err)
+	}
+	return nil
 }
 
 // importOneRow is the shared per-row path used by CREA and BDA.

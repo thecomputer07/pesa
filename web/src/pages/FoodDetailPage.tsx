@@ -190,14 +190,17 @@ export default function FoodDetailPage() {
 
       <section className="flex flex-wrap items-end gap-6">
         <WeightInput value={grams} onChange={setGrams} autoFocus />
-        <StateToggle
-          value={currentState}
-          onChange={(next) => {
-            const targetId = siblingByState[next];
-            if (targetId && targetId !== id) navigate(`/alimento/${targetId}`);
-          }}
-          availableStates={availableStates}
-        />
+        {/* Toggle only when a raw/cooked pair exists (see migration 00026). */}
+        {availableStates.length > 1 ? (
+          <StateToggle
+            value={currentState}
+            onChange={(next) => {
+              const targetId = siblingByState[next];
+              if (targetId && targetId !== id) navigate(`/alimento/${targetId}`);
+            }}
+            availableStates={availableStates}
+          />
+        ) : null}
       </section>
 
       {computed ? (
