@@ -1,0 +1,89 @@
+# Pesa LAN deployment — accessibile da altre macchine sulla rete locale
+# (es. http://10.0.0.2:8080). Prod build: singolo binario Go con SPA embedded.
+#
+# Uso:
+#   docker compose -f docker-compose.lan.yml up -d --build
+#   docker compose -f docker-compose.lan.yml logs -f
+#   docker compose -f docker-compose.lan.yml down
+#
+# Dalla stessa macchina:   http://localhost:8080
+# Dalla LAN (altri device): http://<IP-host>:8080  (es. http://10.0.0.2:8080)
+#
+# Nota: HTTP (non HTTPS). I service-worker PWA e alcune API browser (clipboard,
+# getUserMedia) richiedono HTTPS — eccetto localhost che ha una deroga. Per
+# test PWA da telefono sulla LAN, usa il numero IP stesso (10.0.0.2) nell'URL:
+# alcune feature PWA saranno limitate su HTTP, ma install + offline funzionano.
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: pesa-lan-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: pesa
+      POSTGRES_USER: pesa
+      POSTGRES_PASSWORD: pesa
+      LANG: it_IT.UTF-8
+    # DB NON esposto sulla LAN — solo tra container.
+    volumes:
+      - pg_data_lan:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pesa -d pesa"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 10s
+
+  migrate:
+    build:
+      context: .
+      target: builder
+    container_name: pesa-lan-migrate
+    command: ["/out/pesa", "migrate", "up"]
+    environment:
+      DATABASE_DSN: postgres://pesa:pesa@db:5432/pesa?sslmode=disable
+      PESA_ENV: dev
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: "no"
+
+  backend:
+    build:
+      context: .
+      target: prod
+    container_name: pesa-lan
+    restart: unless-stopped
+    environment:
+      DATABASE_DSN: postgres://pesa:pesa@db:5432/pesa?sslmode=disable
+      PESA_ENV: dev
+      PESA_ADDR: :8080
+      LOG_SALT: ${LOG_SALT:-lan-log-salt-change-me-please-in-production}
+      PESA_ERASURE_HASH_SALT: ${PESA_ERASURE_HASH_SALT:-lan-erasure-salt-change-me-please}
+      SESSION_SECRET: ${SESSION_SECRET:-lan-session-secret-32bytes-min-len-required-pad}
+      WEB_BASE_URL: ${WEB_BASE_URL:-http://10.0.0.2:8080}
+      HTTP_BASE_URL: ${HTTP_BASE_URL:-http://10.0.0.2:8080}
+      COOKIE_DOMAIN: ""
+      COOKIE_SECURE: "false"
+      SMTP_DISABLED: "true"
+      SMTP_FROM: dev@pesa.local
+      OFF_USER_AGENT: "Pesa-LAN/0.1 (+http://pesa.local)"
+      PESA_IMAGE_CACHE_DIR: /home/pesa/.cache/images
+      PESA_CACHE_DIR: /home/pesa/.cache/exports
+      AUTOCERT_ENABLED: "false"
+    # 0.0.0.0 = raggiungibile da qualsiasi IP della LAN sul router che instrada
+    # verso questa macchina. Per restringere a solo 10.0.0.2 sostituisci con
+    # "10.0.0.2:8080:8080" (richiede che l'host abbia quell'IP bindato).
+    ports:
+      - "0.0.0.0:8080:8080"
+    volumes:
+      - pesa_cache:/home/pesa/.cache
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+volumes:
+  pg_data_lan:
+    name: pesa_pg_data_lan
+  pesa_cache:
+    name: pesa_cache_lan

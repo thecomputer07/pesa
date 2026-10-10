@@ -1,0 +1,80 @@
+# Pesa — deploy produzione su VPS OVH Milano (57.131.24.56), dietro Caddy.
+#
+#   docker compose -f docker-compose.milano.yml up -d --build
+#
+# Caddy termina TLS per pesadia.com e fa reverse proxy su 127.0.0.1:8080.
+# Il backend NON è esposto su internet (bind solo loopback).
+# Segreti reali in .env.milano (NON committare).
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: pesa-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: pesa
+      POSTGRES_USER: pesa
+      POSTGRES_PASSWORD: ${PESA_DB_PASSWORD:?set in .env.milano}
+      LANG: it_IT.UTF-8
+    # DB solo tra container, mai esposto.
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pesa -d pesa"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 10s
+
+  migrate:
+    build:
+      context: .
+      target: builder
+    container_name: pesa-migrate
+    command: ["/out/pesa", "migrate", "up"]
+    environment:
+      DATABASE_DSN: postgres://pesa:${PESA_DB_PASSWORD}@db:5432/pesa?sslmode=disable
+      PESA_ENV: dev
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: "no"
+
+  backend:
+    build:
+      context: .
+      target: prod
+    container_name: pesa-backend
+    restart: unless-stopped
+    environment:
+      DATABASE_DSN: postgres://pesa:${PESA_DB_PASSWORD}@db:5432/pesa?sslmode=disable
+      # "dev" salta la validazione sslmode=require (Postgres interno senza TLS);
+      # comportamento cookie/URL governato dalle env sotto. TODO: TLS su pg + prod.
+      PESA_ENV: dev
+      PESA_ADDR: :8080
+      LOG_SALT: ${LOG_SALT:?set in .env.milano}
+      PESA_ERASURE_HASH_SALT: ${PESA_ERASURE_HASH_SALT:?set in .env.milano}
+      SESSION_SECRET: ${SESSION_SECRET:?set in .env.milano}
+      WEB_BASE_URL: https://pesadia.com
+      HTTP_BASE_URL: https://pesadia.com
+      COOKIE_DOMAIN: pesadia.com
+      COOKIE_SECURE: "true"
+      SMTP_DISABLED: "true"
+      SMTP_FROM: no-reply@pesadia.com
+      OFF_USER_AGENT: "Pesa/0.1 (+https://pesadia.com)"
+      PESA_IMAGE_CACHE_DIR: /home/pesa/.cache/images
+      PESA_CACHE_DIR: /home/pesa/.cache/exports
+      AUTOCERT_ENABLED: "false"
+    ports:
+      - "127.0.0.1:8080:8080"
+    volumes:
+      - pesa_cache:/home/pesa/.cache
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+volumes:
+  pg_data:
+    name: pesa_pg_data
+  pesa_cache:
+    name: pesa_cache

@@ -32,3 +32,9 @@ data/crea/
 
 # Accidental dirs (air watching absolute Windows paths)
 C:/
+
+# Build artefact locale (go build in root)
+/pesa
+
+# Ricerca esplorativa non legata a Pesa (copia su Desktop/documentazioni)
+.planning/research/Twilio_Research_20260414/

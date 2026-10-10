@@ -14,6 +14,16 @@ up:
 down:
 	docker compose down
 
+# ---- LAN deployment (http://<IP-LAN>:8080) — vedi docs/deploy-lan.md
+lan-up:
+	docker compose -f docker-compose.lan.yml up -d --build
+
+lan-down:
+	docker compose -f docker-compose.lan.yml down
+
+lan-logs:
+	docker compose -f docker-compose.lan.yml logs -f
+
 restart:
 	docker compose restart
 
