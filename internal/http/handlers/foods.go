@@ -76,8 +76,17 @@ func (h *Foods) Search(w http.ResponseWriter, r *http.Request) {
 		page = 1
 	}
 
+	// Optional source filter: "", "crea", "off", "mine" (own custom foods).
+	source := r.URL.Query().Get("source")
+	switch source {
+	case "", "crea", "off", "mine":
+	default:
+		problem.Write(w, r, http.StatusBadRequest, "invalid-query", "unknown source")
+		return
+	}
+
 	userID := middleware.UserIDFrom(r.Context())
-	results, total, err := repo.SearchFoodsForUser(r.Context(), h.DB, userID, q, limit, page)
+	results, total, err := repo.SearchFoodsFiltered(r.Context(), h.DB, userID, q, source, limit, page)
 	if err != nil {
 		problem.Write(w, r, http.StatusInternalServerError, "internal-error", "search failed")
 		return

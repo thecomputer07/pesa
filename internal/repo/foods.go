@@ -141,6 +141,12 @@ func SearchFoods(ctx context.Context, db *sql.DB, query string, limit, page int)
 
 // SearchFoodsForUser è come SearchFoods ma include gli alimenti privati dell'utente.
 func SearchFoodsForUser(ctx context.Context, db *sql.DB, userID int64, query string, limit, page int) ([]Food, int, error) {
+	return SearchFoodsFiltered(ctx, db, userID, query, "", limit, page)
+}
+
+// SearchFoodsFiltered adds a source filter: "" = all, "mine" = the user's own
+// custom foods, otherwise a food_sources.code ("crea", "off", ...).
+func SearchFoodsFiltered(ctx context.Context, db *sql.DB, userID int64, query, source string, limit, page int) ([]Food, int, error) {
 	normQ, firstTok := BuildBooleanQuery(query)
 	if normQ == "" {
 		return nil, 0, nil
@@ -160,26 +166,59 @@ func SearchFoodsForUser(ctx context.Context, db *sql.DB, userID int64, query str
 	wordLike := "% " + firstTok + " %"
 	ilikePat := "%" + normQ + "%"
 
+	// Ranking: OFF names are "Brand — Product", so match on the product part
+	// (otherwise "Pasta Reggia — Pasta mista" beats CREA "Pasta di semola").
+	// CREA is the generic reference and gets a boost. Within a source, rows
+	// with the same product name are collapsed, preferring one with an image.
 	selectSQL := `
-	SELECT f.id, f.source_id, s.code, s.name, s.license, s.license_url,
-	       s.attribution_text, s.source_url,
-	       f.name_it, f.name_en, f.synonyms, f.category, f.state,
-	       f.edible_pct, f.kcal, f.protein_g, f.fat_g, f.carb_g, f.sugar_g,
-	       f.fiber_g, f.water_g, f.ash_g, f.alcohol_g, f.salt_g,
-	       f.last_imported_at,
-	       (SELECT url FROM food_images WHERE food_id = f.id ORDER BY id LIMIT 1) AS thumb_url,
-	       similarity(f.name_it, $1) AS relevance,
-	       (CASE WHEN f.name_it ILIKE $2 THEN 5 ELSE 0 END) AS prefix_boost,
-	       (CASE WHEN f.name_it = $3 OR f.name_it ILIKE $4 THEN 2 ELSE 0 END) AS exact_boost
-	  FROM foods f
-	  JOIN food_sources s ON s.id = f.source_id
-	 WHERE (coalesce(f.name_it,'') || ' ' || coalesce(f.name_en,'') || ' ' || coalesce(f.synonyms,'')) ILIKE $5
-	   AND f.superseded_by IS NULL
-	   AND (f.user_id IS NULL OR f.user_id = $8)
-	 ORDER BY (similarity(f.name_it, $1) + (CASE WHEN f.name_it ILIKE $2 THEN 5 ELSE 0 END) + (CASE WHEN f.name_it = $3 OR f.name_it ILIKE $4 THEN 2 ELSE 0 END)) DESC, f.name_it ASC
+	WITH m AS (
+	  SELECT f.id, f.source_id, s.code, s.name, s.license, s.license_url,
+	         s.attribution_text, s.source_url,
+	         f.name_it, f.name_en, f.synonyms, f.category, f.state,
+	         f.edible_pct, f.kcal, f.protein_g, f.fat_g, f.carb_g, f.sugar_g,
+	         f.fiber_g, f.water_g, f.ash_g, f.alcohol_g, f.salt_g,
+	         f.last_imported_at,
+	         (SELECT url FROM food_images WHERE food_id = f.id ORDER BY id LIMIT 1) AS thumb_url,
+	         p.pname,
+	         -- one result per source and product name (brand stripped):
+	         -- "Agnesi — Pasta" and "Granoro — Pasta" show once; CREA "Pasta"
+	         -- and OFF "Pasta" both stay. Own custom foods are never merged.
+	         (CASE WHEN f.user_id IS NOT NULL THEN 'u' || f.id::text ELSE s.code END)
+	           || '|' || lower(regexp_replace(trim(p.pname), '\s+', ' ', 'g')) AS dkey,
+	         (CASE WHEN f.user_id IS NOT NULL THEN 0 WHEN s.code = 'crea' THEN 1 ELSE 2 END) AS src_prio
+	    FROM foods f
+	    JOIN food_sources s ON s.id = f.source_id
+	    CROSS JOIN LATERAL (SELECT CASE WHEN position(' — ' IN f.name_it) > 0
+	                                    THEN substr(f.name_it, position(' — ' IN f.name_it) + 3)
+	                                    ELSE f.name_it END AS pname) p
+	   WHERE (coalesce(f.name_it,'') || ' ' || coalesce(f.name_en,'') || ' ' || coalesce(f.synonyms,'')) ILIKE $5
+	     AND f.superseded_by IS NULL
+	     AND (f.user_id IS NULL OR f.user_id = $8)
+	     AND (($9 = '') OR ($9 = 'mine' AND f.user_id IS NOT NULL) OR (s.code = $9))
+	), d AS (
+	  SELECT DISTINCT ON (dkey) *
+	    FROM m
+	   ORDER BY dkey, src_prio, (thumb_url IS NULL), id
+	)
+	SELECT id, source_id, code, name, license, license_url,
+	       attribution_text, source_url,
+	       name_it, name_en, synonyms, category, state,
+	       edible_pct, kcal, protein_g, fat_g, carb_g, sugar_g,
+	       fiber_g, water_g, ash_g, alcohol_g, salt_g,
+	       last_imported_at, thumb_url,
+	       similarity(pname, $1) AS relevance,
+	       (CASE WHEN pname ILIKE $2 THEN 5 ELSE 0 END) AS prefix_boost,
+	       (CASE WHEN pname ILIKE $3 OR pname ILIKE $4 THEN 2 ELSE 0 END)
+	         + (CASE WHEN code = 'crea' THEN 3 ELSE 0 END) AS exact_boost
+	  FROM d
+	 ORDER BY (similarity(pname, $1)
+	           + (CASE WHEN pname ILIKE $2 THEN 5 ELSE 0 END)
+	           + (CASE WHEN pname ILIKE $3 OR pname ILIKE $4 THEN 2 ELSE 0 END)
+	           + (CASE WHEN code = 'crea' THEN 3 ELSE 0 END)) DESC,
+	          length(pname) ASC, name_it ASC
 	 LIMIT $6 OFFSET $7`
 
-	rows, err := db.QueryContext(ctx, selectSQL, normQ, prefixLike, firstTok, wordLike, ilikePat, limit, offset, userID)
+	rows, err := db.QueryContext(ctx, selectSQL, normQ, prefixLike, firstTok, wordLike, ilikePat, limit, offset, userID, source)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -208,25 +247,31 @@ func SearchFoodsForUser(ctx context.Context, db *sql.DB, userID int64, query str
 
 	var total int
 	countSQL := `
-	SELECT COUNT(*) FROM foods f
+	SELECT COUNT(DISTINCT (CASE WHEN f.user_id IS NOT NULL THEN 'u' || f.id::text ELSE s.code END)
+	         || '|' || lower(regexp_replace(trim(
+	         CASE WHEN position(' — ' IN f.name_it) > 0
+	              THEN substr(f.name_it, position(' — ' IN f.name_it) + 3)
+	              ELSE f.name_it END), '\s+', ' ', 'g'))) FROM foods f
+	  JOIN food_sources s ON s.id = f.source_id
 	 WHERE (coalesce(f.name_it,'') || ' ' || coalesce(f.name_en,'') || ' ' || coalesce(f.synonyms,'')) ILIKE $1
 	   AND f.superseded_by IS NULL
-	   AND (f.user_id IS NULL OR f.user_id = $2)`
-	if err := db.QueryRowContext(ctx, countSQL, ilikePat, userID).Scan(&total); err != nil {
+	   AND (f.user_id IS NULL OR f.user_id = $2)
+	   AND (($3 = '') OR ($3 = 'mine' AND f.user_id IS NOT NULL) OR (s.code = $3))`
+	if err := db.QueryRowContext(ctx, countSQL, ilikePat, userID, source).Scan(&total); err != nil {
 		return nil, 0, err
 	}
 
 	// Fallback: if primary search returned nothing, retry with ILIKE on first token.
 	// Helps with small datasets and very short queries.
 	if total == 0 {
-		return searchFoodsLike(ctx, db, userID, firstTok, query, limit, offset)
+		return searchFoodsLike(ctx, db, userID, firstTok, query, source, limit, offset)
 	}
 	return out, total, nil
 }
 
 // searchFoodsLike is a forgiving fallback: matches tokens via ILIKE %tok%
 // against name_it / name_en / synonyms. No relevance ranking, alphabetic order.
-func searchFoodsLike(ctx context.Context, db *sql.DB, userID int64, firstTok, raw string, limit, offset int) ([]Food, int, error) {
+func searchFoodsLike(ctx context.Context, db *sql.DB, userID int64, firstTok, raw, source string, limit, offset int) ([]Food, int, error) {
 	// Use the lowercased+normalised first token; if empty, use the raw query trimmed.
 	needle := firstTok
 	if needle == "" {
@@ -249,10 +294,11 @@ func searchFoodsLike(ctx context.Context, db *sql.DB, userID int64, firstTok, ra
 	 WHERE (f.name_it ILIKE $1 OR f.name_en ILIKE $1 OR f.synonyms ILIKE $1)
 	   AND f.superseded_by IS NULL
 	   AND (f.user_id IS NULL OR f.user_id = $4)
+	   AND (($5 = '') OR ($5 = 'mine' AND f.user_id IS NOT NULL) OR (s.code = $5))
 	 ORDER BY f.name_it ASC
 	 LIMIT $2 OFFSET $3`
 
-	rows, err := db.QueryContext(ctx, selectSQL, pattern, limit, offset, userID)
+	rows, err := db.QueryContext(ctx, selectSQL, pattern, limit, offset, userID, source)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -279,11 +325,13 @@ func searchFoodsLike(ctx context.Context, db *sql.DB, userID int64, firstTok, ra
 
 	var total int
 	if err := db.QueryRowContext(ctx,
-		`SELECT COUNT(*) FROM foods
-		  WHERE (name_it ILIKE $1 OR name_en ILIKE $1 OR synonyms ILIKE $1)
-		    AND superseded_by IS NULL
-		    AND (user_id IS NULL OR user_id = $2)`,
-		pattern, userID).Scan(&total); err != nil {
+		`SELECT COUNT(*) FROM foods f
+		   JOIN food_sources s ON s.id = f.source_id
+		  WHERE (f.name_it ILIKE $1 OR f.name_en ILIKE $1 OR f.synonyms ILIKE $1)
+		    AND f.superseded_by IS NULL
+		    AND (f.user_id IS NULL OR f.user_id = $2)
+		    AND (($3 = '') OR ($3 = 'mine' AND f.user_id IS NOT NULL) OR (s.code = $3))`,
+		pattern, userID, source).Scan(&total); err != nil {
 		return nil, 0, err
 	}
 	return out, total, nil

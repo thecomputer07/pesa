@@ -96,7 +96,12 @@
     "error": "Errore di rete. Riprova.",
     "offlineNotice": "Sei offline: risultati dalla cache locale.",
     "stateCrudo": "crudo",
-    "stateCotto": "cotto"
+    "stateCotto": "cotto",
+    "filterLabel": "Fonte dati",
+    "filterAll": "Tutte",
+    "filterCrea": "CREA",
+    "filterOff": "Open Food Facts",
+    "filterMine": "I miei"
   },
   "detail": {
     "back": "Torna ai risultati",

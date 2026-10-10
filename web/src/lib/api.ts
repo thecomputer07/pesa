@@ -147,11 +147,15 @@ export type FoodDetail = z.infer<typeof FoodDetailSchema>;
 
 // ─── API calls ───
 
+/** Search source filter: each value returns rows of that source only. */
+export type SearchSource = "crea" | "off" | "mine";
+
 export function searchFoods(
   q: string,
-  opts: { limit?: number; page?: number; signal?: AbortSignal } = {},
+  opts: { limit?: number; page?: number; source?: SearchSource; signal?: AbortSignal } = {},
 ): Promise<FoodSearchResponse> {
   const params = new URLSearchParams({ q });
+  if (opts.source) params.set("source", opts.source);
   if (opts.limit) params.set("limit", String(opts.limit));
   if (opts.page) params.set("page", String(opts.page));
   return request(`/foods/search?${params.toString()}`, FoodSearchResponseSchema, {

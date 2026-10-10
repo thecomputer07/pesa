@@ -4,10 +4,16 @@ import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import SearchBox from "../components/SearchBox";
 import ResultList from "../components/ResultList";
-import { searchFoods, type FoodSearchResult } from "../lib/api";
+import { searchFoods, type FoodSearchResult, type SearchSource } from "../lib/api";
 import { localSearch } from "../lib/db/search";
 import { upsertFoods } from "../lib/db/sync";
 import { useAuth } from "../lib/auth/AuthContext";
+
+const SOURCE_KEY = "pesa.search.source";
+
+function readSource(v: string | null): SearchSource | "" {
+  return v === "crea" || v === "off" || v === "mine" ? v : "";
+}
 
 export default function SearchPage() {
   const { t } = useTranslation();
@@ -16,14 +22,24 @@ export default function SearchPage() {
   const initialQ = params.get("q") ?? "";
   const [query, setQuery] = useState(initialQ);
   const [, startTransition] = useTransition();
+  // Optional source filter ("" = all). Remembered per device; URL wins.
+  const [source, setSource] = useState<SearchSource | "">(() => {
+    const fromUrl = readSource(params.get("source"));
+    if (fromUrl) return fromUrl;
+    try {
+      return readSource(localStorage.getItem(SOURCE_KEY));
+    } catch {
+      return "";
+    }
+  });
 
   const q = query.trim();
   const canSearch = q.length >= 2;
 
   const { data, isLoading, error, isError } = useQuery({
-    queryKey: ["foods", "search", q],
+    queryKey: ["foods", "search", q, source],
     queryFn: async ({ signal }) => {
-      const resp = await searchFoods(q, { limit: 20, page: 1, signal });
+      const resp = await searchFoods(q, { limit: 20, page: 1, source: source || undefined, signal });
       // Warm local cache on the side (fire-and-forget).
       void upsertFoods(resp.results);
       return resp;
@@ -69,18 +85,38 @@ export default function SearchPage() {
     };
   }, [q, canSearch, isError]);
 
-  const results = data?.results ?? fallback ?? [];
+  const offlineRows = (fallback ?? []).filter((r) =>
+    source === "" ? true : source === "mine" ? r.source.code === "manual" : r.source.code === source,
+  );
+  const results = data?.results ?? (fallback ? offlineRows : []);
+
+  function urlParams(value: string, src: SearchSource | "") {
+    const p: Record<string, string> = {};
+    if (value) p.q = value;
+    if (src) p.source = src;
+    return p;
+  }
+  function chooseSource(src: SearchSource | "") {
+    setSource(src);
+    try {
+      if (src) localStorage.setItem(SOURCE_KEY, src);
+      else localStorage.removeItem(SOURCE_KEY);
+    } catch {
+      /* storage unavailable: filter still works for this session */
+    }
+    setParams(urlParams(query, src), { replace: true });
+  }
 
   function handleSubmit(value: string) {
     startTransition(() => {
       setQuery(value);
-      setParams(value ? { q: value } : {}, { replace: true });
+      setParams(urlParams(value, source), { replace: true });
     });
   }
   function handleDebouncedChange(value: string) {
     startTransition(() => {
       setQuery(value);
-      setParams(value ? { q: value } : {}, { replace: true });
+      setParams(urlParams(value, source), { replace: true });
     });
   }
 
@@ -105,6 +141,34 @@ export default function SearchPage() {
         onQueryChange={handleDebouncedChange}
         autoFocus
       />
+
+      <div role="radiogroup" aria-label={t("search.filterLabel")} className="flex flex-wrap items-center gap-2 text-sm">
+        <span className="opacity-70">{t("search.filterLabel")}:</span>
+        {(
+          [
+            ["", t("search.filterAll")],
+            ["crea", t("search.filterCrea")],
+            ["off", t("search.filterOff")],
+            ...(user ? [["mine", t("search.filterMine")]] : []),
+          ] as [SearchSource | "", string][]
+        ).map(([value, label]) => (
+          <button
+            key={value || "all"}
+            type="button"
+            role="radio"
+            aria-checked={source === value}
+            onClick={() => chooseSource(value)}
+            className={[
+              "px-3 py-1 rounded-full border",
+              source === value
+                ? "bg-[color:var(--color-brand-600)] text-white border-[color:var(--color-brand-600)]"
+                : "bg-white border-[color:var(--color-border)]",
+            ].join(" ")}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
 
       {!canSearch ? (
         <p className="text-sm opacity-70">{t("search.minChars", { n: 2 })}</p>

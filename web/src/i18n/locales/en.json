@@ -96,7 +96,12 @@
     "error": "Network error. Please retry.",
     "offlineNotice": "You are offline: results from local cache.",
     "stateCrudo": "raw",
-    "stateCotto": "cooked"
+    "stateCotto": "cooked",
+    "filterLabel": "Data source",
+    "filterAll": "All",
+    "filterCrea": "CREA",
+    "filterOff": "Open Food Facts",
+    "filterMine": "Mine"
   },
   "detail": {
     "back": "Back to results",
