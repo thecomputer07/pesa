@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Link, useParams, useNavigate } from "react-router-dom";
+import { Link, Navigate, useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { getFood, apiFetch } from "../lib/api";
@@ -11,6 +11,11 @@ import AttributionFooter from "../components/AttributionFooter";
 import SourceBadge from "../components/SourceBadge";
 import FavoriteToggle from "../components/favorites/FavoriteToggle";
 import { useAuth } from "../lib/auth/AuthContext";
+
+function isValidCarb(v: string): boolean {
+  const n = Number(v.replace(",", "."));
+  return v.trim() !== "" && Number.isFinite(n) && n >= 0 && n <= 100;
+}
 
 function stateToFoodState(s: string): FoodState {
   return s === "cooked" || s === "cotto" ? "cotto" : "crudo";
@@ -29,6 +34,8 @@ export default function FoodDetailPage() {
   const [savedId, setSavedId] = useState<number | null>(null);
   const [savingErr, setSavingErr] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  // Scanned product without carbohydrates on OFF: value from the label.
+  const [labelCarb, setLabelCarb] = useState("");
 
   const { data: food, isLoading, isError } = useQuery({
     queryKey: offEan ? ["off-barcode", offEan] : ["foods", id],
@@ -36,7 +43,10 @@ export default function FoodDetailPage() {
       if (offEan) {
         const res = await apiFetch(`/foods/barcode/${encodeURIComponent(offEan)}`, { signal });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        return (await res.json()) as Awaited<ReturnType<typeof getFood>>;
+        const body = (await res.json()) as Awaited<ReturnType<typeof getFood>>;
+        // In the catalog: load the real food (the render redirects to it).
+        if (body.id > 0) return getFood(body.id, { signal });
+        return body;
       }
       return getFood(id, { signal });
     },
@@ -51,6 +61,9 @@ export default function FoodDetailPage() {
     return { per100, portion };
   }, [food, grams]);
 
+  if (offEan && food && food.id > 0) {
+    return <Navigate to={`/alimento/${food.id}`} replace />;
+  }
   if (isLoading) {
     return (
       <p role="status" aria-live="polite" className="py-8 text-center text-sm opacity-70">
@@ -129,6 +142,24 @@ export default function FoodDetailPage() {
             <span className="font-mono text-xs">{offEan}</span>. Per aggiungerlo ai tuoi pasti
             salvalo nei tuoi alimenti.
           </p>
+          {food.carb_g == null ? (
+            <label className="mb-2 block">
+              <span className="block font-medium text-red-700">
+                Open Food Facts non riporta i carboidrati di questo prodotto: inseriscili
+                dall'etichetta (g per 100 g).
+              </span>
+              <input
+                type="number"
+                inputMode="decimal"
+                min={0}
+                max={100}
+                step="0.1"
+                value={labelCarb}
+                onChange={(e) => setLabelCarb(e.target.value)}
+                className="mt-1 w-28 px-2 py-1 border border-[color:var(--color-border)] rounded-md"
+              />
+            </label>
+          ) : null}
           {savedId ? (
             <p role="status" className="text-green-700">
               Salvato.{" "}
@@ -140,7 +171,7 @@ export default function FoodDetailPage() {
             <>
               <button
                 type="button"
-                disabled={saving}
+                disabled={saving || (food.carb_g == null && !isValidCarb(labelCarb))}
                 onClick={async () => {
                   setSavingErr(null);
                   setSaving(true);
@@ -154,7 +185,8 @@ export default function FoodDetailPage() {
                         state: "raw",
                         edible_pct: food.edible_pct,
                         kcal: food.kcal,
-                        carb_g: food.carb_g ?? 0,
+                        // never default to 0: a missing value comes from the label
+                        carb_g: food.carb_g ?? Number(labelCarb.replace(",", ".")),
                         protein_g: food.protein_g,
                         fat_g: food.fat_g,
                         sugar_g: food.sugar_g,

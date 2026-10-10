@@ -3,6 +3,7 @@ package off
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 )
 
 // FoodDTO mirrors the foodDetailDTO shape used by /api/v1/foods handlers.
@@ -18,6 +19,7 @@ type FoodDTO struct {
 	ProteinG    *float64   `json:"protein_g,omitempty"`
 	FatG        *float64   `json:"fat_g,omitempty"`
 	CarbG       *float64   `json:"carb_g,omitempty"`
+	Brand       *string    `json:"brand,omitempty"`
 	SugarG      *float64   `json:"sugar_g,omitempty"`
 	FiberG      *float64   `json:"fiber_g,omitempty"`
 	Attribution string     `json:"attribution"`
@@ -46,29 +48,32 @@ type ImageDTO struct {
 
 // offRaw captures only the fields we consume from OFF's v2 product endpoint.
 type offRaw struct {
-	Status  int        `json:"status"`   // 1 = found, 0 = not_found
-	Code    string     `json:"code"`
-	Product *offProd   `json:"product"`
+	Status  int      `json:"status"` // 1 = found, 0 = not_found
+	Code    string   `json:"code"`
+	Product *offProd `json:"product"`
 }
 
 type offProd struct {
-	ProductName   string      `json:"product_name"`
-	ProductNameIT string      `json:"product_name_it"`
-	ProductNameEN string      `json:"product_name_en"`
-	Brands        string      `json:"brands"`
-	Quantity      string      `json:"quantity"`
-	Categories    string      `json:"categories"`
-	ImageFrontURL string      `json:"image_front_small_url"`
-	Nutriments    offNutris   `json:"nutriments"`
+	ProductName   string    `json:"product_name"`
+	ProductNameIT string    `json:"product_name_it"`
+	ProductNameEN string    `json:"product_name_en"`
+	Brands        string    `json:"brands"`
+	Quantity      string    `json:"quantity"`
+	Categories    string    `json:"categories"`
+	ImageFrontURL string    `json:"image_front_small_url"`
+	Nutriments    offNutris `json:"nutriments"`
 }
 
 type offNutris struct {
-	Energy   *float64 `json:"energy-kcal_100g"`
-	Protein  *float64 `json:"proteins_100g"`
-	Fat      *float64 `json:"fat_100g"`
-	Carb     *float64 `json:"carbohydrates_100g"`
-	Sugar    *float64 `json:"sugars_100g"`
-	Fiber    *float64 `json:"fiber_100g"`
+	Energy  *float64 `json:"energy-kcal_100g"`
+	Protein *float64 `json:"proteins_100g"`
+	Fat     *float64 `json:"fat_100g"`
+	Carb    *float64 `json:"carbohydrates_100g"`
+	// Some OFF entries carry carbs only in the "prepared" field (e.g. Kinder
+	// Bueno, 49.3 g): used as fallback, better than showing nothing.
+	CarbPrepared *float64 `json:"carbohydrates_prepared_100g"`
+	Sugar        *float64 `json:"sugars_100g"`
+	Fiber        *float64 `json:"fiber_100g"`
 }
 
 // Constants for OFF licensing.
@@ -122,7 +127,7 @@ func FromOFF(raw []byte, ean string) (FoodDTO, error) {
 		Kcal:        p.Nutriments.Energy,
 		ProteinG:    p.Nutriments.Protein,
 		FatG:        p.Nutriments.Fat,
-		CarbG:       p.Nutriments.Carb,
+		CarbG:       firstNonNil(p.Nutriments.Carb, p.Nutriments.CarbPrepared),
 		SugarG:      p.Nutriments.Sugar,
 		FiberG:      p.Nutriments.Fiber,
 		Attribution: offAttribution,
@@ -135,6 +140,9 @@ func FromOFF(raw []byte, ean string) (FoodDTO, error) {
 			LicenseURL: &licURL,
 		},
 		Images: []ImageDTO{},
+	}
+	if b := strings.TrimSpace(strings.Split(p.Brands, ",")[0]); b != "" {
+		dto.Brand = &b
 	}
 	if p.ImageFrontURL != "" {
 		attr := offAttribution
@@ -156,4 +164,13 @@ func firstNonEmpty(ss ...string) string {
 		}
 	}
 	return ""
+}
+
+func firstNonNil(vs ...*float64) *float64 {
+	for _, v := range vs {
+		if v != nil {
+			return v
+		}
+	}
+	return nil
 }

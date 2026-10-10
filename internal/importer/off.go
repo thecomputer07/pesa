@@ -32,6 +32,8 @@ type offNutriments struct {
 	ProteinG    *float64 `json:"proteins_100g"`
 	FatG        *float64 `json:"fat_100g"`
 	CarbG       *float64 `json:"carbohydrates_100g"`
+	// fallback when OFF only has the "prepared" value (see off.FromOFF)
+	CarbPreparedG *float64 `json:"carbohydrates_prepared_100g"`
 	SugarG      *float64 `json:"sugars_100g"`
 	FiberG      *float64 `json:"fiber_100g"`
 	SaltG       *float64 `json:"salt_100g"`
@@ -169,6 +171,9 @@ func ImportOFF(ctx context.Context, db *sql.DB, opts OFFOpts) (*ImportReport, er
 			nutr := p.Nutriments
 			if nutr == nil {
 				nutr = &offNutriments{}
+			}
+			if nutr.CarbG == nil {
+				nutr.CarbG = nutr.CarbPreparedG
 			}
 			if opts.MinCarb && nutr.CarbG == nil {
 				continue

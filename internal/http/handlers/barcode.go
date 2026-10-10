@@ -2,7 +2,9 @@ package handlers
 
 import (
 	"context"
+	"database/sql"
 	"errors"
+	"log/slog"
 	"net/http"
 	"regexp"
 	"strings"
@@ -10,6 +12,7 @@ import (
 	"github.com/go-chi/chi/v5"
 
 	"github.com/thecomputer07/pesa/internal/http/problem"
+	"github.com/thecomputer07/pesa/internal/importer"
 	"github.com/thecomputer07/pesa/internal/service/off"
 )
 
@@ -22,6 +25,16 @@ type BarcodeLookup interface {
 // Barcode exposes GET /api/v1/foods/barcode/{ean}.
 type Barcode struct {
 	Svc BarcodeLookup
+	// DB enables the shared catalog: a scanned product already in it is
+	// returned as-is (never added twice); a new one with carbohydrates is
+	// added as an Open Food Facts food. Nil in tests.
+	DB *sql.DB
+}
+
+// existingFoodDTO tells the client to open the catalog food instead.
+type existingFoodDTO struct {
+	ID       int64 `json:"id"`
+	Existing bool  `json:"existing"`
 }
 
 // NewBarcode builds a Barcode handler bound to the given service.
@@ -37,6 +50,12 @@ func (h *Barcode) Lookup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	ean := zeroPadTo13(raw)
+	if h.DB != nil {
+		if id, err := importer.FindOFFFoodByCode(r.Context(), h.DB, ean); err == nil && id > 0 {
+			writeJSON(w, http.StatusOK, existingFoodDTO{ID: id, Existing: true})
+			return
+		}
+	}
 	dto, err := h.Svc.LookupByEAN(r.Context(), ean)
 	if err != nil {
 		if errors.Is(err, off.ErrNotFound) {
@@ -46,7 +65,27 @@ func (h *Barcode) Lookup(w http.ResponseWriter, r *http.Request) {
 		problem.Write(w, r, http.StatusInternalServerError, "internal-error", "barcode lookup failed")
 		return
 	}
-	writeJSONCached(w, http.StatusOK, dto)
+	if h.DB != nil && dto.CarbG != nil {
+		p := importer.ScannedOFF{
+			Code: ean, Name: dto.NameIT, Kcal: dto.Kcal, ProteinG: dto.ProteinG,
+			FatG: dto.FatG, CarbG: dto.CarbG, SugarG: dto.SugarG, FiberG: dto.FiberG,
+		}
+		if dto.Brand != nil {
+			p.Brand = *dto.Brand
+		}
+		if len(dto.Images) > 0 {
+			p.ImageURL = dto.Images[0].URL
+		}
+		if id, err := importer.AddScannedOFF(r.Context(), h.DB, p); err == nil && id > 0 {
+			writeJSON(w, http.StatusOK, existingFoodDTO{ID: id, Existing: false})
+			return
+		} else if err != nil {
+			slog.Warn("add scanned product", "err", err)
+		}
+	}
+	// Not added (no carbohydrates, or catalog unavailable): the client shows
+	// the live product and asks for the value from the label.
+	writeJSON(w, http.StatusOK, dto)
 }
 
 func zeroPadTo13(s string) string {

@@ -79,6 +79,7 @@ func NewRouter(d Deps) stdhttp.Handler {
 	}
 	offSvc := off.NewService(off.NewRepo(d.DB), off.NewClient("https://world.openfoodfacts.org"), offPersister)
 	barcode := handlers.NewBarcode(offSvc)
+	barcode.DB = d.DB
 	sources := handlers.NewSources(d.DB)
 	var images *handlers.Images
 	if imgStore != nil {

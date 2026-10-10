@@ -59,7 +59,9 @@ export default function ScanPage() {
       try {
         const resp = await fetch(`/api/v1/foods/barcode/${encodeURIComponent(ean)}`);
         if (resp.status === 200) {
-          navigate(`/alimento/off-${ean}`);
+          // id > 0: product is in the catalog (already there or just added)
+          const body = (await resp.json().catch(() => ({}))) as { id?: number };
+          navigate(body.id && body.id > 0 ? `/alimento/${body.id}` : `/alimento/off-${ean}`);
           return;
         }
         if (resp.status === 404) {
