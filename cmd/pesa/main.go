@@ -70,6 +70,8 @@ func main() {
 		runApplyTombstones(args)
 	case "staff":
 		runStaff(args)
+	case "images":
+		runImages(args)
 	case "version", "-v", "--version":
 		fmt.Printf("pesa %s (commit %s, built %s)\n", version, commit, date)
 	default:
