@@ -58,6 +58,9 @@ export default function MealEditorSheet({
   const { t } = useTranslation();
   const sheetRef = useRef<HTMLDivElement | null>(null);
   const [slot, setSlot] = useState<Slot>(initialMeal?.slot ?? "pranzo");
+  const [time, setTime] = useState<string>(
+    initialMeal?.occurred_at != null ? msToHHmm(initialMeal.occurred_at) : nowHHmm(),
+  );
   const [notes, setNotes] = useState<string>(initialMeal?.notes ?? "");
   const [items, setItems] = useState<EditorItem[]>(
     (initialItems ?? []).map((i) => ({
@@ -156,7 +159,7 @@ export default function MealEditorSheet({
   async function onSave() {
     const mealClientId = initialMeal?.client_id ?? crypto.randomUUID();
     const now = Date.now();
-    const occurredAtMs = initialMeal?.occurred_at ?? noonRomeMs(isoDate);
+    const occurredAtMs = combineDateTime(isoDate, time) ?? initialMeal?.occurred_at ?? noonRomeMs(isoDate);
 
     const mealRow: LocalMeal = {
       client_id: mealClientId,
@@ -299,6 +302,16 @@ export default function MealEditorSheet({
               </option>
             ))}
           </select>
+        </label>
+
+        <label className="block text-sm">
+          {t("diary.timeLabel")}
+          <input
+            type="time"
+            value={time}
+            onChange={(e) => setTime(e.target.value)}
+            className="mt-1 w-full border border-[color:var(--color-border)] rounded-md px-2 py-1.5"
+          />
         </label>
 
         <fieldset>
@@ -460,4 +473,22 @@ function noonRomeMs(isoDate: string): number {
   const [y, m, d] = isoDate.split("-").map(Number);
   // 12:00 UTC is safely inside Europe/Rome's 13:00/14:00 local — good default.
   return Date.UTC(y, m - 1, d, 12, 0, 0);
+}
+
+function nowHHmm(): string {
+  const d = new Date();
+  return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
+}
+
+function msToHHmm(ms: number): string {
+  const d = new Date(ms);
+  return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
+}
+
+function combineDateTime(isoDate: string, hhmm: string): number | null {
+  if (!/^\d{2}:\d{2}$/.test(hhmm)) return null;
+  const [y, m, d] = isoDate.split("-").map(Number);
+  const [h, min] = hhmm.split(":").map(Number);
+  const ms = new Date(y, m - 1, d, h, min, 0, 0).getTime();
+  return Number.isFinite(ms) ? ms : null;
 }

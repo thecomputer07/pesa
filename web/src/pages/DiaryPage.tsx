@@ -67,7 +67,7 @@ export default function DiaryPage() {
         +
       </button>
 
-      {userId != null ? (
+      {userId != null && editor.open ? (
         <MealEditorSheet
           open={editor.open}
           mode={editor.mode}
