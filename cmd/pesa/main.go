@@ -151,9 +151,10 @@ func runServe() {
 		sm.Cookie.Domain = cfg.CookieDomain
 	}
 
-	// Mailer.
+	// Mailer. Real SMTP whenever a host is configured (independent of
+	// PESA_ENV: the Milano deploy runs env=dev for the pg sslmode check).
 	var mailer service.Mailer
-	if cfg.Env == "prod" && cfg.SMTPHost != "" {
+	if cfg.SMTPHost != "" && !cfg.SMTPDisabled {
 		mailer = &service.SMTPMailer{
 			Host: cfg.SMTPHost, Port: cfg.SMTPPort,
 			User: cfg.SMTPUser, Password: cfg.SMTPPassword, From: cfg.SMTPFrom,

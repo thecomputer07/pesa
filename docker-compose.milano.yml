@@ -59,8 +59,13 @@ services:
       HTTP_BASE_URL: https://pesadia.com
       COOKIE_DOMAIN: pesadia.com
       COOKIE_SECURE: "true"
-      SMTP_DISABLED: "true"
-      SMTP_FROM: no-reply@pesadia.com
+      # Relay iRedMail su mail.area-23.it (Finlandia): DKIM/SPF/DMARC di
+      # pesadia.com gia' configurati li'. Login consentito solo dall'IP Milano.
+      SMTP_HOST: mail.area-23.it
+      SMTP_PORT: "587"
+      SMTP_USER: noreply@pesadia.com
+      SMTP_PASSWORD: ${SMTP_PASSWORD:?set in .env.milano}
+      SMTP_FROM: "Pesa <noreply@pesadia.com>"
       OFF_USER_AGENT: "Pesa/0.1 (+https://pesadia.com)"
       PESA_IMAGE_CACHE_DIR: /home/pesa/.cache/images
       PESA_CACHE_DIR: /home/pesa/.cache/exports

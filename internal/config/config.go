@@ -30,6 +30,8 @@ type Config struct {
 	SMTPUser     string
 	SMTPPassword string
 	SMTPFrom     string
+	// SMTPDisabled forces the stdout mailer even when SMTPHost is set.
+	SMTPDisabled bool
 
 	// TLS / autocert
 	EnableTLS         bool
@@ -62,6 +64,7 @@ func Load() (*Config, error) {
 		SMTPUser:         os.Getenv("SMTP_USER"),
 		SMTPPassword:     os.Getenv("SMTP_PASSWORD"),
 		SMTPFrom:         getenv("SMTP_FROM", "no-reply@example.invalid"),
+		SMTPDisabled:     os.Getenv("SMTP_DISABLED") == "true",
 		EnableTLS:        os.Getenv("PESA_ENABLE_TLS") == "1",
 		AutocertHosts:    os.Getenv("AUTOCERT_HOSTS"),
 		AutocertEmail:    os.Getenv("AUTOCERT_EMAIL"),
