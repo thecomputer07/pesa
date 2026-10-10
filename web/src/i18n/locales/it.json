@@ -45,7 +45,7 @@
     "imagesPage": {
       "title": "Fonti delle immagini",
       "intro": "Le immagini dei prodotti possono provenire da Open Food Facts o Wikimedia Commons. Pesa le ospita con attribuzione visibile quando la licenza lo permette.",
-      "creaBdaNote": "Immagini CREA e BDA-IEO non sono ospitate da Pesa: quando un link esterno è disponibile, viene mostrato con attribuzione all'origine."
+      "creaBdaNote": "Le immagini dei prodotti Open Food Facts sono ospitate da Pesa con attribuzione ai contributori di Open Food Facts (immagini CC BY-SA, dati ODbL). Le immagini CREA non sono ospitate da Pesa: quando un link esterno è disponibile, viene mostrato con attribuzione all'origine."
     },
     "common": {
       "license": "Licenza",
@@ -80,7 +80,7 @@
       },
       "sources": {
         "title": "Fonti italiane citate",
-        "body": "Ogni valore mostra la fonte (CREA, BDA IEO, Open Food Facts) e il link originale."
+        "body": "Ogni valore mostra la fonte (CREA, Open Food Facts) e il link originale."
       }
     }
   },

@@ -20,7 +20,7 @@ The controller is a single natural person established in Italy; there are no joi
 
 ## 2. Nature of the service
 
-Pesa is a **generic nutritional carb calculator** that computes carbohydrates (and, contextually, fiber/sugars/kcal) of foods contained in certified Italian databases (CREA, BDA IEO) and in Open Food Facts. Extended positioning is documented in `.planning/legal/scope.md` (user-facing version: "About / Scope" page).
+Pesa is a **generic nutritional carb calculator** that computes carbohydrates (and, contextually, fiber/sugars/kcal) of foods contained in certified Italian databases (CREA) and in Open Food Facts. Extended positioning is documented in `.planning/legal/scope.md` (user-facing version: "About / Scope" page).
 
 **Pesa is NOT a medical tool, is NOT a medical device under Regulation (EU) 2017/745 (MDR), does not provide diagnosis, therapy, or clinical advice.** Consistently, the service **does NOT process Art. 9 GDPR data** (health, biometric, genetic, sexual life, racial/ethnic origin, religious belief, trade-union membership, political opinion). None of these categories are collected, processed, inferred, or deduced.
 
@@ -60,7 +60,7 @@ Personal data are not disclosed to third parties for their own purposes. The fol
 
 Both providers are established in the European Union; both operate exclusively on EU data centers; extra-EEA sub-transfers are not authorized for Pesa data.
 
-**No other recipients.** No ad broker, no third-party analytics, no CDN carrying user data, no marketing platform, no social login, no pixel. Third-party data sources (CREA, BDA IEO, Open Food Facts) are **consulted outbound** — Pesa fetches public food information from them without sending any user data.
+**No other recipients.** No ad broker, no third-party analytics, no CDN carrying user data, no marketing platform, no social login, no pixel. Third-party data sources (CREA, Open Food Facts) are **consulted outbound** — Pesa fetches public food information from them without sending any user data.
 
 Communications to public authorities: only upon formal motivated request, within the limits of law, with notice to the data subject where permitted.
 
@@ -116,7 +116,7 @@ The controller adopts technical and organizational measures appropriate under Ar
 
 ## 9. Extra-EEA transfers
 
-**No personal data transfer occurs outside the European Economic Area.** Hosting OVH Milan (Italy), backups Hetzner (Finland/Germany) — both EU. The consulted third-party sources (CREA — Italian public body; BDA IEO — Milan; Open Food Facts — France) are also EU-based; for OFF, the barcode call uses a custom User-Agent with no user identifier.
+**No personal data transfer occurs outside the European Economic Area.** Hosting OVH Milan (Italy), backups Hetzner (Finland/Germany) — both EU. The consulted third-party sources (CREA — Italian public body; Open Food Facts — France) are also EU-based; for OFF, the barcode call uses a custom User-Agent with no user identifier.
 
 Should an extra-EEA transfer become necessary in the future, the safeguards under Arts. 45-49 GDPR will apply (adequacy decision or standard contractual clauses with post-Schrems II complementary assessment), and this policy will be updated with at least 30 days' notice.
 

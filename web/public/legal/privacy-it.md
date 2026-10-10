@@ -18,7 +18,7 @@ Il titolare è persona fisica singola stabilita in Italia; non sono presenti con
 
 ## 2. Natura del servizio
 
-Pesa è un **calcolatore nutrizionale generico** che calcola i carboidrati (e, come contorno, fibre/zuccheri/kcal) di alimenti presenti in banche dati italiane certificate (CREA, BDA IEO) e in Open Food Facts. Per il posizionamento esteso si rimanda al documento `.planning/legal/scope.md` (versione utente: pagina "Chi siamo / Scopo" del servizio).
+Pesa è un **calcolatore nutrizionale generico** che calcola i carboidrati (e, come contorno, fibre/zuccheri/kcal) di alimenti presenti in banche dati italiane certificate (CREA) e in Open Food Facts. Per il posizionamento esteso si rimanda al documento `.planning/legal/scope.md` (versione utente: pagina "Chi siamo / Scopo" del servizio).
 
 **Pesa NON è uno strumento medico, non è un dispositivo medico ai sensi del Regolamento UE 2017/745, non fornisce diagnosi, terapie, consigli clinici.** Coerentemente, il servizio **NON tratta dati di cui all'art. 9 GDPR** (dati sanitari, biometrici, genetici, relativi alla vita sessuale, all'origine etnica, alle convinzioni religiose, all'appartenenza sindacale, alle opinioni politiche). Nessuna di queste categorie viene raccolta, elaborata, inferita o dedotta.
 
@@ -58,7 +58,7 @@ I dati personali non sono comunicati a terzi per finalità proprie. Sono designa
 
 Entrambi i fornitori sono stabiliti nell'Unione Europea; entrambi operano esclusivamente su data center UE; non sono autorizzati sub-trasferimenti extra-SEE per i dati Pesa.
 
-**Nessun destinatario ulteriore.** Nessun broker pubblicitario, nessun fornitore di analytics terzo, nessun CDN con dati utente, nessuna piattaforma di marketing, nessun social login, nessun pixel. Le fonti dati terze (CREA, BDA IEO, Open Food Facts) sono **consultate in uscita** — Pesa richiede loro informazioni pubbliche su alimenti, senza inviare dati utente.
+**Nessun destinatario ulteriore.** Nessun broker pubblicitario, nessun fornitore di analytics terzo, nessun CDN con dati utente, nessuna piattaforma di marketing, nessun social login, nessun pixel. Le fonti dati terze (CREA, Open Food Facts) sono **consultate in uscita** — Pesa richiede loro informazioni pubbliche su alimenti, senza inviare dati utente.
 
 Comunicazioni a autorità pubbliche: solo su richiesta formale motivata, nei limiti di legge, con notifica all'interessato quando consentito.
 
@@ -114,7 +114,7 @@ Il titolare adotta misure tecniche e organizzative adeguate ex art. 32 GDPR:
 
 ## 9. Trasferimenti extra-SEE
 
-**Nessun trasferimento di dati personali avviene fuori dallo Spazio Economico Europeo.** Hosting OVH Milano (Italia), backup Hetzner (Finlandia/Germania) — entrambi UE. Le fonti dati terze consultate (CREA — ente pubblico italiano; BDA IEO — Milano; Open Food Facts — Francia) sono anch'esse nell'UE; per OFF la chiamata barcode utilizza un User-Agent custom senza alcun identificatore utente.
+**Nessun trasferimento di dati personali avviene fuori dallo Spazio Economico Europeo.** Hosting OVH Milano (Italia), backup Hetzner (Finlandia/Germania) — entrambi UE. Le fonti dati terze consultate (CREA — ente pubblico italiano; Open Food Facts — Francia) sono anch'esse nell'UE; per OFF la chiamata barcode utilizza un User-Agent custom senza alcun identificatore utente.
 
 Qualora in futuro divenisse necessario un trasferimento extra-SEE, si applicheranno le garanzie ex artt. 45-49 GDPR (decisione di adeguatezza o clausole contrattuali tipo con valutazione complementare post-Schrems II) e questa informativa sarà aggiornata con preavviso minimo 30 giorni.
 

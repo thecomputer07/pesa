@@ -30,15 +30,12 @@ Se hai esigenze cliniche specifiche — ad esempio diabete, fenilchetonuria, cel
 
 ## Fonti dei dati
 
-Pesa integra tre fonti, tutte citate in modo visibile per ogni alimento:
+Pesa integra due fonti, entrambe citate in modo visibile per ogni alimento:
 
 - **CREA — Alimenti e Nutrizione** (alimentinutrizione.it): standard governativo italiano, circa 900 alimenti di base. Licenza CC BY-NC-SA.
-- **BDA IEO** (bda.ieo.it): banca dati accademica dell'Istituto Europeo di Oncologia, copertura più ampia, uso citazionale non-commerciale.
 - **Open Food Facts** (openfoodfacts.org): banca dati collaborativa di prodotti confezionati con barcode, licenza ODbL. Usata per lo scanner.
 
 Per ogni risultato di ricerca e per ogni scheda alimento, Pesa mostra un badge con la fonte del dato e un link alla pagina originale. C'è una pagina "Fonti" dedicata che riporta il credit esteso e tutte le licenze applicabili.
-
-Quando CREA e BDA riportano valori nutrizionali diversi per lo stesso alimento, Pesa **mostra entrambe le fonti** se la differenza è sopra il 10% — niente media nascosta, preferiamo che tu veda la variabilità reale del dato.
 
 ## Privacy in due righe
 

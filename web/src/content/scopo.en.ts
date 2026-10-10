@@ -32,15 +32,12 @@ If you have specific clinical needs — for example a form of diabetes, phenylke
 
 ## Data sources
 
-Pesa integrates three sources, each visibly credited on every food item:
+Pesa integrates two sources, each visibly credited on every food item:
 
 - **CREA — Alimenti e Nutrizione** (alimentinutrizione.it): Italian governmental standard, about 900 base foods. License: CC BY-NC-SA.
-- **BDA IEO** (bda.ieo.it): academic database of the Istituto Europeo di Oncologia (European Institute of Oncology), broader coverage, non-commercial citational use.
 - **Open Food Facts** (openfoodfacts.org): collaborative database of packaged products with barcodes, ODbL license. Used by the scanner.
 
 For every search result and every food detail page, Pesa shows a badge with the data source and a link to the original entry. A dedicated "Sources" page lists all credits and applicable licenses.
-
-When CREA and BDA report different nutritional values for the same food, Pesa **shows both sources** when the difference exceeds 10% — no hidden averaging, we would rather you see the real variability of the data.
 
 ## Privacy in two lines
 

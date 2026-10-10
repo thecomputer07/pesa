@@ -18,12 +18,17 @@ type FoodSource struct {
 	Notes           sql.NullString
 }
 
-// ListFoodSources returns every row from food_sources ordered by code.
+// ListFoodSources returns the food_sources actually in use, ordered by code:
+// those backing at least one food, plus image providers (food_images has no
+// source FK). Registered-but-empty sources (e.g. BDA before its import) are
+// not attributed publicly.
 func ListFoodSources(ctx context.Context, db *sql.DB) ([]FoodSource, error) {
 	rows, err := db.QueryContext(ctx, `
 		SELECT code, name, license, license_url, attribution_text, source_url,
 		       scope, contact, notes
-		FROM food_sources
+		FROM food_sources fs
+		WHERE fs.scope LIKE '%images%'
+		   OR EXISTS (SELECT 1 FROM foods f WHERE f.source_id = fs.id)
 		ORDER BY code ASC`)
 	if err != nil {
 		return nil, err

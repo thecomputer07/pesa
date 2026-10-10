@@ -45,7 +45,7 @@
     "imagesPage": {
       "title": "Image sources",
       "intro": "Product images may come from Open Food Facts or Wikimedia Commons. Pesa hosts them with visible attribution where the license permits.",
-      "creaBdaNote": "CREA and BDA-IEO images are not hosted by Pesa: when an external link is available, it is shown with attribution to the origin."
+      "creaBdaNote": "Open Food Facts product images are hosted by Pesa with attribution to the Open Food Facts contributors (images CC BY-SA, data ODbL). CREA images are not hosted by Pesa: when an external link is available, it is shown with attribution to the origin."
     },
     "common": {
       "license": "License",
@@ -80,7 +80,7 @@
       },
       "sources": {
         "title": "Cited Italian sources",
-        "body": "Every value shows its source (CREA, BDA IEO, Open Food Facts) with a link to the original entry."
+        "body": "Every value shows its source (CREA, Open Food Facts) with a link to the original entry."
       }
     }
   },
