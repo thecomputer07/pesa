@@ -14,6 +14,9 @@
     "terms": "Terms",
     "cookies": "Cookies"
   },
+  "legal": {
+    "loadError": "Could not load the document. Please try again later."
+  },
   "scanner": {
     "pageTitle": "Scan a barcode",
     "pageIntro": "Point the camera at the product's barcode. You can also type it below.",
@@ -240,6 +243,7 @@
     "deleted": "Meal deleted",
     "empty": "No meals logged.",
     "slotLabel": "When",
+    "timeLabel": "Time",
     "notes": "Notes",
     "itemName": "Food name",
     "slots": {
@@ -325,12 +329,15 @@
       "title": "Retention periods",
       "categoryHeader": "Category",
       "periodHeader": "Period",
-      "meals": { "label": "Meals & diary", "period": "24 months" },
+      "meals": { "label": "Meals & diary", "period": "Until account deletion" },
       "recipes": { "label": "Recipes", "period": "Until account deletion" },
-      "sessions": { "label": "Login sessions", "period": "30 days" },
-      "audit": { "label": "Security audit log", "period": "12 months" },
-      "appLog": { "label": "Application log", "period": "90 days" },
-      "erasureLog": { "label": "Erasure log (Art. 17)", "period": "12 months" }
+      "sessions": { "label": "Login sessions", "period": "30 days (rolling)" },
+      "audit": { "label": "Security events log (slog)", "period": "90 days (target)" },
+      "appLog": { "label": "Application log", "period": "90 days (target)" },
+      "erasureLog": { "label": "Erasure log (Art. 17)", "period": "12 months (target; manual rotation in the MVP)" },
+      "export": { "label": "Data export (ZIP archive)", "period": "7 days" },
+      "resetToken": { "label": "Password reset token", "period": "1 hour" },
+      "verifyToken": { "label": "Email verification token", "period": "24 hours" }
     },
     "export": {
       "title": "Export my data",

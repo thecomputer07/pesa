@@ -25,6 +25,12 @@ const PasswordResetConfirmPage = lazy(() => import("./pages/PasswordResetConfirm
 const VerifyEmailPage = lazy(() => import("./pages/VerifyEmailPage"));
 const CustomFoodPage = lazy(() => import("./pages/CustomFoodPage"));
 const MyFoodsPage = lazy(() => import("./pages/MyFoodsPage"));
+const PrivacyLegalPage = lazy(() =>
+  import("./pages/LegalPage").then((m) => ({ default: m.PrivacyLegalPage })),
+);
+const CookieLegalPage = lazy(() =>
+  import("./pages/LegalPage").then((m) => ({ default: m.CookieLegalPage })),
+);
 
 function PageFallback() {
   return (
@@ -177,6 +183,22 @@ export default function AppRoutes() {
           element={
             <Suspense fallback={<PageFallback />}>
               <SourcesImagesPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="privacy"
+          element={
+            <Suspense fallback={<PageFallback />}>
+              <PrivacyLegalPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="cookies"
+          element={
+            <Suspense fallback={<PageFallback />}>
+              <CookieLegalPage />
             </Suspense>
           }
         />

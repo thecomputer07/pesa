@@ -1,0 +1,22 @@
+# PRIV-06: Application security logs retention policy (90-day target).
+# Install to /etc/logrotate.d/pesa on the production host.
+# Assumes pesa writes JSON slog output to /var/log/pesa/pesa.log via systemd
+# journald capture or direct file handler. Adjust path if your deployment
+# ships logs elsewhere (e.g. stdout → journalctl, container stdout).
+
+/var/log/pesa/*.log {
+    daily
+    rotate 90
+    missingok
+    notifempty
+    compress
+    delaycompress
+    create 640 pesa pesa
+    sharedscripts
+    postrotate
+        # pesa logs to stdout when running under systemd; no signal needed.
+        # If a file handler is configured, uncomment the reload line below.
+        # systemctl kill --signal=SIGHUP pesa.service >/dev/null 2>&1 || true
+        :
+    endscript
+}

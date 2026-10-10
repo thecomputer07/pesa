@@ -1,13 +1,15 @@
 import { useTranslation } from "react-i18next";
 
-// Retention table sourced from Privacy Policy §6 + RoPA.
-const RETENTION: Array<{ key: string; value: string }> = [
-  { key: "privacy.retention.meals", value: "24 {{unit}}" },
-  { key: "privacy.retention.recipes", value: "{{deleteUntil}}" },
-  { key: "privacy.retention.sessions", value: "30 {{daysUnit}}" },
-  { key: "privacy.retention.audit", value: "12 {{unit}}" },
-  { key: "privacy.retention.appLog", value: "90 {{daysUnit}}" },
-  { key: "privacy.retention.erasureLog", value: "12 {{unit}}" },
+const RETENTION = [
+  "privacy.retention.meals",
+  "privacy.retention.recipes",
+  "privacy.retention.sessions",
+  "privacy.retention.verifyToken",
+  "privacy.retention.resetToken",
+  "privacy.retention.export",
+  "privacy.retention.audit",
+  "privacy.retention.appLog",
+  "privacy.retention.erasureLog",
 ];
 
 export default function RetentionInfo() {
@@ -29,7 +31,7 @@ export default function RetentionInfo() {
           </tr>
         </thead>
         <tbody>
-          {RETENTION.map(({ key }) => (
+          {RETENTION.map((key) => (
             <tr key={key}>
               <td className="py-1">{t(`${key}.label`)}</td>
               <td className="py-1 opacity-80">{t(`${key}.period`)}</td>

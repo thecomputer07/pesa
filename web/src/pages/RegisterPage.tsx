@@ -126,7 +126,7 @@ export default function RegisterPage() {
               i18nKey="auth.register.privacyConsent"
               components={{
                 scope: <Link to="/scopo" className="underline" />,
-                privacy: <Link to="/io/privacy" className="underline" />,
+                privacy: <Link to="/privacy" className="underline" />,
               }}
             />
           </span>

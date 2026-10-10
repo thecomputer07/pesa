@@ -34,6 +34,7 @@ import (
 	"github.com/thecomputer07/pesa/internal/service"
 	"github.com/thecomputer07/pesa/internal/service/erasure"
 	"github.com/thecomputer07/pesa/internal/service/export"
+	"github.com/thecomputer07/pesa/internal/service/retention"
 	"github.com/thecomputer07/pesa/internal/service/srt"
 	pesaweb "github.com/thecomputer07/pesa/internal/web"
 )
@@ -207,6 +208,9 @@ func runServe() {
 	workerCtx, cancelWorker := context.WithCancel(context.Background())
 	defer cancelWorker()
 	go exportWorker.Run(workerCtx)
+
+	// Retention janitor (PRIV-03, PRIV-06): expired tokens + stale erasure rows.
+	go retention.New(db).Run(workerCtx)
 
 	srv := &stdhttp.Server{
 		Addr:              cfg.Addr,

@@ -14,6 +14,9 @@
     "terms": "Termini",
     "cookies": "Cookie"
   },
+  "legal": {
+    "loadError": "Impossibile caricare il documento. Riprova più tardi."
+  },
   "scanner": {
     "pageTitle": "Scansiona un codice a barre",
     "pageIntro": "Inquadra il codice a barre del prodotto confezionato. Puoi anche inserirlo a mano qui sotto.",
@@ -240,6 +243,7 @@
     "deleted": "Pasto eliminato",
     "empty": "Nessun pasto registrato.",
     "slotLabel": "Momento",
+    "timeLabel": "Orario",
     "notes": "Note",
     "itemName": "Nome alimento",
     "slots": {
@@ -325,12 +329,15 @@
       "title": "Tempi di conservazione",
       "categoryHeader": "Categoria",
       "periodHeader": "Periodo",
-      "meals": { "label": "Pasti e diario", "period": "24 mesi" },
+      "meals": { "label": "Pasti e diario", "period": "Fino alla cancellazione dell'account" },
       "recipes": { "label": "Ricette", "period": "Fino alla cancellazione dell'account" },
-      "sessions": { "label": "Sessioni di accesso", "period": "30 giorni" },
-      "audit": { "label": "Log audit di sicurezza", "period": "12 mesi" },
-      "appLog": { "label": "Log applicativo", "period": "90 giorni" },
-      "erasureLog": { "label": "Registro cancellazioni (art. 17)", "period": "12 mesi" }
+      "sessions": { "label": "Sessioni di accesso", "period": "30 giorni (rolling)" },
+      "audit": { "label": "Log eventi di sicurezza (slog)", "period": "90 giorni (target)" },
+      "appLog": { "label": "Log applicativo", "period": "90 giorni (target)" },
+      "erasureLog": { "label": "Registro cancellazioni (art. 17)", "period": "12 mesi (obiettivo; rotazione manuale nel MVP)" },
+      "export": { "label": "Export dati (archivio ZIP)", "period": "7 giorni" },
+      "resetToken": { "label": "Token reset password", "period": "1 ora" },
+      "verifyToken": { "label": "Token verifica email", "period": "24 ore" }
     },
     "export": {
       "title": "Esporta i miei dati",
