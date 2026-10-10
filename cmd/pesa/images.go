@@ -31,7 +31,8 @@ func runImages(args []string) {
 func runImagesLocalize(args []string) {
 	fs := flag.NewFlagSet("images localize", flag.ExitOnError)
 	limit := fs.Int("limit", 0, "max immagini (0 = tutte)")
-	workers := fs.Int("workers", 4, "download paralleli")
+	workers := fs.Int("workers", 2, "download paralleli")
+	delay := fs.Duration("delay", 500*time.Millisecond, "pausa per worker tra download (Wikimedia risponde 429 se troppo veloce)")
 	if err := fs.Parse(args); err != nil {
 		os.Exit(2)
 	}
@@ -82,6 +83,8 @@ func runImagesLocalize(args []string) {
 		go func() {
 			defer wg.Done()
 			for j := range ch {
+				// Be polite to the upstream CDNs, also after a failure.
+				time.Sleep(*delay)
 				u, err := url.Parse(j.url)
 				if err != nil {
 					failed.Add(1)
@@ -122,8 +125,6 @@ func runImagesLocalize(args []string) {
 				if n := done.Add(1); n%250 == 0 {
 					slog.Info("images localize progress", "done", n, "failed", failed.Load(), "total", len(jobs))
 				}
-				// Be polite to the upstream CDNs.
-				time.Sleep(150 * time.Millisecond)
 			}
 		}()
 	}

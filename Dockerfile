@@ -45,7 +45,9 @@ RUN CGO_ENABLED=0 GOOS=linux go build -trimpath -ldflags="-s -w" -o /out/pesa ./
 # ---- prod runtime ----
 FROM alpine:3.20 AS prod
 RUN apk add --no-cache ca-certificates tzdata && \
-    addgroup -S pesa && adduser -S -G pesa pesa
+    addgroup -S pesa && adduser -S -G pesa pesa && \
+    install -d -o pesa -g pesa /home/pesa/.cache
+# ^ owned by pesa so a fresh named volume mounted there is writable (image cache)
 COPY --from=builder /out/pesa /usr/local/bin/pesa
 USER pesa
 WORKDIR /home/pesa
