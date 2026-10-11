@@ -21,18 +21,30 @@ const SearchBox = forwardRef<HTMLInputElement, SearchBoxProps>(function SearchBo
   const id = useId();
   const [q, setQ] = useState(defaultValue);
   const timerRef = useRef<number | null>(null);
+  // Latest callback in a ref: a parent re-render must not restart the timer
+  // (it used to keep postponing it until after the user had tapped a result,
+  // and the late URL update then undid that navigation).
+  const onChangeRef = useRef(onQueryChange);
+  onChangeRef.current = onQueryChange;
+  // Only typing triggers a live search, not mounting with a default value.
+  const lastEmitted = useRef(defaultValue.trim());
 
   useEffect(() => {
-    if (!onQueryChange) return;
-    if (timerRef.current) window.clearTimeout(timerRef.current);
-    timerRef.current = window.setTimeout(() => onQueryChange(q.trim()), debounceMs);
+    const value = q.trim();
+    if (!onChangeRef.current || value === lastEmitted.current) return;
+    timerRef.current = window.setTimeout(() => {
+      lastEmitted.current = value;
+      onChangeRef.current?.(value);
+    }, debounceMs);
     return () => {
       if (timerRef.current) window.clearTimeout(timerRef.current);
     };
-  }, [q, debounceMs, onQueryChange]);
+  }, [q, debounceMs]);
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (timerRef.current) window.clearTimeout(timerRef.current);
+    lastEmitted.current = q.trim();
     onSubmit(q.trim());
   }
 

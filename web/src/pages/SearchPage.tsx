@@ -1,4 +1,4 @@
-import { useEffect, useState, useTransition } from "react";
+import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
@@ -13,7 +13,7 @@ import { useAuth } from "../lib/auth/AuthContext";
 const SOURCE_KEY = "pesa.search.source";
 
 function readSource(v: string | null): SearchSource | "" {
-  return v === "crea" || v === "ciqual" || v === "off" || v === "mine" ? v : "";
+  return v === "crea" || v === "ciqual" || v === "usda" || v === "off" || v === "mine" ? v : "";
 }
 
 export default function SearchPage() {
@@ -22,7 +22,6 @@ export default function SearchPage() {
   const { user } = useAuth();
   const initialQ = params.get("q") ?? "";
   const [query, setQuery] = useState(initialQ);
-  const [, startTransition] = useTransition();
   // Optional source filter ("" = all). Remembered per device; URL wins.
   const [source, setSource] = useState<SearchSource | "">(() => {
     const fromUrl = readSource(params.get("source"));
@@ -108,18 +107,15 @@ export default function SearchPage() {
     setParams(urlParams(query, src), { replace: true });
   }
 
-  function handleSubmit(value: string) {
-    startTransition(() => {
-      setQuery(value);
-      setParams(urlParams(value, source), { replace: true });
-    });
+  // Plain updates, no transition, and nothing when the query is unchanged:
+  // a URL update must never land after the user has navigated elsewhere.
+  function applyQuery(value: string) {
+    if (value === query.trim() && value === (params.get("q") ?? "")) return;
+    setQuery(value);
+    setParams(urlParams(value, source), { replace: true });
   }
-  function handleDebouncedChange(value: string) {
-    startTransition(() => {
-      setQuery(value);
-      setParams(urlParams(value, source), { replace: true });
-    });
-  }
+  const handleSubmit = applyQuery;
+  const handleDebouncedChange = applyQuery;
 
   const showAddCTA = user && canSearch && !isLoading && results.length === 0 && !isError;
 
@@ -151,6 +147,7 @@ export default function SearchPage() {
             ["", t("search.filterAll")],
             ["crea", t("search.filterCrea")],
             ["ciqual", t("search.filterCiqual")],
+            ["usda", t("search.filterUsda")],
             ["off", t("search.filterOff")],
             ...(user ? [["mine", t("search.filterMine")]] : []),
           ] as [SearchSource | "", string][]

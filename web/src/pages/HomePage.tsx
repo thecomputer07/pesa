@@ -1,6 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { useTransition } from "react";
 import SearchBox from "../components/SearchBox";
 import Icon, { type IconName } from "../components/ui/Icon";
 
@@ -10,14 +9,13 @@ const SUGGESTIONS = ["pasta", "pane", "riso", "pizza", "mela", "sushi"];
 export default function HomePage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const [, startTransition] = useTransition();
 
   function go(query: string) {
     const q = query.trim();
     if (!q) return;
-    startTransition(() => {
-      navigate(`/cerca?q=${encodeURIComponent(q)}`);
-    });
+    // No transition: the lazy search page shows its fallback at once
+    // instead of the home page sitting still while the chunk loads.
+    navigate(`/cerca?q=${encodeURIComponent(q)}`);
   }
 
   return (
