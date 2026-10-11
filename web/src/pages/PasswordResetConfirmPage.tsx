@@ -58,8 +58,8 @@ export default function PasswordResetConfirmPage() {
 
   if (!token) {
     return (
-      <main className="max-w-md mx-auto space-y-3">
-        <h1 className="text-2xl font-bold">{t("auth.passwordReset.confirmTitle")}</h1>
+      <section className="max-w-md mx-auto space-y-3">
+        <h1 className="text-2xl md:text-3xl font-semibold tracking-[-0.03em]">{t("auth.passwordReset.confirmTitle")}</h1>
         <p role="alert" className="text-sm text-red-700">
           {t("auth.passwordReset.missingToken")}
         </p>
@@ -68,13 +68,13 @@ export default function PasswordResetConfirmPage() {
             {t("auth.passwordReset.requestTitle")}
           </Link>
         </p>
-      </main>
+      </section>
     );
   }
 
   return (
-    <main className="max-w-md mx-auto space-y-4" aria-labelledby="pwconfirm-title">
-      <h1 id="pwconfirm-title" className="text-2xl font-bold">
+    <section className="max-w-md mx-auto space-y-5 surface p-6 sm:p-8 mt-2 md:mt-6" aria-labelledby="pwconfirm-title">
+      <h1 id="pwconfirm-title" className="text-2xl md:text-3xl font-semibold tracking-[-0.03em]">
         {t("auth.passwordReset.confirmTitle")}
       </h1>
       {done ? (
@@ -101,7 +101,7 @@ export default function PasswordResetConfirmPage() {
               minLength={MIN_PASSWORD}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="mt-1 w-full border border-[color:var(--color-border)] rounded-md px-2 py-1.5"
+              className="mt-1 w-full border border-[color:var(--color-border)] bg-white px-3.5 py-2.5"
             />
           </label>
           <label className="block">
@@ -112,7 +112,7 @@ export default function PasswordResetConfirmPage() {
               required
               value={confirm}
               onChange={(e) => setConfirm(e.target.value)}
-              className="mt-1 w-full border border-[color:var(--color-border)] rounded-md px-2 py-1.5"
+              className="mt-1 w-full border border-[color:var(--color-border)] bg-white px-3.5 py-2.5"
             />
           </label>
           {error ? (
@@ -123,12 +123,12 @@ export default function PasswordResetConfirmPage() {
           <button
             type="submit"
             disabled={submitting}
-            className="px-3 py-1.5 text-sm bg-[color:var(--color-brand-600)] text-white rounded-md disabled:opacity-60"
+            className="btn-primary text-sm disabled:opacity-60"
           >
             {t("auth.passwordReset.confirmSubmit")}
           </button>
         </form>
       )}
-    </main>
+    </section>
   );
 }

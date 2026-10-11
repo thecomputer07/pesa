@@ -178,7 +178,7 @@ export default function CustomFoodPage() {
         value={form[key]}
         onChange={(e) => update(key, e.target.value as Form[typeof key])}
         required={required}
-        className="w-full border border-[color:var(--color-border)] rounded-md px-2 py-1.5 text-sm"
+        className="w-full border border-[color:var(--color-border)] bg-white px-3.5 py-2.5 text-sm"
       />
     </label>
   );
@@ -188,7 +188,7 @@ export default function CustomFoodPage() {
   }
 
   return (
-    <main className="max-w-xl mx-auto space-y-6">
+    <section className="max-w-xl mx-auto space-y-6">
       <header>
         <h1 className="text-2xl md:text-3xl font-bold">
           {isEdit ? "Modifica alimento" : "Aggiungi un tuo alimento"}
@@ -238,7 +238,7 @@ export default function CustomFoodPage() {
         </div>
 
         {error ? (
-          <p role="alert" className="text-sm text-red-700 bg-red-50 border border-red-200 rounded-md px-3 py-2">
+          <p role="alert" className="text-sm text-red-700 bg-red-50 border border-red-200 rounded-xl px-3 py-2">
             {error}
           </p>
         ) : null}
@@ -247,14 +247,14 @@ export default function CustomFoodPage() {
           <button
             type="submit"
             disabled={submitting}
-            className="px-4 py-2 bg-[color:var(--color-brand-600)] text-white rounded-md font-medium disabled:opacity-50"
+            className="px-4 py-2 bg-[color:var(--color-brand-600)] text-white rounded-xl font-medium disabled:opacity-50"
           >
             {submitting ? "Salvataggio…" : "Salva"}
           </button>
           <button
             type="button"
             onClick={() => navigate(-1)}
-            className="px-4 py-2 border border-[color:var(--color-border)] rounded-md"
+            className="px-4 py-2 border border-[color:var(--color-border)] rounded-xl"
           >
             Annulla
           </button>
@@ -263,7 +263,7 @@ export default function CustomFoodPage() {
               type="button"
               onClick={() => setConfirmDelete(true)}
               disabled={deleting}
-              className="ml-auto px-4 py-2 border border-red-300 text-red-700 rounded-md disabled:opacity-50"
+              className="ml-auto px-4 py-2 border border-red-300 text-red-700 rounded-xl disabled:opacity-50"
             >
               {deleting ? "Eliminazione…" : "Elimina"}
             </button>
@@ -279,6 +279,6 @@ export default function CustomFoodPage() {
         onConfirm={doDelete}
         onCancel={() => setConfirmDelete(false)}
       />
-    </main>
+    </section>
   );
 }

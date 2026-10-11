@@ -294,7 +294,7 @@ export default function MealEditorSheet({
           <select
             value={slot}
             onChange={(e) => setSlot(e.target.value as Slot)}
-            className="mt-1 w-full border border-[color:var(--color-border)] rounded-md px-2 py-1.5"
+            className="mt-1 w-full border border-[color:var(--color-border)] bg-white px-3.5 py-2.5"
           >
             {(["colazione", "pranzo", "cena", "spuntino", "altro"] as Slot[]).map((s) => (
               <option key={s} value={s}>
@@ -310,7 +310,7 @@ export default function MealEditorSheet({
             type="time"
             value={time}
             onChange={(e) => setTime(e.target.value)}
-            className="mt-1 w-full border border-[color:var(--color-border)] rounded-md px-2 py-1.5"
+            className="mt-1 w-full border border-[color:var(--color-border)] bg-white px-3.5 py-2.5"
           />
         </label>
 
@@ -352,12 +352,12 @@ export default function MealEditorSheet({
                     onChange={(e) =>
                       setPending((p) => (p ? { ...p, grams: Number(e.target.value) } : p))
                     }
-                    className="w-24 border border-[color:var(--color-border)] rounded-md px-2 py-1.5 text-sm"
+                    className="w-24 border border-[color:var(--color-border)] bg-white px-3.5 py-2.5 text-sm"
                   />
                   <button
                     type="button"
                     onClick={confirmPending}
-                    className="px-3 py-1.5 text-sm bg-[color:var(--color-brand-600)] text-white rounded-md"
+                    className="btn-primary text-sm"
                   >
                     {t("foodPicker.confirmAdd")}
                   </button>
@@ -389,12 +389,12 @@ export default function MealEditorSheet({
                         p ? { ...p, grams: Number(e.target.value) } : p,
                       )
                     }
-                    className="w-24 border border-[color:var(--color-border)] rounded-md px-2 py-1.5 text-sm"
+                    className="w-24 border border-[color:var(--color-border)] bg-white px-3.5 py-2.5 text-sm"
                   />
                   <button
                     type="button"
                     onClick={confirmPendingRecipe}
-                    className="px-3 py-1.5 text-sm bg-[color:var(--color-brand-600)] text-white rounded-md"
+                    className="btn-primary text-sm"
                   >
                     {t("foodPicker.confirmAdd")}
                   </button>
@@ -438,7 +438,7 @@ export default function MealEditorSheet({
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
             maxLength={500}
-            className="mt-1 w-full border border-[color:var(--color-border)] rounded-md px-2 py-1.5 text-sm"
+            className="mt-1 w-full border border-[color:var(--color-border)] bg-white px-3.5 py-2.5 text-sm"
             rows={2}
           />
         </label>
@@ -458,7 +458,7 @@ export default function MealEditorSheet({
             <button
               type="button"
               onClick={onSave}
-              className="px-3 py-1.5 text-sm bg-[color:var(--color-brand-600)] text-white rounded-md"
+              className="btn-primary text-sm"
             >
               {t("common.save")}
             </button>

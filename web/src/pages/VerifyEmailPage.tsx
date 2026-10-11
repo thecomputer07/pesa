@@ -49,8 +49,8 @@ export default function VerifyEmailPage() {
   }, [token]);
 
   return (
-    <main className="max-w-md mx-auto space-y-4" aria-labelledby="verify-title">
-      <h1 id="verify-title" className="text-2xl font-bold">
+    <section className="max-w-md mx-auto space-y-5 surface p-6 sm:p-8 mt-2 md:mt-6" aria-labelledby="verify-title">
+      <h1 id="verify-title" className="text-2xl md:text-3xl font-semibold tracking-[-0.03em]">
         {t("auth.verifyEmail.title")}
       </h1>
       {status === "verifying" ? (
@@ -80,6 +80,6 @@ export default function VerifyEmailPage() {
           {t("auth.verifyEmail.missing")}
         </p>
       ) : null}
-    </main>
+    </section>
   );
 }

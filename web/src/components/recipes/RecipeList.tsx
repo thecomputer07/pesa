@@ -32,13 +32,13 @@ export default function RecipeList() {
         onChange={(e) => setQ(e.target.value)}
         placeholder={t("search.placeholder")}
         aria-label={t("search.label")}
-        className="w-full border border-[color:var(--color-border)] rounded-md px-3 py-2"
+        className="w-full border border-[color:var(--color-border)] rounded-xl px-3 py-2"
       />
       <ul className="grid gap-2 md:grid-cols-2">
         {recipes.map((r) => (
           <li
             key={r.client_id}
-            className="border border-[color:var(--color-border)] rounded-md bg-white"
+            className="border border-[color:var(--color-border)] rounded-xl bg-white"
           >
             <Link to={`/ricette/${r.client_id}`} className="block p-3 no-underline text-[color:var(--color-ink)]">
               <h3 className="font-semibold truncate">{r.name}</h3>

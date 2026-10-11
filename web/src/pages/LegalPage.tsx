@@ -32,7 +32,7 @@ export function LegalPage({ slug }: { slug: Slug }) {
   }, [slug, lang, t]);
 
   return (
-    <main className="mx-auto max-w-3xl px-4 py-8" aria-labelledby="legal-title">
+    <section className="surface mx-auto max-w-3xl p-6 sm:p-10" aria-labelledby="legal-title">
       <h1 id="legal-title" className="sr-only">
         {t(`nav.${slug === "privacy" ? "privacy" : "cookies"}`)}
       </h1>
@@ -42,11 +42,11 @@ export function LegalPage({ slug }: { slug: Slug }) {
         </p>
       ) : (
         <article
-          className="prose prose-sm max-w-none [&_h1]:text-2xl [&_h1]:font-bold [&_h1]:mt-0 [&_h1]:mb-4 [&_h2]:text-xl [&_h2]:font-semibold [&_h2]:mt-6 [&_h2]:mb-2 [&_h3]:text-lg [&_h3]:font-semibold [&_h3]:mt-4 [&_h3]:mb-2 [&_p]:mb-3 [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:mb-3 [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:mb-3 [&_li]:mb-1 [&_table]:w-full [&_table]:border-collapse [&_table]:text-sm [&_th]:border [&_th]:border-[color:var(--color-border)] [&_th]:p-2 [&_th]:bg-gray-50 [&_td]:border [&_td]:border-[color:var(--color-border)] [&_td]:p-2 [&_td]:align-top [&_code]:bg-gray-100 [&_code]:px-1 [&_code]:rounded [&_a]:text-[color:var(--color-brand-600)] [&_a]:underline"
+          className="prose prose-sm max-w-none [&_h1]:text-2xl [&_h1]:font-bold [&_h1]:mt-0 [&_h1]:mb-4 [&_h2]:text-xl [&_h2]:font-semibold [&_h2]:mt-6 [&_h2]:mb-2 [&_h3]:text-lg [&_h3]:font-semibold [&_h3]:mt-4 [&_h3]:mb-2 [&_p]:mb-3 [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:mb-3 [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:mb-3 [&_li]:mb-1 [&_table]:w-full [&_table]:border-collapse [&_table]:text-sm [&_th]:border [&_th]:border-[color:var(--color-border)] [&_th]:p-2 [&_th]:bg-[color:var(--color-surface-muted)] [&_td]:border [&_td]:border-[color:var(--color-border)] [&_td]:p-2 [&_td]:align-top [&_a]:text-[color:var(--color-brand-600)] [&_a]:underline"
           dangerouslySetInnerHTML={{ __html: html }}
         />
       )}
-    </main>
+    </section>
   );
 }
 

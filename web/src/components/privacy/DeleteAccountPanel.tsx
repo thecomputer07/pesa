@@ -42,7 +42,7 @@ export default function DeleteAccountPanel() {
         <button
           type="button"
           onClick={() => setStep("password")}
-          className="px-3 py-2 rounded-md border text-sm"
+          className="px-3 py-2 rounded-xl border text-sm"
           data-testid="delete-start"
         >
           {t("privacy.delete.startCta")}
@@ -63,7 +63,7 @@ export default function DeleteAccountPanel() {
               autoComplete="current-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="mt-1 w-full border rounded-md px-2 py-1"
+              className="mt-1 w-full border rounded-xl px-2 py-1"
               data-testid="delete-password"
               required
             />
@@ -71,7 +71,7 @@ export default function DeleteAccountPanel() {
           <button
             type="submit"
             disabled={password.length === 0}
-            className="px-3 py-2 rounded-md bg-[color:var(--color-brand-600)] text-white text-sm disabled:opacity-50"
+            className="px-3 py-2 rounded-xl bg-[color:var(--color-brand-600)] text-white text-sm disabled:opacity-50"
           >
             {t("privacy.delete.continueCta")}
           </button>
@@ -87,7 +87,7 @@ export default function DeleteAccountPanel() {
               value={confirmText}
               onChange={(e) => setConfirmText(e.target.value)}
               autoComplete="off"
-              className="mt-1 w-full border rounded-md px-2 py-1"
+              className="mt-1 w-full border rounded-xl px-2 py-1"
               data-testid="delete-confirm-input"
               aria-invalid={!confirmOk}
               required
@@ -96,7 +96,7 @@ export default function DeleteAccountPanel() {
           <button
             type="submit"
             disabled={!confirmOk || busy}
-            className="px-3 py-2 rounded-md bg-red-600 text-white text-sm disabled:opacity-50"
+            className="px-3 py-2 rounded-xl bg-red-600 text-white text-sm disabled:opacity-50"
             data-testid="delete-submit"
           >
             {t("privacy.delete.submitCta")}

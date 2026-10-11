@@ -49,14 +49,14 @@ export default function SourcesImagesPage() {
       <h1 className="mb-3 text-2xl font-semibold">{t("sources.imagesPage.title")}</h1>
       <p className="mb-4 text-sm opacity-80">{t("sources.imagesPage.intro")}</p>
 
-      <div className="mb-6 rounded-md border border-amber-500/40 bg-amber-50/40 p-3 text-sm">
+      <div className="mb-6 rounded-xl border border-amber-500/40 bg-amber-50/40 p-3 text-sm">
         <strong>{t("sources.imagesPage.creaBdaNote")}</strong>
       </div>
 
       {rows.map((s) => (
         <section
           key={s.code}
-          className="mb-6 rounded-lg border border-[color:var(--color-border)] p-4"
+          className="mb-4 surface p-5 sm:p-6"
         >
           <h2 className="text-lg font-semibold">{s.name}</h2>
           <dl className="mt-2 grid gap-1 text-sm">

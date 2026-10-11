@@ -141,13 +141,13 @@ export default function FoodPicker({
           window.setTimeout(() => setOpen(false), 150);
         }}
         onKeyDown={onKeyDown}
-        className="w-full border border-[color:var(--color-border)] rounded-md px-2 py-1.5 text-sm"
+        className="w-full border border-[color:var(--color-border)] bg-white px-3.5 py-2.5 text-sm"
       />
       {showDropdown ? (
         <ul
           id={listboxId}
           role="listbox"
-          className="absolute z-20 left-0 right-0 mt-1 max-h-64 overflow-y-auto rounded-md border border-[color:var(--color-border)] bg-white shadow-lg"
+          className="absolute z-20 left-0 right-0 mt-1 max-h-64 overflow-y-auto rounded-xl border border-[color:var(--color-border)] bg-white shadow-lg"
         >
           {isFetching && results.length === 0 ? (
             <li className="px-3 py-2 text-sm text-[color:var(--color-ink-muted)]" aria-live="polite">

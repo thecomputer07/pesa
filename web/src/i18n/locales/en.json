@@ -12,7 +12,8 @@
     "accessibility": "Accessibility",
     "privacy": "Privacy",
     "terms": "Terms",
-    "cookies": "Cookies"
+    "cookies": "Cookies",
+    "myFoods": "My foods"
   },
   "legal": {
     "loadError": "Could not load the document. Please try again later."
@@ -66,6 +67,16 @@
     "requiredField": "required field"
   },
   "home": {
+    "eyebrow": "Carbohydrate calculator",
+    "tryLabel": "Try",
+    "scanCta": "Scan a barcode",
+    "example": {
+      "label": "Real example from the catalog",
+      "food": "Durum wheat pasta",
+      "portion": "80 g · raw",
+      "carbs": "of carbohydrates",
+      "per100": "72.7 g per 100 g · source CREA"
+    },
     "title": "How many carbs are in this food?",
     "tagline": "Type the name, enter the weight in grams, get the carbohydrate value. Data from cited Italian sources.",
     "learnMore": "Read what Pesa is for on the page",
@@ -105,6 +116,13 @@
     "filterMine": "Mine"
   },
   "detail": {
+    "resultFor": "of carbohydrates in {{grams}} g",
+    "quickWeights": "Quick portions",
+    "decrease": "Remove 10 g",
+    "increase": "Add 10 g",
+    "nutrients": "Nutrition facts",
+    "portionCol": "{{grams}} g",
+    "per100Col": "100 g",
     "back": "Back to results",
     "weightLabel": "Weight in grams",
     "weightHelp": "Whole numbers or decimals (e.g. 120.5).",

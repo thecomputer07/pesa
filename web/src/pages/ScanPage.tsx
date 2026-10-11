@@ -108,7 +108,7 @@ export default function ScanPage() {
       <ManualEntry onSubmit={resolve} />
 
       {toast && (
-        <div role="status" aria-live="polite" className="mt-4 rounded-md bg-yellow-100 p-3 text-sm">
+        <div role="status" aria-live="polite" className="mt-4 rounded-xl bg-yellow-100 p-3 text-sm">
           <p>{toast}</p>
           <a href="/cerca" className="underline">
             {t("scanner.tryTextSearch")}

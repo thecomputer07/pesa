@@ -50,7 +50,7 @@ export default function MealTemplateBuilder({ userId }: MealTemplateBuilderProps
           required
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className="mt-1 w-full border border-[color:var(--color-border)] rounded-md px-2 py-1.5"
+          className="mt-1 w-full border border-[color:var(--color-border)] bg-white px-3.5 py-2.5"
         />
       </label>
 
@@ -69,7 +69,7 @@ export default function MealTemplateBuilder({ userId }: MealTemplateBuilderProps
           value={newName}
           onChange={(e) => setNewName(e.target.value)}
           placeholder={t("diary.itemName")}
-          className="flex-1 border border-[color:var(--color-border)] rounded-md px-2 py-1.5 text-sm"
+          className="flex-1 border border-[color:var(--color-border)] bg-white px-3.5 py-2.5 text-sm"
         />
         <input
           aria-label={t("detail.weightLabel")}
@@ -77,7 +77,7 @@ export default function MealTemplateBuilder({ userId }: MealTemplateBuilderProps
           min={0}
           value={newGrams}
           onChange={(e) => setNewGrams(Number(e.target.value))}
-          className="w-24 border border-[color:var(--color-border)] rounded-md px-2 py-1.5 text-sm"
+          className="w-24 border border-[color:var(--color-border)] bg-white px-3.5 py-2.5 text-sm"
         />
         <button
           type="button"
@@ -90,7 +90,7 @@ export default function MealTemplateBuilder({ userId }: MealTemplateBuilderProps
 
       <button
         type="submit"
-        className="px-3 py-1.5 text-sm bg-[color:var(--color-brand-600)] text-white rounded-md"
+        className="btn-primary text-sm"
       >
         {t("common.save")}
       </button>

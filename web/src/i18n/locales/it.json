@@ -12,7 +12,8 @@
     "accessibility": "Accessibilità",
     "privacy": "Privacy",
     "terms": "Termini",
-    "cookies": "Cookie"
+    "cookies": "Cookie",
+    "myFoods": "I miei alimenti"
   },
   "legal": {
     "loadError": "Impossibile caricare il documento. Riprova più tardi."
@@ -66,6 +67,16 @@
     "requiredField": "campo obbligatorio"
   },
   "home": {
+    "eyebrow": "Calcolatore di carboidrati",
+    "tryLabel": "Prova con",
+    "scanCta": "Scansiona un codice a barre",
+    "example": {
+      "label": "Esempio reale dal catalogo",
+      "food": "Pasta di semola",
+      "portion": "80 g · cruda",
+      "carbs": "di carboidrati",
+      "per100": "72,7 g per 100 g · fonte CREA"
+    },
     "title": "Quanti carboidrati in questo alimento?",
     "tagline": "Scrivi il nome, inserisci il peso in grammi, ottieni i carboidrati. Dati da fonti italiane citate.",
     "learnMore": "Scopri a cosa serve Pesa nella pagina",
@@ -105,6 +116,13 @@
     "filterMine": "I miei"
   },
   "detail": {
+    "resultFor": "di carboidrati in {{grams}} g",
+    "quickWeights": "Porzioni rapide",
+    "decrease": "Togli 10 g",
+    "increase": "Aggiungi 10 g",
+    "nutrients": "Valori nutrizionali",
+    "portionCol": "{{grams}} g",
+    "per100Col": "100 g",
     "back": "Torna ai risultati",
     "weightLabel": "Peso in grammi",
     "weightHelp": "Numeri interi o con virgola (es. 120,5).",

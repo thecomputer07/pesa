@@ -47,17 +47,17 @@ export default function FavoritesPage() {
 
   if (!favs) {
     return (
-      <main>
+      <section>
         <p role="status" className="py-6 text-sm opacity-70">
           {t("a11y.loading")}
         </p>
-      </main>
+      </section>
     );
   }
 
   return (
-    <main className="space-y-4">
-      <h1 className="text-2xl font-bold">{t("favorites.title")}</h1>
+    <section className="space-y-4">
+      <h1 className="text-2xl md:text-3xl font-semibold tracking-[-0.03em]">{t("favorites.title")}</h1>
       {favs.length === 0 ? (
         <div className="space-y-2">
           <p className="text-sm text-[color:var(--color-ink-muted)]">{t("favorites.empty")}</p>
@@ -70,7 +70,7 @@ export default function FavoritesPage() {
           {favs.map((f) => (
             <li
               key={f.client_id}
-              className="border border-[color:var(--color-border)] rounded-md bg-white"
+              className="border border-[color:var(--color-border)] rounded-xl bg-white"
             >
               <Link
                 to={`/alimento/${f.food_id}`}
@@ -89,6 +89,6 @@ export default function FavoritesPage() {
           ))}
         </ul>
       )}
-    </main>
+    </section>
   );
 }

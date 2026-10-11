@@ -14,7 +14,7 @@ export default function ScopePage() {
 
   return (
     <article
-      className="prose max-w-none prose-headings:text-[color:var(--color-ink)] prose-a:text-[color:var(--color-brand-600)]"
+      className="prose surface mx-auto max-w-3xl p-6 sm:p-10 rise"
       // Content is trusted: checked-in source, not user input.
       dangerouslySetInnerHTML={{ __html: html }}
     />

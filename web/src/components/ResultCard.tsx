@@ -9,75 +9,65 @@ export interface ResultCardProps {
   food: FoodSearchResult;
 }
 
+/** One search result row: what it is on the left, its carbs on the right. */
 export default function ResultCard({ food }: ResultCardProps) {
   const { t } = useTranslation();
   const fmtG = useFormatGrams();
   const fmtKcal = useFormatKcal();
-  const isCooked = food.state === "cooked" || food.state === "cotto";
   // "Crudo" on Nutella or yogurt is noise: label only cooked items.
+  const isCooked = food.state === "cooked" || food.state === "cotto";
 
   return (
-    <li className="border border-[color:var(--color-border)] rounded-[color:var(--radius-card)] bg-white hover:border-[color:var(--color-brand-500)] focus-within:border-[color:var(--color-brand-500)] transition-colors">
+    <li className="group relative flex items-center gap-2 pr-2 transition-colors hover:bg-[color:var(--color-canvas)]/70 focus-within:bg-[color:var(--color-canvas)]/70">
+      {/* The link is the whole row; the favourite button sits beside it, never inside. */}
       <Link
         to={`/alimento/${food.id}`}
-        className="block p-4 no-underline text-[color:var(--color-ink)]"
+        className="flex-1 min-w-0 flex items-center gap-4 p-3 sm:p-4 no-underline text-[color:var(--color-ink)] hover:text-[color:var(--color-ink)]"
       >
-        <div className="flex items-start justify-between gap-3">
-          <div className="flex items-start gap-3 min-w-0">
-            {food.thumb_url ? (
-              <img
-                src={food.thumb_url}
-                alt=""
-                loading="lazy"
-                onError={(e) => {
-                  (e.currentTarget as HTMLImageElement).style.display = "none";
-                }}
-                className="w-14 h-14 object-cover rounded-md border border-[color:var(--color-border)] bg-white shrink-0"
-              />
+        <Thumb url={food.thumb_url} name={food.name_it} />
+
+        <div className="min-w-0 flex-1">
+          <h3 className="font-medium leading-snug line-clamp-2 sm:truncate">{food.name_it}</h3>
+          <p className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-[color:var(--color-ink-muted)]">
+            <SourceBadge code={food.source.code} license={food.source.license} compact />
+            {food.category ? <span className="truncate max-w-[24ch]">{food.category}</span> : null}
+            {isCooked ? (
+              <span className="rounded-md bg-[color:var(--color-carb-50)] px-1.5 py-0.5 font-medium text-[color:var(--color-carb-700)]">
+                {t("search.stateCotto")}
+              </span>
             ) : null}
-            <div className="min-w-0">
-              <h3 className="font-semibold truncate">{food.name_it}</h3>
-              {food.category ? (
-                <p className="text-xs text-[color:var(--color-ink-muted)] mt-0.5">{food.category}</p>
-              ) : null}
-            </div>
-          </div>
-          <div className="flex items-center gap-1">
-            <FavoriteToggle foodId={food.id} className="text-lg leading-none px-1" />
-            <SourceBadge
-              code={food.source.code}
-              license={food.source.license}
-              licenseUrl={food.source.license_url}
-            />
-          </div>
+            <span className="tabular hidden sm:inline">{fmtKcal(food.kcal)}</span>
+          </p>
         </div>
 
-        <dl className="mt-3 grid grid-cols-4 gap-2 text-sm">
-          <Kv label={t("detail.carb")} value={fmtG(food.carb_g)} emphasise />
-          <Kv label={t("detail.kcal")} value={fmtKcal(food.kcal)} />
-          <Kv label={t("detail.fiber")} value={fmtG(food.fiber_g)} />
-          {isCooked ? <Kv label={t("detail.stateLabel")} value={t("search.stateCotto")} /> : null}
-        </dl>
+        <div className="shrink-0 text-right">
+          <p className="tabular text-lg sm:text-xl font-semibold tracking-[-0.02em]">{fmtG(food.carb_g)}</p>
+          <p className="text-[11px] text-[color:var(--color-ink-faint)]">
+            {t("detail.carb").toLowerCase()} · 100 g
+          </p>
+        </div>
       </Link>
+      <FavoriteToggle foodId={food.id} />
     </li>
   );
 }
 
-function Kv({
-  label,
-  value,
-  emphasise = false,
-}: {
-  label: string;
-  value: string;
-  emphasise?: boolean;
-}) {
+function Thumb({ url, name }: { url?: string | null; name: string }) {
+  const initial = name.replace(/^[^\p{L}]+/u, "").slice(0, 1).toUpperCase() || "·";
   return (
-    <div>
-      <dt className="text-[10px] uppercase tracking-wide text-[color:var(--color-ink-muted)]">
-        {label}
-      </dt>
-      <dd className={emphasise ? "font-semibold" : ""}>{value}</dd>
-    </div>
+    <span className="relative grid place-items-center w-14 h-14 shrink-0 overflow-hidden rounded-2xl bg-[color:var(--color-surface-sunken)] text-lg font-semibold text-[color:var(--color-ink-faint)]">
+      <span aria-hidden="true">{initial}</span>
+      {url ? (
+        <img
+          src={url}
+          alt=""
+          loading="lazy"
+          onError={(e) => {
+            (e.currentTarget as HTMLImageElement).style.display = "none";
+          }}
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+      ) : null}
+    </span>
   );
 }

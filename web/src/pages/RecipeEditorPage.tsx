@@ -9,9 +9,9 @@ export default function RecipeEditorPage() {
   const userId = useCurrentUserId();
   if (userId == null) return null; // RequireAuth gate will redirect
   return (
-    <main className="space-y-4">
-      <h1 className="text-2xl font-bold">{clientId ? t("recipes.edit") : t("recipes.new")}</h1>
+    <section className="space-y-4">
+      <h1 className="text-2xl md:text-3xl font-semibold tracking-[-0.03em]">{clientId ? t("recipes.edit") : t("recipes.new")}</h1>
       <RecipeEditor clientId={clientId} userId={userId} />
-    </main>
+    </section>
   );
 }

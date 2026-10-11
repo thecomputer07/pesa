@@ -28,12 +28,12 @@ export default function MyFoodsPage() {
   }, [data, q]);
 
   return (
-    <main className="space-y-4">
+    <section className="space-y-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">I miei alimenti</h1>
+        <h1 className="text-2xl md:text-3xl font-semibold tracking-[-0.03em]">I miei alimenti</h1>
         <Link
           to="/alimento/nuovo"
-          className="text-sm px-3 py-1.5 border border-[color:var(--color-border)] rounded-md hover:bg-[color:var(--color-brand-50)] no-underline"
+          className="text-sm px-3 py-1.5 border border-[color:var(--color-border)] rounded-xl hover:bg-[color:var(--color-brand-50)] no-underline"
         >
           + Nuovo
         </Link>
@@ -44,7 +44,7 @@ export default function MyFoodsPage() {
       ) : error ? (
         <p role="alert" className="text-sm text-red-700">Errore nel caricamento.</p>
       ) : !data || data.results.length === 0 ? (
-        <div className="rounded-md border border-dashed border-[color:var(--color-border)] p-6 text-center text-sm text-[color:var(--color-ink-muted)]">
+        <div className="rounded-xl border border-dashed border-[color:var(--color-border)] p-6 text-center text-sm text-[color:var(--color-ink-muted)]">
           <p className="mb-2">Non hai ancora aggiunto alimenti personali.</p>
           <Link to="/alimento/nuovo" className="underline">
             Aggiungine uno
@@ -58,7 +58,7 @@ export default function MyFoodsPage() {
             onChange={(e) => setQ(e.target.value)}
             placeholder="Cerca tra i tuoi alimenti…"
             aria-label="Cerca alimenti personali"
-            className="w-full border border-[color:var(--color-border)] rounded-md px-3 py-2 text-sm"
+            className="w-full border border-[color:var(--color-border)] rounded-xl px-3 py-2 text-sm"
           />
           {filtered.length === 0 ? (
             <p className="text-sm text-[color:var(--color-ink-muted)] py-4 text-center">
@@ -77,7 +77,7 @@ export default function MyFoodsPage() {
               <div className="border-t border-[color:var(--color-border)] px-3 py-2 flex justify-end">
                 <Link
                   to={`/alimento/${food.id}/modifica`}
-                  className="text-xs px-3 py-1.5 border border-[color:var(--color-border)] rounded-md hover:bg-[color:var(--color-brand-50)] no-underline"
+                  className="text-xs px-3 py-1.5 border border-[color:var(--color-border)] rounded-xl hover:bg-[color:var(--color-brand-50)] no-underline"
                   aria-label={`Modifica ${food.name_it}`}
                 >
                   Modifica
@@ -88,6 +88,6 @@ export default function MyFoodsPage() {
           </ul>
         </>
       )}
-    </main>
+    </section>
   );
 }

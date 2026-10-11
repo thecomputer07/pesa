@@ -41,8 +41,8 @@ export default function ConfirmDialog({
 
   const confirmClass =
     variant === "danger"
-      ? "px-4 py-2 bg-red-600 text-white rounded-md font-medium"
-      : "px-4 py-2 bg-[color:var(--color-brand-600)] text-white rounded-md font-medium";
+      ? "px-4 py-2 bg-red-600 text-white rounded-xl font-medium"
+      : "px-4 py-2 bg-[color:var(--color-brand-600)] text-white rounded-xl font-medium";
 
   return (
     <div
@@ -65,7 +65,7 @@ export default function ConfirmDialog({
           <button
             type="button"
             onClick={onCancel}
-            className="px-4 py-2 border border-[color:var(--color-border)] rounded-md"
+            className="px-4 py-2 border border-[color:var(--color-border)] rounded-xl"
           >
             {cancelLabel}
           </button>

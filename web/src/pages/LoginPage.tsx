@@ -39,8 +39,8 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="max-w-md mx-auto space-y-4" aria-labelledby="login-title">
-      <h1 id="login-title" className="text-2xl font-bold">
+    <section className="max-w-md mx-auto space-y-5 surface p-6 sm:p-8 mt-2 md:mt-6" aria-labelledby="login-title">
+      <h1 id="login-title" className="text-2xl md:text-3xl font-semibold tracking-[-0.03em]">
         {t("auth.login.title")}
       </h1>
       <form onSubmit={onSubmit} className="space-y-3" noValidate>
@@ -52,7 +52,7 @@ export default function LoginPage() {
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="mt-1 w-full border border-[color:var(--color-border)] rounded-md px-2 py-1.5"
+            className="mt-1 w-full border border-[color:var(--color-border)] bg-white px-3.5 py-2.5"
           />
         </label>
         <label className="block">
@@ -63,7 +63,7 @@ export default function LoginPage() {
             required
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="mt-1 w-full border border-[color:var(--color-border)] rounded-md px-2 py-1.5"
+            className="mt-1 w-full border border-[color:var(--color-border)] bg-white px-3.5 py-2.5"
           />
         </label>
         {error ? (
@@ -74,7 +74,7 @@ export default function LoginPage() {
         <button
           type="submit"
           disabled={submitting}
-          className="px-3 py-1.5 text-sm bg-[color:var(--color-brand-600)] text-white rounded-md disabled:opacity-60"
+          className="btn-primary text-sm disabled:opacity-60"
         >
           {t("auth.login.submit")}
         </button>
@@ -90,6 +90,6 @@ export default function LoginPage() {
           {t("auth.login.forgotPassword")}
         </Link>
       </p>
-    </main>
+    </section>
   );
 }

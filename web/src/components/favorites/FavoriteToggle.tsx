@@ -1,4 +1,5 @@
 import { useTranslation } from "react-i18next";
+import Icon from "../ui/Icon";
 import { toggleFavorite, useIsFavorited } from "../../lib/favorites/favorites";
 import { flushOutbox } from "../../lib/sync/worker";
 import { useCurrentUserId } from "../../lib/auth/useCurrentUserId";
@@ -28,12 +29,15 @@ export default function FavoriteToggle({ foodId, userId, className }: FavoriteTo
       aria-pressed={isFav === true}
       aria-label={isFav ? t("favorites.remove") : t("favorites.add")}
       onClick={onClick}
-      className={
-        className ??
-        "text-xl leading-none px-2 py-1 rounded hover:bg-[color:var(--color-surface-hover)]"
-      }
+      className={[
+        "grid place-items-center w-10 h-10 !min-h-10 rounded-full transition-colors",
+        isFav
+          ? "text-rose-500 hover:bg-rose-50"
+          : "text-[color:var(--color-ink-faint)] hover:text-rose-500 hover:bg-black/[0.04]",
+        className ?? "",
+      ].join(" ")}
     >
-      {isFav ? "★" : "☆"}
+      <Icon name="heart" size={20} fill={isFav ? "currentColor" : "none"} />
     </button>
   );
 }

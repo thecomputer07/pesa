@@ -61,7 +61,7 @@ export default function ExportPanel() {
         type="button"
         onClick={onRequest}
         disabled={loading || pending}
-        className="px-3 py-2 rounded-md bg-[color:var(--color-brand-600)] text-white text-sm disabled:opacity-50"
+        className="px-3 py-2 rounded-xl bg-[color:var(--color-brand-600)] text-white text-sm disabled:opacity-50"
       >
         {t("privacy.export.requestCta")}
       </button>
@@ -76,7 +76,7 @@ export default function ExportPanel() {
           href={job.download_url}
           target="_blank"
           rel="noreferrer"
-          className="inline-block px-3 py-2 rounded-md border text-sm"
+          className="inline-block px-3 py-2 rounded-xl border text-sm"
           data-testid="download-export"
         >
           {t("privacy.export.downloadCta")}

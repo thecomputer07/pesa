@@ -29,7 +29,7 @@ export default function PermissionPrompt({
           <button
             type="button"
             onClick={onRequest}
-            className="mt-3 rounded-md bg-[color:var(--color-brand-600)] px-4 py-2 text-white"
+            className="mt-3 rounded-xl bg-[color:var(--color-brand-600)] px-4 py-2 text-white"
           >
             {t("scanner.promptCta")}
           </button>
@@ -42,7 +42,7 @@ export default function PermissionPrompt({
           <button
             type="button"
             onClick={onReset}
-            className="mt-3 rounded-md border border-[color:var(--color-border)] px-4 py-2"
+            className="mt-3 rounded-xl border border-[color:var(--color-border)] px-4 py-2"
           >
             {t("scanner.retry")}
           </button>

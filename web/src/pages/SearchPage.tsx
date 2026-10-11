@@ -2,6 +2,7 @@ import { useEffect, useState, useTransition } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
+import Icon from "../components/ui/Icon";
 import SearchBox from "../components/SearchBox";
 import ResultList from "../components/ResultList";
 import { searchFoods, type FoodSearchResult, type SearchSource } from "../lib/api";
@@ -123,15 +124,12 @@ export default function SearchPage() {
   const showAddCTA = user && canSearch && !isLoading && results.length === 0 && !isError;
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between gap-3">
-        <h1 className="text-2xl font-bold">{t("nav.search")}</h1>
+    <div className="mx-auto max-w-3xl space-y-5 rise">
+      <div className="flex items-end justify-between gap-3">
+        <h1 className="text-3xl md:text-4xl font-semibold tracking-[-0.03em]">{t("nav.search")}</h1>
         {user ? (
-          <Link
-            to="/alimento/nuovo"
-            className="text-sm px-3 py-1.5 border border-[color:var(--color-border)] rounded-md hover:bg-[color:var(--color-brand-50)] no-underline"
-          >
-            + Aggiungi alimento
+          <Link to="/alimento/nuovo" className="btn-quiet !py-2 text-sm">
+            <Icon name="plus" size={16} /> Aggiungi alimento
           </Link>
         ) : null}
       </div>
@@ -142,8 +140,12 @@ export default function SearchPage() {
         autoFocus
       />
 
-      <div role="radiogroup" aria-label={t("search.filterLabel")} className="flex flex-wrap items-center gap-2 text-sm">
-        <span className="opacity-70">{t("search.filterLabel")}:</span>
+      <div
+        role="radiogroup"
+        aria-label={t("search.filterLabel")}
+        className="-mx-4 px-4 flex items-center gap-2 overflow-x-auto pb-1 [scrollbar-width:none]"
+      >
+        <span className="shrink-0 text-sm text-[color:var(--color-ink-faint)] mr-1">{t("search.filterLabel")}</span>
         {(
           [
             ["", t("search.filterAll")],
@@ -159,12 +161,7 @@ export default function SearchPage() {
             role="radio"
             aria-checked={source === value}
             onClick={() => chooseSource(value)}
-            className={[
-              "px-3 py-1 rounded-full border",
-              source === value
-                ? "bg-[color:var(--color-brand-600)] text-white border-[color:var(--color-brand-600)]"
-                : "bg-white border-[color:var(--color-border)]",
-            ].join(" ")}
+            className="chip shrink-0 !min-h-9"
           >
             {label}
           </button>
@@ -172,7 +169,7 @@ export default function SearchPage() {
       </div>
 
       {!canSearch ? (
-        <p className="text-sm opacity-70">{t("search.minChars", { n: 2 })}</p>
+        <p className="text-sm text-[color:var(--color-ink-faint)]">{t("search.minChars", { n: 2 })}</p>
       ) : (
         <>
           <ResultList
@@ -182,7 +179,7 @@ export default function SearchPage() {
             offline={isError && (fallback?.length ?? 0) > 0}
           />
           {showAddCTA ? (
-            <p className="text-sm text-center mt-4">
+            <p className="text-sm text-center mt-6 text-[color:var(--color-ink-muted)]">
               Non trovi quello che cerchi?{" "}
               <Link to="/alimento/nuovo" className="underline">
                 Aggiungi un tuo alimento

@@ -27,8 +27,8 @@ export default function PasswordResetRequestPage() {
   }
 
   return (
-    <main className="max-w-md mx-auto space-y-4" aria-labelledby="pwreset-title">
-      <h1 id="pwreset-title" className="text-2xl font-bold">
+    <section className="max-w-md mx-auto space-y-5 surface p-6 sm:p-8 mt-2 md:mt-6" aria-labelledby="pwreset-title">
+      <h1 id="pwreset-title" className="text-2xl md:text-3xl font-semibold tracking-[-0.03em]">
         {t("auth.passwordReset.requestTitle")}
       </h1>
       {done ? (
@@ -45,13 +45,13 @@ export default function PasswordResetRequestPage() {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="mt-1 w-full border border-[color:var(--color-border)] rounded-md px-2 py-1.5"
+              className="mt-1 w-full border border-[color:var(--color-border)] bg-white px-3.5 py-2.5"
             />
           </label>
           <button
             type="submit"
             disabled={submitting}
-            className="px-3 py-1.5 text-sm bg-[color:var(--color-brand-600)] text-white rounded-md disabled:opacity-60"
+            className="btn-primary text-sm disabled:opacity-60"
           >
             {t("auth.passwordReset.requestSubmit")}
           </button>
@@ -62,6 +62,6 @@ export default function PasswordResetRequestPage() {
           {t("auth.register.hasAccount")}
         </Link>
       </p>
-    </main>
+    </section>
   );
 }

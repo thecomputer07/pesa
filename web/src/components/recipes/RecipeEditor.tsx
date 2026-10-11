@@ -229,7 +229,7 @@ export default function RecipeEditor({ clientId, userId }: RecipeEditorProps) {
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="es. Pasta al pomodoro della nonna"
-          className="w-full border border-[color:var(--color-border)] rounded-md px-3 py-2 text-base"
+          className="w-full border border-[color:var(--color-border)] rounded-xl px-3 py-2 text-base"
         />
       </label>
 
@@ -246,7 +246,7 @@ export default function RecipeEditor({ clientId, userId }: RecipeEditorProps) {
             Nessun ingrediente. Cerca un alimento qui sotto per aggiungerlo.
           </p>
         ) : (
-          <ul className="divide-y divide-[color:var(--color-border)] border border-[color:var(--color-border)] rounded-md bg-white">
+          <ul className="divide-y divide-[color:var(--color-border)] border border-[color:var(--color-border)] rounded-xl bg-white">
             {items.map((i) => (
               <li key={i.clientId} className="p-2 flex items-center gap-2">
                 <span className="flex-1 min-w-0 truncate text-sm" title={i.name}>
@@ -262,7 +262,7 @@ export default function RecipeEditor({ clientId, userId }: RecipeEditorProps) {
                     const n = Number(v);
                     if (Number.isFinite(n) && n > 0) updateItemGrams(i.clientId, n);
                   }}
-                  className="w-20 shrink-0 border border-[color:var(--color-border)] rounded-md px-2 py-1 text-sm text-right tabular-nums"
+                  className="w-20 shrink-0 border border-[color:var(--color-border)] rounded-xl px-2 py-1 text-sm text-right tabular-nums"
                 />
                 <span className="shrink-0 text-xs text-[color:var(--color-ink-muted)]">g</span>
                 <button
@@ -279,7 +279,7 @@ export default function RecipeEditor({ clientId, userId }: RecipeEditorProps) {
         )}
 
         {pending ? (
-          <div className="flex items-center gap-2 p-2 border border-[color:var(--color-brand-500)] rounded-md bg-[color:var(--color-brand-50)]">
+          <div className="flex items-center gap-2 p-2 border border-[color:var(--color-brand-500)] rounded-xl bg-[color:var(--color-brand-50)]">
             <span className="flex-1 min-w-0 truncate text-sm" title={pending.food.name_it}>
               {pending.food.name_it}
             </span>
@@ -294,7 +294,7 @@ export default function RecipeEditor({ clientId, userId }: RecipeEditorProps) {
             <button
               type="button"
               onClick={confirmPending}
-              className="shrink-0 px-3 py-1.5 text-sm bg-[color:var(--color-brand-600)] text-white rounded-md"
+              className="shrink-0 btn-primary text-sm"
             >
               Aggiungi
             </button>
@@ -327,7 +327,7 @@ export default function RecipeEditor({ clientId, userId }: RecipeEditorProps) {
                 const n = Number(v);
                 setScaleTarget(v === "" ? null : Number.isFinite(n) ? n : scaleTarget);
               }}
-              className="w-24 border border-[color:var(--color-border)] rounded-md px-2 py-1 text-sm text-right tabular-nums"
+              className="w-24 border border-[color:var(--color-border)] rounded-xl px-2 py-1 text-sm text-right tabular-nums"
             />
             <span className="text-[color:var(--color-ink-muted)]">g</span>
             <button
@@ -339,7 +339,7 @@ export default function RecipeEditor({ clientId, userId }: RecipeEditorProps) {
                 }
               }}
               disabled={!scaleTarget || scaleTarget <= 0}
-              className="px-2 py-1 text-xs border border-[color:var(--color-border)] rounded-md disabled:opacity-50"
+              className="px-2 py-1 text-xs border border-[color:var(--color-border)] rounded-xl disabled:opacity-50"
             >
               Applica
             </button>
@@ -351,7 +351,7 @@ export default function RecipeEditor({ clientId, userId }: RecipeEditorProps) {
       ) : null}
 
       {items.length > 0 ? (
-        <section className="space-y-1 rounded-md border border-[color:var(--color-border)] bg-white p-3">
+        <section className="space-y-1 rounded-xl border border-[color:var(--color-border)] bg-white p-3">
           <h2 className="text-base font-semibold">Valori per 100 g della ricetta</h2>
           <dl className="grid grid-cols-4 gap-2 text-sm mt-2">
             <Kv label="Carb" value={`${fmt(aggregate.per100g.carb_g)} g`} emphasise />
@@ -367,7 +367,7 @@ export default function RecipeEditor({ clientId, userId }: RecipeEditorProps) {
           <button
             type="button"
             onClick={() => setConfirmDelete(true)}
-            className="px-3 py-2 text-sm text-red-700 border border-red-200 rounded-md"
+            className="px-3 py-2 text-sm text-red-700 border border-red-200 rounded-xl"
           >
             Elimina
           </button>
@@ -377,7 +377,7 @@ export default function RecipeEditor({ clientId, userId }: RecipeEditorProps) {
         <button
           type="submit"
           disabled={!name.trim() || items.length === 0}
-          className="px-4 py-2 bg-[color:var(--color-brand-600)] text-white rounded-md font-medium disabled:opacity-50"
+          className="px-4 py-2 bg-[color:var(--color-brand-600)] text-white rounded-xl font-medium disabled:opacity-50"
         >
           Salva ricetta
         </button>

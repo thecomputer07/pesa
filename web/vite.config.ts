@@ -80,11 +80,14 @@ export default defineConfig({
     // fallback localhost per dev nativo (senza container).
     proxy: (() => {
       const target = process.env.VITE_API_PROXY_TARGET || "http://localhost:8080";
+      // changeOrigin: lets the target be a real vhost (e.g. https://pesadia.com).
+      const p = { target, changeOrigin: true };
       return {
-        "/api": target,
-        "/healthz": target,
-        "/readyz": target,
-        "/verify-email": target,
+        "/api": p,
+        "/healthz": p,
+        "/readyz": p,
+        "/verify-email": p,
+        "/static": p,
       };
     })(),
   },

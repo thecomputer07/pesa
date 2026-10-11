@@ -58,13 +58,13 @@ export default function SourcesDataPage() {
 
   return (
     <section>
-      <h1 className="mb-3 text-2xl font-semibold">{t("sources.dataPage.title")}</h1>
+      <h1 className="mb-3 text-3xl md:text-4xl font-semibold tracking-[-0.03em]">{t("sources.dataPage.title")}</h1>
       <p className="mb-6 text-sm opacity-80">{t("sources.dataPage.intro")}</p>
 
       {rows.map((s) => (
         <section
           key={s.code}
-          className="mb-6 rounded-lg border border-[color:var(--color-border)] p-4"
+          className="mb-4 surface p-5 sm:p-6"
         >
           <h2 className="text-lg font-semibold">{s.name}</h2>
           <dl className="mt-2 grid gap-1 text-sm">

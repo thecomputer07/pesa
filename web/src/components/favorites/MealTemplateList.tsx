@@ -28,7 +28,7 @@ export default function MealTemplateList({ userId, onPick }: MealTemplateListPro
         return (
           <li
             key={tpl.client_id}
-            className="border border-[color:var(--color-border)] rounded-md bg-white p-3"
+            className="border border-[color:var(--color-border)] rounded-xl bg-white p-3"
           >
             <div className="flex justify-between items-start gap-2">
               <div className="min-w-0">

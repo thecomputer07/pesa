@@ -40,7 +40,7 @@ export default function EmailChangePanel() {
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="mt-1 w-full border rounded-md px-2 py-1"
+            className="mt-1 w-full border rounded-xl px-2 py-1"
             required
           />
         </label>
@@ -51,14 +51,14 @@ export default function EmailChangePanel() {
             autoComplete="current-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="mt-1 w-full border rounded-md px-2 py-1"
+            className="mt-1 w-full border rounded-xl px-2 py-1"
             required
           />
         </label>
         <button
           type="submit"
           disabled={busy}
-          className="px-3 py-2 rounded-md bg-[color:var(--color-brand-600)] text-white text-sm disabled:opacity-50"
+          className="px-3 py-2 rounded-xl bg-[color:var(--color-brand-600)] text-white text-sm disabled:opacity-50"
         >
           {t("privacy.email.submitCta")}
         </button>

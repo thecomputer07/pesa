@@ -11,6 +11,8 @@ import AttributionFooter from "../components/AttributionFooter";
 import SourceBadge from "../components/SourceBadge";
 import FavoriteToggle from "../components/favorites/FavoriteToggle";
 import { useAuth } from "../lib/auth/AuthContext";
+import { useFormatGrams } from "../lib/format";
+import Icon from "../components/ui/Icon";
 
 function isValidCarb(v: string): boolean {
   const n = Number(v.replace(",", "."));
@@ -94,19 +96,20 @@ export default function FoodDetailPage() {
   const primaryImage = food.images?.[0];
 
   return (
-    <article className="space-y-6">
+    <article className="mx-auto max-w-5xl space-y-6 md:space-y-8">
       <nav aria-label="breadcrumb">
         <button
           type="button"
           onClick={() => navigate(-1)}
-          className="text-sm underline bg-transparent border-0 p-0 cursor-pointer"
+          className="inline-flex items-center gap-1.5 -ml-2 px-2 !min-h-9 rounded-full text-sm font-medium text-[color:var(--color-ink-muted)] hover:text-[color:var(--color-ink)] hover:bg-black/[0.04]"
         >
-          ← {t("detail.back")}
+          <Icon name="back" size={16} /> {t("detail.back")}
         </button>
       </nav>
 
-      <header className="flex items-start justify-between gap-3">
-        <div className="flex items-start gap-4">
+      <header className="flex items-start gap-4 sm:gap-6 rise">
+        <span className="relative grid place-items-center w-20 h-20 sm:w-28 sm:h-28 shrink-0 overflow-hidden rounded-3xl bg-[color:var(--color-surface-sunken)] text-3xl font-semibold text-[color:var(--color-ink-faint)] shadow-[0_0_0_1px_rgb(22_24_40/0.06)]">
+          <span aria-hidden="true">{food.name_it.slice(0, 1).toUpperCase()}</span>
           {primaryImage ? (
             <img
               src={primaryImage.url}
@@ -115,28 +118,26 @@ export default function FoodDetailPage() {
               onError={(e) => {
                 (e.currentTarget as HTMLImageElement).style.display = "none";
               }}
-              className="w-24 h-24 md:w-32 md:h-32 object-cover rounded-md border border-[color:var(--color-border)] bg-white"
+              className="absolute inset-0 w-full h-full object-cover"
             />
           ) : null}
-          <div>
-            <h1 className="text-2xl md:text-3xl font-bold">{food.name_it}</h1>
-            {food.category ? (
-              <p className="text-sm text-[color:var(--color-ink-muted)] mt-1">{food.category}</p>
-            ) : null}
+        </span>
+        <div className="min-w-0 flex-1 pt-1">
+          <h1 className="text-2xl sm:text-4xl font-semibold tracking-[-0.03em] leading-tight">{food.name_it}</h1>
+          <div className="mt-3 flex flex-wrap items-center gap-2 text-sm text-[color:var(--color-ink-muted)]">
+            <SourceBadge
+              code={attrCode(food.attribution)}
+              license={food.license}
+              licenseUrl={food.license_url}
+            />
+            {food.category ? <span>{food.category}</span> : null}
           </div>
         </div>
-        <div className="flex items-center gap-2">
-          {!offEan ? <FavoriteToggle foodId={id} /> : null}
-          <SourceBadge
-            code={attrCode(food.attribution)}
-            license={food.license}
-            licenseUrl={food.license_url}
-          />
-        </div>
+        {!offEan ? <FavoriteToggle foodId={id} /> : null}
       </header>
 
       {offEan && user ? (
-        <section className="rounded-md border border-[color:var(--color-border)] bg-[color:var(--color-brand-50)] p-3 text-sm">
+        <section className="surface p-5 text-sm">
           <p className="mb-2">
             Prodotto letto da Open Food Facts via codice a barre{" "}
             <span className="font-mono text-xs">{offEan}</span>. Per aggiungerlo ai tuoi pasti
@@ -156,7 +157,7 @@ export default function FoodDetailPage() {
                 step="0.1"
                 value={labelCarb}
                 onChange={(e) => setLabelCarb(e.target.value)}
-                className="mt-1 w-28 px-2 py-1 border border-[color:var(--color-border)] rounded-md"
+                className="mt-1 w-28 px-3 py-2 border border-[color:var(--color-border)] bg-white"
               />
             </label>
           ) : null}
@@ -206,7 +207,7 @@ export default function FoodDetailPage() {
                     setSaving(false);
                   }
                 }}
-                className="px-3 py-1.5 bg-[color:var(--color-brand-600)] text-white rounded-md"
+                className="btn-primary"
               >
                 {saving ? "Salvataggio…" : "Salva nei miei alimenti"}
               </button>
@@ -220,31 +221,75 @@ export default function FoodDetailPage() {
         </section>
       ) : null}
 
-      <section className="flex flex-wrap items-end gap-6">
-        <WeightInput value={grams} onChange={setGrams} autoFocus />
-        {/* Toggle only when a raw/cooked pair exists (see migration 00026). */}
-        {availableStates.length > 1 ? (
-          <StateToggle
-            value={currentState}
-            onChange={(next) => {
-              const targetId = siblingByState[next];
-              if (targetId && targetId !== id) navigate(`/alimento/${targetId}`);
-            }}
-            availableStates={availableStates}
+      <section className="grid gap-4 lg:grid-cols-[1fr_1.1fr] rise rise-2">
+        <div className="surface p-5 sm:p-6 flex flex-col gap-7">
+          <WeightInput value={grams} onChange={setGrams} autoFocus presets={[50, 80, 100, 150, 200]} />
+          {/* Toggle only when a raw/cooked pair exists (see migration 00026). */}
+          {availableStates.length > 1 ? (
+            <StateToggle
+              value={currentState}
+              onChange={(next) => {
+                const targetId = siblingByState[next];
+                if (targetId && targetId !== id) navigate(`/alimento/${targetId}`);
+              }}
+              availableStates={availableStates}
+            />
+          ) : null}
+        </div>
+
+        {computed ? (
+          <CarbDisplay
+            grams={grams ?? 0}
+            carb={computed.portion.values.carb_g}
+            carbPer100={computed.per100.values.carb_g}
           />
         ) : null}
       </section>
 
       {computed ? (
-        <NutrientPanel
-          grams={grams ?? 0}
-          portion={computed.portion}
-          per100={computed.per100}
-        />
+        <div className="rise rise-3">
+          <NutrientPanel grams={grams ?? 0} portion={computed.portion} per100={computed.per100} />
+        </div>
       ) : null}
 
       <AttributionFooter food={food} lang={i18n.language} />
     </article>
+  );
+}
+
+/** The answer, read out like the display of a kitchen scale. */
+function CarbDisplay({ grams, carb, carbPer100 }: { grams: number; carb?: number; carbPer100?: number }) {
+  const { t, i18n } = useTranslation();
+  const fmtG = useFormatGrams();
+  const value =
+    carb == null || !Number.isFinite(carb)
+      ? "—"
+      : new Intl.NumberFormat(i18n.language.startsWith("en") ? "en-GB" : "it-IT", { maximumFractionDigits: 1 }).format(carb);
+  const share = carbPer100 != null && Number.isFinite(carbPer100) ? Math.min(100, Math.max(0, carbPer100)) : 0;
+
+  return (
+    <div className="relative overflow-hidden rounded-[var(--radius-card)] bg-[color:var(--color-ink)] p-6 sm:p-8 text-white shadow-[0_30px_60px_-30px_rgb(20_30_80/0.55)] flex flex-col justify-between min-h-[16rem]">
+      <div aria-hidden="true" className="absolute inset-0 bg-[radial-gradient(120%_80%_at_100%_0%,rgb(49_87_224/0.45),transparent_60%)]" />
+      <p className="relative text-xs font-medium tracking-wide text-white/55">{t("detail.carb")}</p>
+      <div className="relative">
+        <p className="flex items-baseline gap-2">
+          <span className="tabular text-[4.25rem] sm:text-[5.5rem] leading-none font-semibold tracking-[-0.05em] text-[color:var(--color-carb-100)]">
+            {value}
+          </span>
+          <span className="text-2xl font-medium text-[color:var(--color-carb-100)]/80">g</span>
+        </p>
+        <p className="mt-2 text-white/70 tabular">{t("detail.resultFor", { grams: new Intl.NumberFormat(i18n.language).format(grams) })}</p>
+        <div className="mt-7 h-2 rounded-full bg-white/10 overflow-hidden" aria-hidden="true">
+          <div
+            className="h-full rounded-full bg-gradient-to-r from-[color:var(--color-carb-500)] to-[color:var(--color-carb-100)] transition-[width] duration-500"
+            style={{ width: `${share}%` }}
+          />
+        </div>
+        <p className="mt-3 text-xs text-white/50 tabular">
+          {fmtG(carbPer100)} / {t("detail.per100Col")}
+        </p>
+      </div>
+    </div>
   );
 }
 

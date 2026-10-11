@@ -11,8 +11,8 @@ export interface StateToggleProps {
 }
 
 /**
- * Required toggle between raw/cooked. When only one state is available,
- * the other button is disabled but still visible to keep context.
+ * Segmented raw/cooked switch. When only one state is available, the other
+ * option is disabled but still visible to keep context.
  */
 export default function StateToggle({
   value,
@@ -35,12 +35,11 @@ export default function StateToggle({
         disabled={disabled || !available}
         onClick={() => available && onChange(state)}
         className={[
-          "px-3 py-2 text-sm font-medium border",
+          "flex-1 px-4 !min-h-10 rounded-xl text-sm font-semibold",
           active
-            ? "bg-[color:var(--color-brand-600)] text-white border-[color:var(--color-brand-600)]"
-            : "bg-white text-[color:var(--color-ink)] border-[color:var(--color-border)]",
-          !available ? "opacity-50 cursor-not-allowed" : "",
-          state === "crudo" ? "rounded-l-md" : "rounded-r-md",
+            ? "bg-white text-[color:var(--color-ink)] shadow-[0_0_0_1px_rgb(22_24_40/0.06),var(--shadow-soft)]"
+            : "text-[color:var(--color-ink-muted)] hover:text-[color:var(--color-ink)]",
+          !available ? "opacity-40" : "",
         ].join(" ")}
       >
         {state === "crudo" ? t("detail.stateCrudo") : t("detail.stateCotto")}
@@ -49,11 +48,15 @@ export default function StateToggle({
   };
 
   return (
-    <div className="flex flex-col gap-1">
-      <span id={`${groupId}-label`} className="text-sm font-medium">
+    <div className="flex flex-col gap-3">
+      <span id={`${groupId}-label`} className="eyebrow">
         {t("detail.stateLabel")}
       </span>
-      <div role="radiogroup" aria-labelledby={`${groupId}-label`} className="inline-flex">
+      <div
+        role="radiogroup"
+        aria-labelledby={`${groupId}-label`}
+        className="flex gap-1 rounded-2xl bg-[color:var(--color-surface-sunken)] p-1"
+      >
         {btn("crudo")}
         {btn("cotto")}
       </div>

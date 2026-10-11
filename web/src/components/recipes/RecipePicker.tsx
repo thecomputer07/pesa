@@ -68,9 +68,9 @@ export default function RecipePicker({ onPick }: RecipePickerProps) {
         value={q}
         onChange={(e) => setQ(e.target.value)}
         placeholder="Cerca tra le tue ricette…"
-        className="w-full border border-[color:var(--color-border)] rounded-md px-2 py-1.5 text-sm"
+        className="w-full border border-[color:var(--color-border)] bg-white px-3.5 py-2.5 text-sm"
       />
-      <ul className="max-h-48 overflow-y-auto rounded-md border border-[color:var(--color-border)] bg-white">
+      <ul className="max-h-48 overflow-y-auto rounded-xl border border-[color:var(--color-border)] bg-white">
         {filtered.length === 0 ? (
           <li className="px-3 py-2 text-sm text-[color:var(--color-ink-muted)]">
             Nessun risultato.

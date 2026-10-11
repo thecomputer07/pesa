@@ -11,18 +11,18 @@ export default function MealTemplatesPage() {
   if (userId == null) return null;
 
   return (
-    <main className="space-y-4">
+    <section className="space-y-4">
       <header className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold">{t("templates.title")}</h1>
+        <h1 className="text-2xl md:text-3xl font-semibold tracking-[-0.03em]">{t("templates.title")}</h1>
         <button
           type="button"
           onClick={() => setShowBuilder((v) => !v)}
-          className="px-3 py-1.5 text-sm bg-[color:var(--color-brand-600)] text-white rounded-md"
+          className="btn-primary text-sm"
         >
           {showBuilder ? t("common.cancel") : `+ ${t("templates.new")}`}
         </button>
       </header>
       {showBuilder ? <MealTemplateBuilder userId={userId} /> : <MealTemplateList userId={userId} />}
-    </main>
+    </section>
   );
 }

@@ -31,7 +31,7 @@ export default function WeekStrip({ isoDate }: WeekStripProps) {
             type="button"
             aria-current={active ? "date" : undefined}
             onClick={() => navigate(`/diario/${iso}`)}
-            className={`min-w-[3.5rem] px-2 py-1.5 rounded-md text-xs border ${
+            className={`min-w-[3.5rem] px-2 py-1.5 rounded-xl text-xs border ${
               active
                 ? "bg-[color:var(--color-brand-600)] text-white border-transparent"
                 : "bg-white border-[color:var(--color-border)]"

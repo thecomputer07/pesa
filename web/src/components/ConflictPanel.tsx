@@ -32,7 +32,7 @@ export default function ConflictPanel({ candidates, selectedId, onPick }: Confli
             <div
               key={`${c.attribution}-${c.id}`}
               className={[
-                "bg-white rounded-md border p-3 flex flex-col gap-2",
+                "bg-white rounded-xl border p-3 flex flex-col gap-2",
                 selected ? "border-[color:var(--color-brand-600)]" : "border-[color:var(--color-border)]",
               ].join(" ")}
             >

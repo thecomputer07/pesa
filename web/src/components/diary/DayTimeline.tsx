@@ -45,7 +45,7 @@ export default function DayTimeline({ isoDate, onEdit, onSaveAsTemplate }: DayTi
               {section.map(({ meal, items }) => (
                 <li
                   key={meal.client_id}
-                  className="border border-[color:var(--color-border)] rounded-md bg-white"
+                  className="border border-[color:var(--color-border)] rounded-xl bg-white"
                 >
                   <button
                     type="button"

@@ -5,13 +5,16 @@ export interface SourceBadgeProps {
   license?: string;
   licenseUrl?: string;
   className?: string;
+  /** Hide the licence text (still in the accessible label and tooltip). */
+  compact?: boolean;
 }
 
-const STYLE_BY_CODE: Record<string, string> = {
-  CREA: "bg-emerald-50 text-emerald-800 border-emerald-200",
-  CIQUAL: "bg-indigo-50 text-indigo-800 border-indigo-200",
-  BDA: "bg-amber-50 text-amber-800 border-amber-200",
-  OFF: "bg-sky-50 text-sky-800 border-sky-200",
+// One quiet style per source: a coloured dot, never a loud pill.
+const DOT_BY_CODE: Record<string, string> = {
+  CREA: "bg-emerald-500",
+  CIQUAL: "bg-indigo-500",
+  BDA: "bg-amber-500",
+  OFF: "bg-sky-500",
 };
 
 /** Small pill identifying the origin dataset of a nutritional value. */
@@ -20,19 +23,22 @@ export default function SourceBadge({
   license,
   licenseUrl,
   className = "",
+  compact = false,
 }: SourceBadgeProps) {
   const { t } = useTranslation();
-  const style = STYLE_BY_CODE[code] ?? "bg-slate-50 text-slate-700 border-slate-200";
-  const label = `${t("a11y.sourceBadge")}: ${code}${license ? ` (${license})` : ""}`;
+  const shown = code === "off" || code === "OFF" ? "OFF" : code.toUpperCase();
+  const dot = DOT_BY_CODE[shown] ?? "bg-slate-400";
+  const label = `${t("a11y.sourceBadge")}: ${shown}${license ? ` (${license})` : ""}`;
 
   const inner = (
     <span
-      className={`inline-flex items-center gap-1 text-xs font-medium border rounded-full px-2 py-0.5 ${style} ${className}`}
+      className={`inline-flex items-center gap-1.5 text-[11px] font-semibold tracking-wide rounded-md px-1.5 py-0.5 bg-[color:var(--color-surface-sunken)] text-[color:var(--color-ink-muted)] ${className}`}
       aria-label={label}
       title={label}
     >
-      {code}
-      {license ? <span className="opacity-70 font-normal">· {license}</span> : null}
+      <span aria-hidden="true" className={`w-1.5 h-1.5 rounded-full ${dot}`} />
+      {shown}
+      {license && !compact ? <span className="font-normal opacity-80">· {license}</span> : null}
     </span>
   );
 

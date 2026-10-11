@@ -49,7 +49,7 @@ export default function DiaryPage() {
   }
 
   return (
-    <main className="space-y-3" aria-labelledby="diary-title">
+    <section className="space-y-3" aria-labelledby="diary-title">
       <h1 id="diary-title" className="sr-only">
         {t("diary.title")}
       </h1>
@@ -83,11 +83,11 @@ export default function DiaryPage() {
         <div
           role="status"
           aria-live="polite"
-          className="fixed bottom-24 left-1/2 -translate-x-1/2 bg-black text-white px-4 py-2 rounded-md text-sm"
+          className="fixed bottom-24 left-1/2 -translate-x-1/2 bg-black text-white px-4 py-2 rounded-xl text-sm"
         >
           {toastMsg}
         </div>
       ) : null}
-    </main>
+    </section>
   );
 }

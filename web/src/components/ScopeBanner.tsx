@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import Icon from "./ui/Icon";
 
 const STORAGE_KEY = "pesa.scope_banner_dismissed_v1";
 
@@ -33,16 +34,13 @@ export default function ScopeBanner() {
   };
 
   return (
-    <aside
-      role="note"
-      aria-labelledby="scope-banner-title"
-      className="bg-[color:var(--color-brand-50)] border-b border-[color:var(--color-brand-100)] text-[color:var(--color-brand-700)]"
-    >
-      <div className="max-w-5xl mx-auto px-4 py-2 flex items-start gap-3 text-sm">
-        <p id="scope-banner-title" className="flex-1">
-          <strong className="font-semibold">{t("scopeBanner.badge")}</strong>{" "}
-          <span className="text-[color:var(--color-ink)]">{t("scopeBanner.body")}</span>{" "}
-          <Link to="/scopo" className="whitespace-nowrap">
+    <aside role="note" aria-labelledby="scope-banner-title" className="max-w-6xl w-full mx-auto px-4 md:px-6 pt-4">
+      <div className="flex items-start gap-3 rounded-2xl bg-white/70 px-4 py-3 text-sm shadow-[0_0_0_1px_var(--color-border)] backdrop-blur">
+        <Icon name="info" size={18} className="mt-0.5 shrink-0 text-[color:var(--color-brand-600)]" />
+        <p id="scope-banner-title" className="flex-1 text-[color:var(--color-ink-muted)]">
+          <strong className="font-semibold text-[color:var(--color-ink)]">{t("scopeBanner.badge")}</strong>{" "}
+          {t("scopeBanner.body")}{" "}
+          <Link to="/scopo" className="whitespace-nowrap font-medium">
             {t("scopeBanner.learnMore")}
           </Link>
         </p>
@@ -50,9 +48,9 @@ export default function ScopeBanner() {
           type="button"
           onClick={onDismiss}
           aria-label={t("scopeBanner.dismissLabel")}
-          className="shrink-0 px-2 py-1 rounded hover:bg-white/60"
+          className="shrink-0 grid place-items-center w-8 !min-h-8 h-8 -mr-1 -mt-0.5 rounded-full text-[color:var(--color-ink-faint)] hover:text-[color:var(--color-ink)] hover:bg-black/[0.05]"
         >
-          ×
+          <Icon name="close" size={16} />
         </button>
       </div>
     </aside>

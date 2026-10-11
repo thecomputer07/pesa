@@ -46,13 +46,13 @@ export default function ManualEntry({ onSubmit, autoFocus }: ManualEntryProps) {
           autoFocus={autoFocus}
           value={value}
           onChange={(e) => setValue(e.target.value)}
-          className="flex-1 rounded-md border border-[color:var(--color-border)] bg-transparent px-3 py-2"
+          className="flex-1 rounded-xl border border-[color:var(--color-border)] bg-transparent px-3 py-2"
           aria-invalid={error ? "true" : "false"}
           aria-describedby={error ? "scanner-manual-err" : undefined}
         />
         <button
           type="submit"
-          className="rounded-md bg-[color:var(--color-brand-600)] px-4 py-2 text-white"
+          className="rounded-xl bg-[color:var(--color-brand-600)] px-4 py-2 text-white"
         >
           {t("scanner.manualSubmit")}
         </button>
