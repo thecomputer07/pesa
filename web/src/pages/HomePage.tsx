@@ -22,7 +22,7 @@ export default function HomePage() {
 
   return (
     <div className="space-y-16 md:space-y-24">
-      <section className="grid gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:gap-14 items-center">
+      <section className="grid grid-cols-[minmax(0,1fr)] gap-10 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] lg:gap-14 items-center">
         <div className="rise">
           <p className="eyebrow !text-[color:var(--color-brand-600)]">{t("home.eyebrow")}</p>
           <h1 className="mt-4 text-[2.5rem] leading-[1.05] sm:text-5xl md:text-[3.75rem] font-semibold tracking-[-0.035em] text-[color:var(--color-ink)]">
