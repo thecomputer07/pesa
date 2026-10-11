@@ -113,3 +113,13 @@ func TestPickBrand_SkipsCompanies(t *testing.T) {
 		}
 	}
 }
+
+// CREA "Fecola di patate": 1.4 p + 0 f + 90.7 c (as monosaccharides) +
+// 16.1 water ~ 108 g. Legitimate, must pass.
+func TestSanityCheck_StarchAsMonosaccharides(t *testing.T) {
+	f := func(v float64) *float64 { return &v }
+	r := FoodRow{Kcal: f(346), ProteinG: f(1.4), FatG: f(0), CarbG: f(90.7), WaterG: f(16.1)}
+	if res := SanityCheck(r); !res.OK {
+		t.Fatalf("potato starch rejected: %v", res.Reasons)
+	}
+}

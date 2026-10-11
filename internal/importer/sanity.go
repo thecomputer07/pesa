@@ -7,7 +7,11 @@ import (
 
 // SanityCheck applies the two hard rules from 02-CONTEXT:
 //
-//  1. macro_sum = protein + fat + carb + water + ash + alcohol ≤ 105 g
+//  1. macro_sum = protein + fat + carb + water + ash + alcohol ≤ 112 g
+//
+// Over 100 is normal: CREA gives available carbohydrate as monosaccharide
+// equivalents (starch x 1.1), so potato starch sums to 108 g. The ceiling
+// only has to catch real errors (a value read ten times too large).
 //  2. |kcal_declared − (4p + 9f + 4c + 2fibre + 7alc)| / kcal_declared ≤ 0.20
 //
 // Fibre counts 2 kcal/g (Reg. UE 1169/2011, all. XIV): without it every
@@ -37,7 +41,7 @@ func SanityCheck(r FoodRow) SanityResult {
 	add(r.AshG)
 	add(r.AlcoholG)
 
-	if macroSum > 105.0 {
+	if macroSum > 112.0 {
 		res.OK = false
 		res.Severity = "error"
 		res.Reasons = append(res.Reasons, fmt.Sprintf("macro_sum_overflow: %.2f", macroSum))
