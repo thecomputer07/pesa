@@ -13,6 +13,10 @@ import (
 	"time"
 )
 
+// wikiSkipCategoriesSQL sono le categorie CREA escluse dall'arricchimento
+// Wikipedia (stesso elenco della migrazione 00029).
+const wikiSkipCategoriesSQL = `'Carni fresche', 'Frattaglie', 'Prodotti della pesca'`
+
 // WikiImageOpts controlla l'arricchimento immagini via Wikipedia REST API.
 type WikiImageOpts struct {
 	Limit      int           // 0 = tutti i food senza immagine
@@ -50,6 +54,8 @@ func EnrichImagesFromWikipedia(ctx context.Context, db *sql.DB, opts WikiImageOp
 	// Query: food senza alcuna immagine, escludendo i superseded. Mai i
 	// prodotti OFF: il nome contiene la marca e Wikipedia restituisce loghi,
 	// stemmi o quadri omonimi ("Angelo Parodi" -> un angelo dipinto).
+	// Nemmeno carne fresca, frattaglie e pesce: la voce Wikipedia illustra
+	// l'animale vivo o uno schema anatomico, non il cibo nel piatto.
 	q := `
 		SELECT f.id, f.name_it
 		  FROM foods f
@@ -57,7 +63,8 @@ func EnrichImagesFromWikipedia(ctx context.Context, db *sql.DB, opts WikiImageOp
 		  JOIN food_sources fs ON fs.id = f.source_id
 		 WHERE fi.id IS NULL
 		   AND f.superseded_by IS NULL
-		   AND fs.code <> 'off'`
+		   AND fs.code <> 'off'
+		   AND COALESCE(f.category, '') NOT IN (` + wikiSkipCategoriesSQL + `)`
 	args := []interface{}{}
 	if opts.OnlySource != "" {
 		q += ` AND fs.code = $1`
