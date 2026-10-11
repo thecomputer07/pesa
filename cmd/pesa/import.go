@@ -113,6 +113,7 @@ func runImportOFF(args []string) {
 	pageSize := fs.Int("page-size", 100, "prodotti per pagina")
 	rateMs := fs.Int("rate-ms", 1000, "delay tra richieste API in millisecondi")
 	minCarb := fs.Bool("min-carb", true, "scarta prodotti senza carbohydrates_100g")
+	startPage := fs.Int("start-page", 1, "riprendi da questa pagina (dopo un'interruzione)")
 	byScans := fs.Bool("by-scans", false, "ordina per numero di scansioni (i piu' consumati) via API v2; rate-ms consigliato >= 7000")
 	dryRun := fs.Bool("dry-run", false, "parse e check senza scrivere")
 	if err := fs.Parse(args); err != nil {
@@ -135,6 +136,7 @@ func runImportOFF(args []string) {
 		RateDelay: time.Duration(*rateMs) * time.Millisecond,
 		MinCarb:   *minCarb,
 		ByScans:   *byScans,
+		StartPage: *startPage,
 	}
 	if *byScans && *rateMs == 1000 {
 		opts.RateDelay = 0 // let the importer pick the v2 rate limit

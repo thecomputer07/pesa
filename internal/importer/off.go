@@ -30,6 +30,7 @@ type OFFOpts struct {
 	// search-a-licious' popularity_key put Herbalife and nameless products
 	// first and caps at 10 000 results.
 	ByScans    bool
+	StartPage  int // resume a stopped run (default 1)
 	HTTPClient *http.Client
 }
 
@@ -163,6 +164,9 @@ func ImportOFF(ctx context.Context, db *sql.DB, opts OFFOpts) (*ImportReport, er
 	}
 
 	page := 1
+	if opts.StartPage > 1 {
+		page = opts.StartPage
+	}
 	fetched := 0
 	for {
 		if ctx.Err() != nil {
@@ -315,9 +319,11 @@ func fetchOFFPage(ctx context.Context, opts OFFOpts, page int) (*offSearchRespon
 		u = "https://search.openfoodfacts.org/search?" + q.Encode()
 	}
 
+	// OFF answers 503/429 when busy, sometimes for minutes: retry patiently
+	// (5 s doubling to a 2 min cap, ~10 min overall) before giving up.
 	var lastErr error
-	backoff := 2 * time.Second
-	for attempt := 1; attempt <= 4; attempt++ {
+	backoff := 5 * time.Second
+	for attempt := 1; attempt <= 8; attempt++ {
 		req, err := http.NewRequestWithContext(ctx, http.MethodGet, u, nil)
 		if err != nil {
 			return nil, err
@@ -359,7 +365,9 @@ func fetchOFFPage(ctx context.Context, opts OFFOpts, page int) (*offSearchRespon
 			return nil, ctx.Err()
 		case <-time.After(backoff):
 		}
-		backoff *= 2
+		if backoff *= 2; backoff > 2*time.Minute {
+			backoff = 2 * time.Minute
+		}
 	}
 	return nil, lastErr
 }
