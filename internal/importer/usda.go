@@ -214,5 +214,16 @@ func ImportUSDA(ctx context.Context, db *sql.DB, dir string, opts ImportOpts) (*
 			report.Errors = append(report.Errors, fmt.Sprintf("%s: %v", row.ExternalID, err))
 		}
 	}
+	if !opts.DryRun {
+		// "Maki al salmone" does not contain the word: searching "sushi" must
+		// still list every type.
+		if _, err := db.ExecContext(ctx, `
+			UPDATE foods f SET synonyms = 'sushi'
+			  FROM food_sources s
+			 WHERE s.id = f.source_id AND s.code = $1 AND f.category = 'Sushi'
+			   AND f.synonyms IS DISTINCT FROM 'sushi'`, opts.SourceCode); err != nil {
+			return report, fmt.Errorf("usda sushi synonyms: %w", err)
+		}
+	}
 	return report, nil
 }
