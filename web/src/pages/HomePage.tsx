@@ -82,7 +82,7 @@ function ExampleDisplay() {
   const { t } = useTranslation();
   return (
     <figure className="rise rise-2 relative mx-auto w-full max-w-md lg:max-w-none" aria-label={t("home.example.label")}>
-      <div aria-hidden="true" className="absolute -inset-6 -z-10 rounded-[2.5rem] bg-[radial-gradient(closest-side,rgb(49_87_224/0.18),transparent)] blur-2xl" />
+      <div aria-hidden="true" className="absolute inset-x-0 -inset-y-6 lg:-inset-6 -z-10 rounded-[2.5rem] bg-[radial-gradient(closest-side,rgb(49_87_224/0.18),transparent)] blur-2xl" />
       <div className="relative overflow-hidden rounded-[1.75rem] bg-[color:var(--color-ink)] p-6 sm:p-8 text-white shadow-[0_30px_60px_-30px_rgb(20_30_80/0.6)]">
         <div aria-hidden="true" className="absolute inset-0 bg-[radial-gradient(120%_80%_at_100%_0%,rgb(49_87_224/0.45),transparent_60%)]" />
         <div className="relative">
