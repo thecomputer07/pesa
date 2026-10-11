@@ -1,0 +1,6 @@
+code	product_name	brands	categories	countries_en	unique_scans_n	image_url	energy-kcal_100g	fat_100g	carbohydrates_100g	sugars_100g	fiber_100g	proteins_100g	salt_100g
+5449000000996	Coca-Cola	COCA-COLA SERVICES SA/NV, Coca-Cola	Bevande	Italy,France	671	https://images.openfoodfacts.org/x.jpg	42	0	10.6	10.6		0	0
+3017620425035	Nutella	Nutella, FERRERO FRANCE COMMERCIALE	Creme spalmabili	France,Italy	1042		539	30.9	57.5	56.3		6.3	0.107
+111	Solo Francia	X		France	9999		10	0	2			0	0
+222	Senza carboidrati	Y		Italy	5000		10	0				0	0
+333	Poco scansionato	Z		Italy	3		100	0	25			0	0

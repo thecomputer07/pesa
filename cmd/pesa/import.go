@@ -4,6 +4,7 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"io"
 	"log/slog"
 	"os"
 	"time"
@@ -14,7 +15,7 @@ import (
 // runImport dispatches `pesa import <target> <path> [flags]`.
 func runImport(args []string) {
 	if len(args) < 1 {
-		fmt.Fprintln(os.Stderr, "usage: pesa import <crea|bda|off|ciqual|usda> [...]")
+		fmt.Fprintln(os.Stderr, "usage: pesa import <crea|crea-live|bda|off|off-dump|ciqual|usda> [...]")
 		os.Exit(2)
 	}
 	sub := args[0]
@@ -26,6 +27,8 @@ func runImport(args []string) {
 		runImportBDA(rest)
 	case "off":
 		runImportOFF(rest)
+	case "off-dump":
+		runImportOFFDump(rest)
 	case "ciqual":
 		runImportCiqual(rest)
 	case "usda":
@@ -318,4 +321,52 @@ func runImportUSDA(args []string) {
 		}
 		os.Exit(1)
 	}
+}
+
+func runImportOFFDump(args []string) {
+	fs := flag.NewFlagSet("import off-dump", flag.ExitOnError)
+	country := fs.String("country", "Italy", "countries_en deve contenere questo paese")
+	top := fs.Int("top", 10000, "i N prodotti piu' scansionati (0 = tutti)")
+	dryRun := fs.Bool("dry-run", false, "parse e check senza scrivere")
+	if err := fs.Parse(args); err != nil {
+		os.Exit(2)
+	}
+	if fs.NArg() < 1 {
+		fmt.Fprintln(os.Stderr, "usage: pesa import off-dump <en.openfoodfacts.org.products.csv[.gz] | -> [--top N] [--country Italy]")
+		os.Exit(2)
+	}
+	var in io.Reader = os.Stdin
+	if p := fs.Arg(0); p != "-" {
+		f, err := os.Open(p)
+		if err != nil {
+			slog.Error("import off-dump", "err", err)
+			os.Exit(1)
+		}
+		defer func() { _ = f.Close() }()
+		in = f
+	}
+	cfg := mustConfig()
+	db := openDB(cfg)
+	defer func() { _ = db.Close() }()
+
+	opts := importer.OFFDumpOpts{
+		OFFOpts: importer.OFFOpts{
+			ImportOpts: importer.ImportOpts{SourceCode: "off", Basis: importer.BasisEdible, DryRun: *dryRun},
+			MinCarb:    true,
+		},
+		Country: *country,
+		Top:     *top,
+	}
+	report, err := importer.ImportOFFDump(context.Background(), db, in, opts)
+	if err != nil {
+		slog.Error("import off-dump", "err", err)
+		os.Exit(1)
+	}
+	slog.Info("import off-dump complete",
+		"total", report.TotalRows,
+		"inserted", report.InsertedFoods,
+		"updated", report.UpdatedFoods,
+		"unchanged", report.Unchanged,
+		"quarantined", report.Quarantined,
+		"errors", len(report.Errors))
 }

@@ -148,20 +148,6 @@ func ImportOFF(ctx context.Context, db *sql.DB, opts OFFOpts) (*ImportReport, er
 	}
 
 	report := &ImportReport{}
-	// Estrae la prima categoria e la tronca a 64 char (limite colonna foods.category).
-	firstCategoryRe := func(cats string) string {
-		for _, c := range strings.Split(cats, ",") {
-			c = strings.TrimSpace(c)
-			if c == "" {
-				continue
-			}
-			if len(c) > 64 {
-				c = c[:64]
-			}
-			return c
-		}
-		return ""
-	}
 
 	page := 1
 	if opts.StartPage > 1 {
@@ -189,62 +175,7 @@ func ImportOFF(ctx context.Context, db *sql.DB, opts OFFOpts) (*ImportReport, er
 			fetched++
 			report.TotalRows++
 
-			if p.Code == "" {
-				continue
-			}
-			name := p.ProductNameIT
-			if name == "" {
-				name = p.ProductName
-			}
-			name = strings.TrimSpace(name)
-			if name == "" {
-				continue
-			}
-			nutr := p.Nutriments
-			if nutr == nil {
-				nutr = &offNutriments{}
-			}
-			if nutr.CarbG == nil {
-				nutr.CarbG = nutr.CarbPreparedG
-			}
-			if opts.MinCarb && nutr.CarbG == nil {
-				continue
-			}
-
-			raw, _ := json.Marshal(p)
-			hash := sha256.Sum256(raw)
-			displayName := name
-			if b := p.firstBrand(); b != "" {
-				displayName = b + " — " + name
-			}
-			row := FoodRow{
-				ExternalID:  p.Code,
-				URL:         "https://world.openfoodfacts.org/product/" + p.Code,
-				NameIT:      displayName,
-				Category:    firstCategoryRe(p.Categories),
-				EdiblePct:   100.0,
-				Kcal:        nutr.Energy100g,
-				ProteinG:    nutr.ProteinG,
-				FatG:        nutr.FatG,
-				CarbG:       nutr.CarbG,
-				SugarG:      nutr.SugarG,
-				FiberG:      nutr.FiberG,
-				SaltG:       nutr.SaltG,
-				ContentHash: hex.EncodeToString(hash[:]),
-				FetchedAt:   time.Now().UTC(),
-				RawJSON:     raw,
-			}
-			if err := importOneRow(ctx, db, sourceID, row, opts.ImportOpts, report, false); err != nil {
-				report.Errors = append(report.Errors, fmt.Sprintf("%s: %v", row.ExternalID, err))
-				continue
-			}
-			if !opts.DryRun {
-				if imgURL := p.bestImageURL(); imgURL != "" {
-					if err := upsertFoodImage(ctx, db, sourceID, row.ExternalID, imgURL); err != nil {
-						slog.Warn("off image upsert", "ean", row.ExternalID, "err", err)
-					}
-				}
-			}
+			importOFFProduct(ctx, db, sourceID, p, opts, report)
 		}
 		slog.Info("off page done", "page", page, "hits", len(resp.Hits),
 			"fetched", fetched, "inserted", report.InsertedFoods, "updated", report.UpdatedFoods,
@@ -266,6 +197,82 @@ func ImportOFF(ctx context.Context, db *sql.DB, opts OFFOpts) (*ImportReport, er
 		}
 	}
 	return report, nil
+}
+
+// offFirstCategory returns the first category, cut to the 64-char column.
+func offFirstCategory(cats string) string {
+	for _, c := range strings.Split(cats, ",") {
+		c = strings.TrimSpace(c)
+		if c == "" {
+			continue
+		}
+		if len(c) > 64 {
+			c = c[:64]
+		}
+		return c
+	}
+	return ""
+}
+
+// importOFFProduct turns one OFF product into a food (+ its image). Shared by
+// the API import and the dump import. Skips are silent, errors go in report.
+func importOFFProduct(ctx context.Context, db *sql.DB, sourceID int64, p offProduct, opts OFFOpts, report *ImportReport) {
+	if p.Code == "" {
+		return
+	}
+	name := p.ProductNameIT
+	if name == "" {
+		name = p.ProductName
+	}
+	name = strings.TrimSpace(name)
+	if name == "" {
+		return
+	}
+	nutr := p.Nutriments
+	if nutr == nil {
+		nutr = &offNutriments{}
+	}
+	if nutr.CarbG == nil {
+		nutr.CarbG = nutr.CarbPreparedG
+	}
+	if opts.MinCarb && nutr.CarbG == nil {
+		return
+	}
+
+	raw, _ := json.Marshal(p)
+	hash := sha256.Sum256(raw)
+	displayName := name
+	if b := p.firstBrand(); b != "" {
+		displayName = b + " — " + name
+	}
+	row := FoodRow{
+		ExternalID:  p.Code,
+		URL:         "https://world.openfoodfacts.org/product/" + p.Code,
+		NameIT:      displayName,
+		Category:    offFirstCategory(p.Categories),
+		EdiblePct:   100.0,
+		Kcal:        nutr.Energy100g,
+		ProteinG:    nutr.ProteinG,
+		FatG:        nutr.FatG,
+		CarbG:       nutr.CarbG,
+		SugarG:      nutr.SugarG,
+		FiberG:      nutr.FiberG,
+		SaltG:       nutr.SaltG,
+		ContentHash: hex.EncodeToString(hash[:]),
+		FetchedAt:   time.Now().UTC(),
+		RawJSON:     raw,
+	}
+	if err := importOneRow(ctx, db, sourceID, row, opts.ImportOpts, report, false); err != nil {
+		report.Errors = append(report.Errors, fmt.Sprintf("%s: %v", row.ExternalID, err))
+		return
+	}
+	if !opts.DryRun {
+		if imgURL := p.bestImageURL(); imgURL != "" {
+			if err := upsertFoodImage(ctx, db, sourceID, row.ExternalID, imgURL); err != nil {
+				slog.Warn("off image upsert", "ean", row.ExternalID, "err", err)
+			}
+		}
+	}
 }
 
 // upsertFoodImage inserisce (o sostituisce) l'URL immagine principale per il food
