@@ -73,6 +73,7 @@ function sourceCodeOf(f: FoodDetail): string {
   const a = f.attribution.toUpperCase();
   if (a.includes("CREA")) return "CREA";
   if (a.includes("CIQUAL")) return "CIQUAL";
+  if (a.includes("AGRICULTURE") || a.includes("FOODDATA")) return "USDA";
   if (a.includes("BDA") || a.includes("IEO")) return "BDA";
   if (a.includes("OPEN FOOD")) return "OFF";
   return "—";

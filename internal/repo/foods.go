@@ -168,7 +168,7 @@ func SearchFoodsFiltered(ctx context.Context, db *sql.DB, userID int64, query, s
 
 	// Ranking: OFF names are "Brand — Product", so match on the product part
 	// (otherwise "Pasta Reggia — Pasta mista" beats CREA "Pasta di semola").
-	// CREA is the generic reference and gets a boost; Ciqual (generic dishes)
+	// CREA is the generic reference and gets a boost; Ciqual and USDA (generic dishes)
 	// a smaller one, so "sushi" beats branded OFF rice. Within a source, rows
 	// with the same product name are collapsed, preferring one with an image.
 	selectSQL := `
@@ -210,12 +210,12 @@ func SearchFoodsFiltered(ctx context.Context, db *sql.DB, userID int64, query, s
 	       similarity(pname, $1) AS relevance,
 	       (CASE WHEN pname ILIKE $2 THEN 5 ELSE 0 END) AS prefix_boost,
 	       (CASE WHEN pname ILIKE $3 OR pname ILIKE $4 THEN 2 ELSE 0 END)
-	         + (CASE code WHEN 'crea' THEN 3 WHEN 'ciqual' THEN 2 ELSE 0 END) AS exact_boost
+	         + (CASE code WHEN 'crea' THEN 3 WHEN 'ciqual' THEN 2 WHEN 'usda' THEN 2 ELSE 0 END) AS exact_boost
 	  FROM d
 	 ORDER BY (similarity(pname, $1)
 	           + (CASE WHEN pname ILIKE $2 THEN 5 ELSE 0 END)
 	           + (CASE WHEN pname ILIKE $3 OR pname ILIKE $4 THEN 2 ELSE 0 END)
-	           + (CASE code WHEN 'crea' THEN 3 WHEN 'ciqual' THEN 2 ELSE 0 END)) DESC,
+	           + (CASE code WHEN 'crea' THEN 3 WHEN 'ciqual' THEN 2 WHEN 'usda' THEN 2 ELSE 0 END)) DESC,
 	          length(pname) ASC, name_it ASC
 	 LIMIT $6 OFFSET $7`
 

@@ -1,7 +1,7 @@
 {
   "name": "Pesa — Calcolatore carboidrati",
   "short_name": "Pesa",
-  "description": "Calcolatore nutrizionale: carboidrati per peso, con fonti italiane citate. Funziona offline.",
+  "description": "Calcolatore nutrizionale: carboidrati per peso, con fonti ufficiali citate. Funziona offline.",
   "lang": "it-IT",
   "dir": "ltr",
   "start_url": "/",

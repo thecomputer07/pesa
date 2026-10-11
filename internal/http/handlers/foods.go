@@ -76,10 +76,10 @@ func (h *Foods) Search(w http.ResponseWriter, r *http.Request) {
 		page = 1
 	}
 
-	// Optional source filter: "", "crea", "ciqual", "off", "mine" (own custom foods).
+	// Optional source filter: "", "crea", "ciqual", "usda", "off", "mine" (own custom foods).
 	source := r.URL.Query().Get("source")
 	switch source {
-	case "", "crea", "ciqual", "off", "mine":
+	case "", "crea", "ciqual", "usda", "off", "mine":
 	default:
 		problem.Write(w, r, http.StatusBadRequest, "invalid-query", "unknown source")
 		return

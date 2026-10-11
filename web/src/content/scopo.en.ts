@@ -9,11 +9,11 @@ export const scopoEN = `# About Pesa / Scope
 
 ## Who we are
 
-Pesa is an open-source project created and maintained by Lorenzo Di Mare, an independent developer. The source code is published under the **AGPL v3** license in a public repository: https://github.com/thecomputer07/pesa. There is no company, no investor, no advertising, no paid tier: Pesa is built for people who count carbohydrates and want a simple, transparent tool grounded in certified Italian data.
+Pesa is an open-source project created and maintained by Lorenzo Di Mare, an independent developer. The source code is published under the **AGPL v3** license in a public repository: https://github.com/thecomputer07/pesa. There is no company, no investor, no advertising, no paid tier: Pesa is built for people who count carbohydrates and want a simple, transparent tool grounded in official public data.
 
 ## What Pesa is for
 
-Pesa computes the **carbohydrate content** of any food item based on its weight in grams. Type the name of a food, enter the weight, and get the carbohydrate value — along with fiber, sugars and kilocalories as contextual information. The data comes from certified Italian sources, not from translated international databases.
+Pesa computes the **carbohydrate content** of any food item based on its weight in grams. Type the name of a food, enter the weight, and get the carbohydrate value — along with fiber, sugars and kilocalories as contextual information. The data comes from official public databases: the Italian CREA table first; for what CREA does not cover, the French Ciqual table and the US USDA database, with names translated into Italian.
 
 You can use Pesa to:
 
@@ -32,10 +32,11 @@ If you have specific clinical needs — for example a form of diabetes, phenylke
 
 ## Data sources
 
-Pesa integrates three sources, each visibly credited on every food item:
+Pesa integrates four sources, each visibly credited on every food item:
 
 - **CREA — Alimenti e Nutrizione** (alimentinutrizione.it): Italian governmental standard, about 900 base foods. License: CC BY-NC-SA.
 - **Ciqual — ANSES** (ciqual.anses.fr): French food composition table, used only for what CREA does not cover — composite dishes (sushi, pizzas, sandwiches, soups), sweets, ice creams and sauces. Names translated into Italian by Pesa, values unchanged. Licence Ouverte / Etalab 2.0.
+- **USDA FoodData Central** (fdc.nal.usda.gov): United States Department of Agriculture database, used only for sushi types (maki, nigiri, uramaki) and Japanese food. Names translated into Italian by Pesa; carbohydrates are reported as available (fibre excluded), as in CREA. Public domain.
 - **Open Food Facts** (openfoodfacts.org): collaborative database of packaged products with barcodes, ODbL license. Used by the scanner.
 
 For every search result and every food detail page, Pesa shows a badge with the data source and a link to the original entry. A dedicated "Sources" page lists all credits and applicable licenses.

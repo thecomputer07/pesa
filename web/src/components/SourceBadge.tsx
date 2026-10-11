@@ -13,6 +13,7 @@ export interface SourceBadgeProps {
 const DOT_BY_CODE: Record<string, string> = {
   CREA: "bg-emerald-500",
   CIQUAL: "bg-indigo-500",
+  USDA: "bg-rose-500",
   BDA: "bg-amber-500",
   OFF: "bg-sky-500",
 };

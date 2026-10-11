@@ -14,7 +14,7 @@ import (
 // runImport dispatches `pesa import <target> <path> [flags]`.
 func runImport(args []string) {
 	if len(args) < 1 {
-		fmt.Fprintln(os.Stderr, "usage: pesa import <crea|bda|off|ciqual> [...]")
+		fmt.Fprintln(os.Stderr, "usage: pesa import <crea|bda|off|ciqual|usda> [...]")
 		os.Exit(2)
 	}
 	sub := args[0]
@@ -28,6 +28,8 @@ func runImport(args []string) {
 		runImportOFF(rest)
 	case "ciqual":
 		runImportCiqual(rest)
+	case "usda":
+		runImportUSDA(rest)
 	case "crea-live":
 		runImportCREALive(rest)
 	case "wiki-images":
@@ -261,6 +263,40 @@ func runImportCiqual(args []string) {
 		os.Exit(1)
 	}
 	slog.Info("import ciqual complete",
+		"total", report.TotalRows,
+		"inserted", report.InsertedFoods,
+		"updated", report.UpdatedFoods,
+		"unchanged", report.Unchanged,
+		"quarantined", report.Quarantined,
+		"errors", len(report.Errors))
+	if len(report.Errors) > 0 {
+		for _, e := range report.Errors {
+			slog.Warn("row error", "detail", e)
+		}
+		os.Exit(1)
+	}
+}
+func runImportUSDA(args []string) {
+	fs := flag.NewFlagSet("import usda", flag.ExitOnError)
+	dryRun := fs.Bool("dry-run", false, "parse and check without writing")
+	if err := fs.Parse(args); err != nil {
+		os.Exit(2)
+	}
+	if fs.NArg() < 1 {
+		fmt.Fprintln(os.Stderr, "usage: pesa import usda <dir con food.csv e food_nutrient.csv (FNDDS)> [--dry-run]")
+		os.Exit(2)
+	}
+	cfg := mustConfig()
+	db := openDB(cfg)
+	defer func() { _ = db.Close() }()
+
+	opts := importer.ImportOpts{SourceCode: "usda", Basis: importer.BasisEdible, DryRun: *dryRun}
+	report, err := importer.ImportUSDA(context.Background(), db, fs.Arg(0), opts)
+	if err != nil {
+		slog.Error("import usda", "err", err)
+		os.Exit(1)
+	}
+	slog.Info("import usda complete",
 		"total", report.TotalRows,
 		"inserted", report.InsertedFoods,
 		"updated", report.UpdatedFoods,

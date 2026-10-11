@@ -148,7 +148,7 @@ export type FoodDetail = z.infer<typeof FoodDetailSchema>;
 // ─── API calls ───
 
 /** Search source filter: each value returns rows of that source only. */
-export type SearchSource = "crea" | "ciqual" | "off" | "mine";
+export type SearchSource = "crea" | "ciqual" | "usda" | "off" | "mine";
 
 export function searchFoods(
   q: string,

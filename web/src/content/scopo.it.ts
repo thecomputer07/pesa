@@ -7,11 +7,11 @@ export const scopoIT = `# Chi siamo / Scopo
 
 ## Chi siamo
 
-Pesa è un progetto open-source creato e mantenuto da Lorenzo Di Mare, sviluppatore indipendente. Il codice è pubblicato con licenza **AGPL v3** su repository pubblico: https://github.com/thecomputer07/pesa. Non c'è un'azienda, non c'è un investitore, non c'è pubblicità, non c'è un piano a pagamento: Pesa è fatto per chi conta i carboidrati e vuole uno strumento semplice, trasparente e costruito su dati italiani certificati.
+Pesa è un progetto open-source creato e mantenuto da Lorenzo Di Mare, sviluppatore indipendente. Il codice è pubblicato con licenza **AGPL v3** su repository pubblico: https://github.com/thecomputer07/pesa. Non c'è un'azienda, non c'è un investitore, non c'è pubblicità, non c'è un piano a pagamento: Pesa è fatto per chi conta i carboidrati e vuole uno strumento semplice, trasparente e costruito su dati pubblici ufficiali.
 
 ## A cosa serve Pesa
 
-Pesa calcola i **carboidrati** di qualsiasi alimento in base al peso in grammi. Scrivi il nome dell'alimento, inserisci il peso, e ottieni il valore di carboidrati — più fibre, zuccheri e calorie come informazioni contestuali. I dati provengono da banche dati italiane certificate, non da database internazionali tradotti.
+Pesa calcola i **carboidrati** di qualsiasi alimento in base al peso in grammi. Scrivi il nome dell'alimento, inserisci il peso, e ottieni il valore di carboidrati — più fibre, zuccheri e calorie come informazioni contestuali. I dati vengono da banche dati pubbliche ufficiali: prima di tutto la tabella italiana CREA; per ciò che CREA non copre, la tabella francese Ciqual e quella statunitense USDA, con i nomi tradotti in italiano.
 
 Puoi usare Pesa per:
 
@@ -30,10 +30,11 @@ Se hai esigenze cliniche specifiche — ad esempio diabete, fenilchetonuria, cel
 
 ## Fonti dei dati
 
-Pesa integra tre fonti, tutte citate in modo visibile per ogni alimento:
+Pesa integra quattro fonti, tutte citate in modo visibile per ogni alimento:
 
 - **CREA — Alimenti e Nutrizione** (alimentinutrizione.it): standard governativo italiano, circa 900 alimenti di base. Licenza CC BY-NC-SA.
 - **Ciqual — ANSES** (ciqual.anses.fr): tabella francese di composizione degli alimenti, usata solo per ciò che CREA non copre — piatti composti (sushi, pizze, panini, zuppe), dolci, gelati e salse. Nomi tradotti in italiano da Pesa, valori invariati. Licenza Ouverte / Etalab 2.0.
+- **USDA FoodData Central** (fdc.nal.usda.gov): banca dati del Dipartimento dell'Agricoltura degli Stati Uniti, usata solo per i tipi di sushi (maki, nigiri, uramaki) e la cucina giapponese. Nomi tradotti in italiano da Pesa; i carboidrati sono riportati come "disponibili" (fibre escluse) come in CREA. Pubblico dominio.
 - **Open Food Facts** (openfoodfacts.org): banca dati collaborativa di prodotti confezionati con barcode, licenza ODbL. Usata per lo scanner.
 
 Per ogni risultato di ricerca e per ogni scheda alimento, Pesa mostra un badge con la fonte del dato e un link alla pagina originale. C'è una pagina "Fonti" dedicata che riporta il credit esteso e tutte le licenze applicabili.

@@ -78,7 +78,7 @@
       "per100": "72,7 g per 100 g · fonte CREA"
     },
     "title": "Quanti carboidrati in questo alimento?",
-    "tagline": "Scrivi il nome, inserisci il peso in grammi, ottieni i carboidrati. Dati da fonti italiane citate.",
+    "tagline": "Scrivi il nome, inserisci il peso in grammi, ottieni i carboidrati. Dati da fonti pubbliche ufficiali, sempre citate.",
     "learnMore": "Scopri a cosa serve Pesa nella pagina",
     "features": {
       "grams": {
@@ -90,8 +90,8 @@
         "body": "Una volta caricato il catalogo, puoi cercare e calcolare anche senza rete."
       },
       "sources": {
-        "title": "Fonti italiane citate",
-        "body": "Ogni valore mostra la fonte (CREA, Ciqual, Open Food Facts) e il link originale."
+        "title": "Fonti ufficiali citate",
+        "body": "Prima di tutto la tabella italiana CREA; Ciqual (Francia) e USDA (Stati Uniti) solo per ciò che CREA non ha. Ogni valore mostra la sua fonte."
       }
     }
   },
@@ -112,6 +112,7 @@
     "filterAll": "Tutte",
     "filterCrea": "CREA",
     "filterCiqual": "Ciqual",
+    "filterUsda": "USDA",
     "filterOff": "Open Food Facts",
     "filterMine": "I miei"
   },
