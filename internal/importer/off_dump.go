@@ -65,7 +65,7 @@ func ReadOFFDump(r io.Reader, country string, top int) ([]offProduct, int, error
 		return nil, 0, fmt.Errorf("off dump: empty input")
 	}
 	col := map[string]int{}
-	for i, name := range strings.Split(sc.Text(), "\t") {
+	for i, name := range strings.Split(strings.TrimRight(sc.Text(), "\r"), "\t") {
 		col[name] = i
 	}
 	for _, need := range []string{"code", "product_name", "countries_en", "unique_scans_n", "carbohydrates_100g"} {
@@ -91,7 +91,7 @@ func ReadOFFDump(r io.Reader, country string, top int) ([]offProduct, int, error
 	h := &offDumpHeap{}
 	matched := 0
 	for sc.Scan() {
-		f := strings.Split(sc.Text(), "\t")
+		f := strings.Split(strings.TrimRight(sc.Text(), "\r"), "\t")
 		if !strings.Contains(strings.ToLower(get(f, "countries_en")), country) {
 			continue
 		}
