@@ -48,3 +48,16 @@ func TestBuildBooleanQuery_PunctuationAndCase(t *testing.T) {
 		t.Errorf("got %q / %q", q, first)
 	}
 }
+
+func TestSearchTokenPatterns_AccentsAndTeaSpellings(t *testing.T) {
+	q, _ := repo.BuildBooleanQuery("Thè alla pesca")
+	got := repo.SearchTokenPatterns(q)
+	want := []string{`\m(te|the)`, `\m(pesca)`}
+	if len(got) != len(want) || got[0] != want[0] || got[1] != want[1] {
+		t.Errorf("patterns = %q, want %q", got, want)
+	}
+	q, _ = repo.BuildBooleanQuery("caffè")
+	if got := repo.SearchTokenPatterns(q); len(got) != 1 || got[0] != `\m(caffe)` {
+		t.Errorf("caffè -> %q", got)
+	}
+}

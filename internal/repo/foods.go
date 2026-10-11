@@ -129,6 +129,45 @@ func BuildBooleanQuery(raw string) (normQ, firstToken string) {
 	return strings.Join(kept, " "), kept[0]
 }
 
+// searchSynonyms: spellings people type for the same word, unaccented.
+var searchSynonyms = map[string][]string{
+	"the": {"te", "the"}, "te": {"te", "the"},
+}
+
+// SearchTokenPatterns turns a normalised query into one PostgreSQL regex per
+// word: each must match the start of a word somewhere in the name, in any
+// order, accents ignored ("the alla pesca" -> \m(te|the), \mpesca: finds
+// "Tè alla pesca" and "Estathé Pesca" is still found through "pesca").
+// Words carry only letters and digits (see BuildBooleanQuery): no escaping.
+func SearchTokenPatterns(normQ string) []string {
+	out := []string{}
+	for _, tok := range strings.Fields(normQ) {
+		tok = stripAccents(tok)
+		alts := searchSynonyms[tok]
+		if len(alts) == 0 {
+			alts = []string{tok}
+		}
+		out = append(out, `\m(`+strings.Join(alts, "|")+`)`)
+		if len(out) == 6 {
+			break
+		}
+	}
+	return out
+}
+
+func stripAccents(s string) string {
+	var b strings.Builder
+	for _, r := range norm.NFD.String(s) {
+		if !unicode.Is(unicode.Mn, r) {
+			b.WriteRune(r)
+		}
+	}
+	return b.String()
+}
+
+// searchHaystack is the text each word is matched against (SQL, alias f).
+const searchHaystack = `pesa_unaccent(lower(coalesce(f.name_it,'') || ' ' || coalesce(f.name_en,'') || ' ' || coalesce(f.synonyms,'')))`
+
 // SearchFoods runs pg_trgm ILIKE + ranking, excluding superseded rows.
 // Falls back to ILIKE-based search when the primary query returns no results
 // (small datasets or very short queries).
@@ -164,7 +203,7 @@ func SearchFoodsFiltered(ctx context.Context, db *sql.DB, userID int64, query, s
 
 	prefixLike := firstTok + "%"
 	wordLike := "% " + firstTok + " %"
-	ilikePat := "%" + normQ + "%"
+	patterns := SearchTokenPatterns(normQ)
 
 	// Ranking: OFF names are "Brand — Product", so match on the product part
 	// (otherwise "Pasta Reggia — Pasta mista" beats CREA "Pasta di semola").
@@ -192,7 +231,7 @@ func SearchFoodsFiltered(ctx context.Context, db *sql.DB, userID int64, query, s
 	    CROSS JOIN LATERAL (SELECT CASE WHEN position(' — ' IN f.name_it) > 0
 	                                    THEN substr(f.name_it, position(' — ' IN f.name_it) + 3)
 	                                    ELSE f.name_it END AS pname) p
-	   WHERE (coalesce(f.name_it,'') || ' ' || coalesce(f.name_en,'') || ' ' || coalesce(f.synonyms,'')) ILIKE $5
+	   WHERE NOT EXISTS (SELECT 1 FROM unnest($5::text[]) AS w(re) WHERE `+searchHaystack+` !~ w.re)
 	     AND f.superseded_by IS NULL
 	     AND (f.user_id IS NULL OR f.user_id = $8)
 	     AND (($9 = '') OR ($9 = 'mine' AND f.user_id IS NOT NULL) OR (s.code = $9))
@@ -219,7 +258,7 @@ func SearchFoodsFiltered(ctx context.Context, db *sql.DB, userID int64, query, s
 	          length(pname) ASC, name_it ASC
 	 LIMIT $6 OFFSET $7`
 
-	rows, err := db.QueryContext(ctx, selectSQL, normQ, prefixLike, firstTok, wordLike, ilikePat, limit, offset, userID, source)
+	rows, err := db.QueryContext(ctx, selectSQL, normQ, prefixLike, firstTok, wordLike, patterns, limit, offset, userID, source)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -254,11 +293,11 @@ func SearchFoodsFiltered(ctx context.Context, db *sql.DB, userID int64, query, s
 	              THEN substr(f.name_it, position(' — ' IN f.name_it) + 3)
 	              ELSE f.name_it END), '\s+', ' ', 'g'))) FROM foods f
 	  JOIN food_sources s ON s.id = f.source_id
-	 WHERE (coalesce(f.name_it,'') || ' ' || coalesce(f.name_en,'') || ' ' || coalesce(f.synonyms,'')) ILIKE $1
+	 WHERE NOT EXISTS (SELECT 1 FROM unnest($1::text[]) AS w(re) WHERE `+searchHaystack+` !~ w.re)
 	   AND f.superseded_by IS NULL
 	   AND (f.user_id IS NULL OR f.user_id = $2)
 	   AND (($3 = '') OR ($3 = 'mine' AND f.user_id IS NOT NULL) OR (s.code = $3))`
-	if err := db.QueryRowContext(ctx, countSQL, ilikePat, userID, source).Scan(&total); err != nil {
+	if err := db.QueryRowContext(ctx, countSQL, patterns, userID, source).Scan(&total); err != nil {
 		return nil, 0, err
 	}
 
