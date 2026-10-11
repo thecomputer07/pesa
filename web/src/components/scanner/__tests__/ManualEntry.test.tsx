@@ -13,7 +13,7 @@ describe("ManualEntry", () => {
   it("calls onSubmit with a normalized 13-digit EAN", () => {
     const onSubmit = vi.fn();
     render(<ManualEntry onSubmit={onSubmit} />);
-    const input = screen.getByLabelText("scanner.manualLabel") as HTMLInputElement;
+    const input = screen.getByLabelText("scanner.manualLabel", { selector: "input" }) as HTMLInputElement;
     fireEvent.change(input, { target: { value: "12345678" } });
     fireEvent.click(screen.getByText("scanner.manualSubmit"));
     expect(onSubmit).toHaveBeenCalledWith("0000012345678");
@@ -22,7 +22,7 @@ describe("ManualEntry", () => {
   it("shows an error for invalid input", () => {
     const onSubmit = vi.fn();
     render(<ManualEntry onSubmit={onSubmit} />);
-    const input = screen.getByLabelText("scanner.manualLabel") as HTMLInputElement;
+    const input = screen.getByLabelText("scanner.manualLabel", { selector: "input" }) as HTMLInputElement;
     fireEvent.change(input, { target: { value: "abc" } });
     fireEvent.click(screen.getByText("scanner.manualSubmit"));
     expect(onSubmit).not.toHaveBeenCalled();

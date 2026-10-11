@@ -25,8 +25,11 @@ export default function ManualEntry({ onSubmit, autoFocus }: ManualEntryProps) {
   };
 
   return (
+    // noValidate: the native pattern check would block submit before our
+    // translated, accessible error message can show.
     <form
       onSubmit={handleSubmit}
+      noValidate
       className="mt-4 flex flex-col gap-2"
       aria-label={t("scanner.manualLabel")}
     >

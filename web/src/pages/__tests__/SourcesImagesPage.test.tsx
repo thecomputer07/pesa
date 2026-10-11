@@ -15,7 +15,7 @@ const fixture = {
 };
 
 beforeEach(() => {
-  (global as unknown as { fetch: typeof fetch }).fetch = vi.fn().mockResolvedValue({
+  (globalThis as unknown as { fetch: typeof fetch }).fetch = vi.fn().mockResolvedValue({
     ok: true,
     json: async () => fixture,
   }) as unknown as typeof fetch;

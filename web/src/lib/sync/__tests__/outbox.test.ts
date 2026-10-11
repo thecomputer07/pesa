@@ -54,12 +54,12 @@ describe("outbox.readyToFlush / drain", () => {
   });
 
   it("drain removes the given ids", async () => {
-    const id1 = await db.outbox.add({
+    const id1 = (await db.outbox.add({
       kind: "meal", client_id: "x", payload_json: "{}", created_at: 0, next_attempt_at: 0, attempts: 0,
-    });
-    const id2 = await db.outbox.add({
+    }))!;
+    const id2 = (await db.outbox.add({
       kind: "meal", client_id: "y", payload_json: "{}", created_at: 0, next_attempt_at: 0, attempts: 0,
-    });
+    }))!;
     await drain([id1, id2]);
     expect(await db.outbox.count()).toBe(0);
   });
@@ -67,9 +67,9 @@ describe("outbox.readyToFlush / drain", () => {
 
 describe("outbox.markFailed backoff", () => {
   it("schedules next_attempt_at per the documented BACKOFF_MS curve", async () => {
-    const id = await db.outbox.add({
+    const id = (await db.outbox.add({
       kind: "meal", client_id: "bo1", payload_json: "{}", created_at: Date.now(), next_attempt_at: 0, attempts: 0,
-    });
+    }))!;
     const before = Date.now();
     await markFailed(id, "http_500");
     const row = await db.outbox.get(id);
@@ -79,14 +79,14 @@ describe("outbox.markFailed backoff", () => {
   });
 
   it("sets blocked=true once attempts cap reached", async () => {
-    const id = await db.outbox.add({
+    const id = (await db.outbox.add({
       kind: "meal",
       client_id: "bo2",
       payload_json: "{}",
       created_at: Date.now(),
       next_attempt_at: 0,
       attempts: _internals.MAX_ATTEMPTS - 1,
-    });
+    }))!;
     await markFailed(id, "still_bad");
     const row = await db.outbox.get(id);
     expect(row!.blocked).toBe(true);

@@ -16,7 +16,7 @@ const fixture = {
 };
 
 beforeEach(() => {
-  (global as unknown as { fetch: typeof fetch }).fetch = vi.fn().mockResolvedValue({
+  (globalThis as unknown as { fetch: typeof fetch }).fetch = vi.fn().mockResolvedValue({
     ok: true,
     json: async () => fixture,
   }) as unknown as typeof fetch;
@@ -28,7 +28,7 @@ afterEach(() => {
 describe("SourcesDataPage", () => {
   it("renders CREA, BDA-IEO and OFF but hides Wikimedia", async () => {
     render(<SourcesDataPage />);
-    await waitFor(() => expect(screen.getByText("CREA")).toBeTruthy());
+    await waitFor(() => expect(screen.getByRole("heading", { name: "CREA" })).toBeTruthy());
     expect(screen.getByText("BDA IEO")).toBeTruthy();
     expect(screen.getByText("Open Food Facts")).toBeTruthy();
     expect(screen.queryByText("Wikimedia")).toBeNull();
@@ -36,7 +36,7 @@ describe("SourcesDataPage", () => {
 
   it("external links use rel=noopener noreferrer and target=_blank", async () => {
     render(<SourcesDataPage />);
-    await waitFor(() => expect(screen.getByText("CREA")).toBeTruthy());
+    await waitFor(() => expect(screen.getByRole("heading", { name: "CREA" })).toBeTruthy());
     const link = screen.getByText("https://crea.example") as HTMLAnchorElement;
     expect(link.getAttribute("rel")).toBe("noopener noreferrer");
     expect(link.getAttribute("target")).toBe("_blank");
@@ -44,7 +44,7 @@ describe("SourcesDataPage", () => {
 
   it("contains no banned medical terms (GUARD-01)", async () => {
     render(<SourcesDataPage />);
-    await waitFor(() => expect(screen.getByText("CREA")).toBeTruthy());
+    await waitFor(() => expect(screen.getByRole("heading", { name: "CREA" })).toBeTruthy());
     const banned = /(glicemia|insulin|diabete|bolo|I:CHO|FSI|CGM|pump)/i;
     expect(document.body.textContent || "").not.toMatch(banned);
   });

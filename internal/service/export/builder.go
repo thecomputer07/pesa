@@ -59,6 +59,7 @@ func BuildAccountJSON(db *sql.DB, userID int64) ([]byte, error) {
 // Deterministic output: callers must pre-order their rows.
 func WriteCSV(w io.Writer, header []string, rows [][]string) error {
 	cw := csv.NewWriter(w)
+	cw.UseCRLF = true // RFC 4180; Excel on Windows expects CRLF
 	if err := cw.Write(header); err != nil {
 		return err
 	}

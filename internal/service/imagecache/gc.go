@@ -82,13 +82,20 @@ func (s *Store) collect() ([]fileEntry, int64, error) {
 		}
 		atime := info.ModTime().Unix() // portable fallback
 		base := strings.TrimSuffix(p, filepath.Ext(p))
+		side := base + ".license.json"
+		// Count the sidecar too: the cap is on the whole directory (DirSize),
+		// and sidecars can outweigh small images.
+		size := info.Size()
+		if si, err := os.Stat(side); err == nil {
+			size += si.Size()
+		}
 		out = append(out, fileEntry{
 			binPath:  p,
-			sidePath: base + ".license.json",
+			sidePath: side,
 			atime:    atime,
-			size:     info.Size(),
+			size:     size,
 		})
-		total += info.Size()
+		total += size
 		return nil
 	})
 	return out, total, err

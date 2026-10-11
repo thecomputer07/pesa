@@ -82,7 +82,8 @@ expect.extend({
 
 declare module "vitest" {
   // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-  interface Assertion<T = unknown> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  interface Assertion<T = any> {
     toBeOneOf(expected: T[]): void;
   }
 }

@@ -48,7 +48,7 @@ export function apiFetch(path: string, init: RequestInit = {}): Promise<Response
   });
 }
 
-async function request<T>(path: string, schema: z.ZodType<T>, init?: RequestInit): Promise<T> {
+async function request<T>(path: string, schema: z.ZodType<T, z.ZodTypeDef, unknown>, init?: RequestInit): Promise<T> {
   const res = await apiFetch(path, init);
 
   if (!res.ok) {

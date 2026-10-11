@@ -12,9 +12,8 @@ WORKDIR /w
 COPY web/package.json web/package-lock.json ./
 RUN npm ci --no-audit --no-fund
 COPY web/ ./
-# Skip `tsc -b` (pre-existing type errors in test files blocked LAN builds —
-# tracked separately). Vite performs its own transpile for the prod bundle.
-RUN npx vite build
+# Type-check first: a type error fails the image build instead of shipping.
+RUN npm run build
 
 # ---- Go base ----
 FROM golang:1.23-alpine AS base

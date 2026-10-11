@@ -1,10 +1,13 @@
 package handlers
 
 import (
+	"database/sql"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	_ "github.com/jackc/pgx/v5/stdlib"
 )
 
 // Structural test: encoding/decoding of the DTO survives a round-trip.
@@ -29,20 +32,19 @@ func TestSourcesDTO_RoundTrip(t *testing.T) {
 	}
 }
 
-// handlerSmokeNoDB confirms that a misconfigured handler surfaces a 500
-// problem+json rather than panicking — mirrors the Foods.Search pattern.
+// A DB failure must surface as a 500 problem+json, never a 200. A closed
+// *sql.DB fails every query immediately, without touching the network.
 func TestSources_DBErrorReturnsProblem(t *testing.T) {
-	h := NewSources(nil) // nil DB forces repo error.
-	defer func() { _ = recover() }() // swallow potential nil-deref; we only assert the contract path.
+	db, err := sql.Open("pgx", "postgres://pesa@127.0.0.1:1/pesa")
+	if err != nil {
+		t.Fatal(err)
+	}
+	_ = db.Close()
+	h := NewSources(db)
 	req := httptest.NewRequest(http.MethodGet, "/api/v1/sources", nil)
 	w := httptest.NewRecorder()
-	func() {
-		defer func() { _ = recover() }()
-		h.List(w, req)
-	}()
-	if w.Code != 0 && w.Code != http.StatusInternalServerError {
-		// Either not written (panic caught) or 500; both are acceptable signals
-		// that the contract does not leak a 200 on DB failure.
-		t.Errorf("unexpected code: %d", w.Code)
+	h.List(w, req)
+	if w.Code != http.StatusInternalServerError {
+		t.Errorf("code = %d, want 500", w.Code)
 	}
 }

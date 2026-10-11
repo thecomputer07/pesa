@@ -22,6 +22,8 @@ var itStopwords = map[string]struct{}{
 // collapses whitespace — used for CREA/BDA title matching.
 func NormalizeName(s string) string {
 	s = strings.ToLower(strings.TrimSpace(s))
+	// Elisions join the words: "d'orzo" -> "dorzo", same on both sides.
+	s = strings.NewReplacer("'", "", "’", "").Replace(s)
 	// NFD → drop combining marks → NFC.
 	decomposed := norm.NFD.String(s)
 	var b strings.Builder

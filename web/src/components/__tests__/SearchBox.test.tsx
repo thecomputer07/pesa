@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi } from "vitest";
 import "../../i18n/config";
@@ -20,20 +20,20 @@ describe("SearchBox", () => {
     expect(onSubmit).toHaveBeenCalledWith("mela");
   });
 
-  it("debounces onQueryChange", async () => {
+  it("debounces onQueryChange", () => {
     vi.useFakeTimers();
-    const onChange = vi.fn();
-    render(<SearchBox onSubmit={() => {}} onQueryChange={onChange} debounceMs={200} />);
-    const input = screen.getByRole("searchbox");
-    // userEvent with fake timers requires `advanceTimers`.
-    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
-    await user.type(input, "pa");
-    // Before debounce elapses: no call (aside from the initial empty)
-    onChange.mockClear();
-    vi.advanceTimersByTime(199);
-    expect(onChange).not.toHaveBeenCalled();
-    vi.advanceTimersByTime(2);
-    expect(onChange).toHaveBeenCalledWith("pa");
-    vi.useRealTimers();
+    try {
+      const onChange = vi.fn();
+      render(<SearchBox onSubmit={() => {}} onQueryChange={onChange} debounceMs={200} />);
+      // fireEvent, not userEvent: userEvent's internal delays stall under fake timers.
+      fireEvent.change(screen.getByRole("searchbox"), { target: { value: "pa" } });
+      onChange.mockClear(); // drop the initial empty-query call
+      vi.advanceTimersByTime(199);
+      expect(onChange).not.toHaveBeenCalled();
+      vi.advanceTimersByTime(2);
+      expect(onChange).toHaveBeenCalledWith("pa");
+    } finally {
+      vi.useRealTimers();
+    }
   });
 });

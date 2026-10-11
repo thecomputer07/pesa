@@ -27,8 +27,9 @@ export async function registerSW(): Promise<void> {
     void event;
   };
 
+  // Since workbox-window v6 "waiting" also fires for a SW from another tab
+  // (event.isExternal); the old "externalwaiting" event no longer exists.
   wb.addEventListener("waiting", showPrompt);
-  wb.addEventListener("externalwaiting", showPrompt);
 
   try {
     await wb.register();

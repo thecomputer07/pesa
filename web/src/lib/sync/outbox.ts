@@ -1,4 +1,4 @@
-import type Dexie from "dexie";
+import type { Transaction } from "dexie";
 import { db } from "../db/schema";
 import type { OutboxKind, OutboxRow } from "./types";
 import { registerBackgroundSync } from "./bg-sync-register";
@@ -17,7 +17,7 @@ export async function enqueue(
   kind: OutboxKind,
   clientId: string,
   payload: unknown,
-  tx?: Dexie.Transaction,
+  tx?: Transaction,
 ): Promise<void> {
   const row: OutboxRow = {
     kind,
