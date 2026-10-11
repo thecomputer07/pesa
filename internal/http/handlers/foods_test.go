@@ -52,7 +52,7 @@ func TestBuildBooleanQuery_PunctuationAndCase(t *testing.T) {
 func TestSearchTokenPatterns_AccentsAndTeaSpellings(t *testing.T) {
 	q, _ := repo.BuildBooleanQuery("Thè alla pesca")
 	got := repo.SearchTokenPatterns(q)
-	want := []string{`\m(te|the)`, `\m(pesca)`}
+	want := []string{`\m(te|the|tea)`, `\m(pesca)`}
 	if len(got) != len(want) || got[0] != want[0] || got[1] != want[1] {
 		t.Errorf("patterns = %q, want %q", got, want)
 	}

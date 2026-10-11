@@ -131,7 +131,7 @@ func BuildBooleanQuery(raw string) (normQ, firstToken string) {
 
 // searchSynonyms: spellings people type for the same word, unaccented.
 var searchSynonyms = map[string][]string{
-	"the": {"te", "the"}, "te": {"te", "the"},
+	"the": {"te", "the", "tea"}, "te": {"te", "the", "tea"}, "tea": {"te", "the", "tea"},
 }
 
 // SearchTokenPatterns turns a normalised query into one PostgreSQL regex per
