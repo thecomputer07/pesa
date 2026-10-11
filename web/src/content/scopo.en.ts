@@ -32,9 +32,10 @@ If you have specific clinical needs — for example a form of diabetes, phenylke
 
 ## Data sources
 
-Pesa integrates two sources, each visibly credited on every food item:
+Pesa integrates three sources, each visibly credited on every food item:
 
 - **CREA — Alimenti e Nutrizione** (alimentinutrizione.it): Italian governmental standard, about 900 base foods. License: CC BY-NC-SA.
+- **Ciqual — ANSES** (ciqual.anses.fr): French food composition table, used only for what CREA does not cover — composite dishes (sushi, pizzas, sandwiches, soups), sweets, ice creams and sauces. Names translated into Italian by Pesa, values unchanged. Licence Ouverte / Etalab 2.0.
 - **Open Food Facts** (openfoodfacts.org): collaborative database of packaged products with barcodes, ODbL license. Used by the scanner.
 
 For every search result and every food detail page, Pesa shows a badge with the data source and a link to the original entry. A dedicated "Sources" page lists all credits and applicable licenses.

@@ -9,6 +9,7 @@ export interface SourceBadgeProps {
 
 const STYLE_BY_CODE: Record<string, string> = {
   CREA: "bg-emerald-50 text-emerald-800 border-emerald-200",
+  CIQUAL: "bg-indigo-50 text-indigo-800 border-indigo-200",
   BDA: "bg-amber-50 text-amber-800 border-amber-200",
   OFF: "bg-sky-50 text-sky-800 border-sky-200",
 };

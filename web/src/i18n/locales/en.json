@@ -80,7 +80,7 @@
       },
       "sources": {
         "title": "Cited Italian sources",
-        "body": "Every value shows its source (CREA, Open Food Facts) with a link to the original entry."
+        "body": "Every value shows its source (CREA, Ciqual, Open Food Facts) with a link to the original entry."
       }
     }
   },
@@ -100,6 +100,7 @@
     "filterLabel": "Data source",
     "filterAll": "All",
     "filterCrea": "CREA",
+    "filterCiqual": "Ciqual",
     "filterOff": "Open Food Facts",
     "filterMine": "Mine"
   },

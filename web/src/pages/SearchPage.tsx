@@ -12,7 +12,7 @@ import { useAuth } from "../lib/auth/AuthContext";
 const SOURCE_KEY = "pesa.search.source";
 
 function readSource(v: string | null): SearchSource | "" {
-  return v === "crea" || v === "off" || v === "mine" ? v : "";
+  return v === "crea" || v === "ciqual" || v === "off" || v === "mine" ? v : "";
 }
 
 export default function SearchPage() {
@@ -148,6 +148,7 @@ export default function SearchPage() {
           [
             ["", t("search.filterAll")],
             ["crea", t("search.filterCrea")],
+            ["ciqual", t("search.filterCiqual")],
             ["off", t("search.filterOff")],
             ...(user ? [["mine", t("search.filterMine")]] : []),
           ] as [SearchSource | "", string][]

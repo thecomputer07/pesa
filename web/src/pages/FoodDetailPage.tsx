@@ -251,6 +251,7 @@ export default function FoodDetailPage() {
 function attrCode(attribution: string): string {
   const a = attribution.toUpperCase();
   if (a.includes("CREA")) return "CREA";
+  if (a.includes("CIQUAL")) return "CIQUAL";
   if (a.includes("BDA") || a.includes("IEO")) return "BDA";
   if (a.includes("OPEN FOOD")) return "OFF";
   return "—";

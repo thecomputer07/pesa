@@ -30,9 +30,10 @@ Se hai esigenze cliniche specifiche — ad esempio diabete, fenilchetonuria, cel
 
 ## Fonti dei dati
 
-Pesa integra due fonti, entrambe citate in modo visibile per ogni alimento:
+Pesa integra tre fonti, tutte citate in modo visibile per ogni alimento:
 
 - **CREA — Alimenti e Nutrizione** (alimentinutrizione.it): standard governativo italiano, circa 900 alimenti di base. Licenza CC BY-NC-SA.
+- **Ciqual — ANSES** (ciqual.anses.fr): tabella francese di composizione degli alimenti, usata solo per ciò che CREA non copre — piatti composti (sushi, pizze, panini, zuppe), dolci, gelati e salse. Nomi tradotti in italiano da Pesa, valori invariati. Licenza Ouverte / Etalab 2.0.
 - **Open Food Facts** (openfoodfacts.org): banca dati collaborativa di prodotti confezionati con barcode, licenza ODbL. Usata per lo scanner.
 
 Per ogni risultato di ricerca e per ogni scheda alimento, Pesa mostra un badge con la fonte del dato e un link alla pagina originale. C'è una pagina "Fonti" dedicata che riporta il credit esteso e tutte le licenze applicabili.

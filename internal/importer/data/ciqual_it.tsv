@@ -1,0 +1,859 @@
+1033	Nuggets di pollo impanati (con soia), preconfezionati
+4041	Aligot (purè di patate con tomme fresca), preconfezionato
+7225	Pane brioche o pane viennese, artigianale
+7355	Galette di riso soffiato, ricoperta di cioccolato
+7356	Galette di mais soffiato, ricoperta di cioccolato
+7412	Fetta croccante di pane, estrusa e tostata, farcita al cioccolato
+7413	Fetta croccante di pane, estrusa e tostata, farcita alla frutta
+7600	Viennoiserie (pasticceria da forno dolce), alimento medio
+7603	Cornetto (croissant), alimento medio
+7615	Cornetto (croissant) comune, artigianale
+7616	Cornetto (croissant) comune, preconfezionato
+7619	Cornetto (croissant) puro burro, alimento medio
+7620	Cornetto (croissant) puro burro, artigianale
+7621	Cornetto (croissant) puro burro, preconfezionato
+7650	Cornetto (croissant) alle mandorle, artigianale
+7710	Pane al latte, artigianale
+7711	Pane al latte, preconfezionato
+7712	Pane al latte con gocce di cioccolato, preconfezionato
+7719	Panettone, preconfezionato
+7720	Girella all'uvetta (pain aux raisins), artigianale
+7730	Cornetto al cioccolato (pain au chocolat), artigianale
+7733	Cornetto al cioccolato (pain au chocolat), preconfezionato
+7735	Brioche (o briochine) con gocce di cioccolato o farcita al cioccolato, preconfezionata
+7738	Brioche farcita alla frutta, preconfezionata
+7739	Brioche farcita con crema pasticcera (tipo chinois), preconfezionata
+7740	Brioche semplice, preconfezionata
+7742	Brioche semplice, artigianale
+7744	Corona dei Re (brioche con frutta candita), preconfezionata
+7745	Brioche pura al burro, semplice (tipo gâche vendéenne), preconfezionata
+7746	Brioche, non specificata, alimento medio
+7811	Focaccia, farcita
+7812	Fougasse (focaccia provenzale), farcita
+7814	Plumcake salato (con formaggio, verdure, carne, pesce, pollame, ecc.), preconfezionato
+8296	Terrina o mousse di verdure, preconfezionata
+8297	Flan di verdure con uova
+8406	Insalata di muso di maiale, con salsa, preconfezionata
+8407	Insalata di cervelas (salsiccia alsaziana), con salsa, preconfezionata
+8601	Trippa alla moda di Caen (stomaco e piede di manzo, carote...), preconfezionata
+8612	Trippa al pomodoro o alla provenzale, preconfezionata
+9082	Grano duro precotto, cucinato, in busta per microonde
+9085	Noodles asiatici cucinati (manzo, pollo, verdure...), non istantanei
+10082	Cozze alla marinara (cipolle e vino bianco), preconfezionate
+10083	Cozze farcite (grasso, prezzemolo e aglio...), preconfezionate, crude
+11008	Ketchup, preconfezionato
+11051	Salsa tartara, preconfezionata
+11054	Maionese (almeno 70% di grassi), preconfezionata
+11073	Ketchup a ridotto contenuto di zuccheri, preconfezionato
+11079	Maionese a ridotto contenuto di grassi o maionese light, preconfezionata
+11100	Salsa barbecue, preconfezionata
+11101	Besciamella, preconfezionata
+11102	Salsa bearnese, preconfezionata
+11104	Salsa di soia, preconfezionata
+11105	Salsa olandese, preconfezionata
+11107	Salsa di pomodoro con cipolle, preconfezionata
+11108	Vinaigrette all'olio d'oliva (50-75% di olio), preconfezionata
+11109	Vinaigrette a ridotto contenuto di grassi (25-50% di olio), preconfezionata
+11110	Vinaigrette (50-75% di olio), preconfezionata
+11111	Salsa armoricana (con aragosta, pomodoro e cognac), preconfezionata
+11112	Harissa (salsa piccante al peperoncino), preconfezionata
+11114	Salsa al pomodoro con carne o salsa alla bolognese, preconfezionata
+11115	Salsa al pepe verde, preconfezionata
+11120	Salsa alla borgognona, preconfezionata
+11121	Salsa al Madeira, preconfezionata
+11122	Salsa allo scalogno con panna, preconfezionata
+11128	Salsa carbonara (salsa alla panna con pancetta), preconfezionata
+11129	Salsa alla cacciatora (vino bianco, funghi, scalogno e pomodoro), preconfezionata
+11132	Salsa al curry, calda, preconfezionata
+11140	Salsa al burro bianco (beurre blanc), preconfezionata
+11143	Besciamella al burro, fatta in casa
+11157	Salsa alla senape, preconfezionata
+11158	Salsa al burro, preconfezionata
+11159	Salsa alla panna
+11160	Salsa ai funghi, preconfezionata
+11161	Salsa alla panna con spezie
+11162	Salsa alla panna alle erbe
+11163	Salsa agrodolce, preconfezionata
+11164	Salsa al vino rosso, fatta in casa
+11166	Salsa allo yogurt, fatta in casa
+11167	Salsa americana (all'aragosta, pomodoro e cognac), preconfezionata
+11168	Salsa aioli (maionese all'aglio e olio d'oliva), preconfezionata
+11170	Salsa basca o salsa ai peperoni, preconfezionata
+11177	Salsa di pomodoro con funghi, preconfezionata
+11178	Salsa di pomodoro con olive, preconfezionata
+11179	Pesto, preconfezionato
+11182	Salsa al pepe, calda, preconfezionata
+11184	Salsa, alimento medio
+11187	Salsa per crudites o salsa per insalata, preconfezionata
+11189	Salsa al formaggio per risotto o pasta, preconfezionata
+11191	Salsa al roquefort, preconfezionata
+11192	Salsa ai funghi e alla panna, preconfezionata
+11194	Salsa nuoc mam o salsa di pesce, preconfezionata
+11196	Salsa per hamburger, preconfezionata
+11198	Salsa per crudites o salsa per insalata, a ridotto contenuto di grassi, preconfezionata
+11199	Salsa grand veneur (riduzione di vino rosso con aglio, scalogno e gelatina di ribes), preconfezionata
+11202	Salsa indiana tipo tandoori o tikka masala, preconfezionata
+11203	Salsa per kebab, preconfezionata
+11205	Salsa rouille (maionese all'aglio, peperoncino e brodo di pesce), preconfezionata
+11207	Salsa di pomodoro con verdure, preconfezionata
+11208	Salsa di pomodoro al formaggio, preconfezionata
+11210	Pesto rosso, preconfezionato
+11212	Salsa al pepe, fredda, preconfezionata
+11213	Salsa fredda, alimento medio
+11216	Salsa di soia dolce, preconfezionata
+11217	Salsa per involtini primavera a base di nuoc-mam diluito, preconfezionata
+11218	Salsa calda, alimento medio
+11219	Salsa vegetale tipo bolognese, con proteine di soia, preconfezionata
+11223	Salsa di ostriche, preconfezionata
+11240	Salsa algerina, preconfezionata
+11243	Salsa andalusa, preconfezionata
+11244	Salsa cocktail, preconfezionata
+11245	Salsa per patatine fritte, preconfezionata
+11246	Salsa samurai, preconfezionata
+11247	Salsa al curry, fredda, preconfezionata
+11248	Salsa Caesar (per insalata), preconfezionata
+11299	Crema di prugne, preconfezionata
+11300	Salsa al cioccolato, preconfezionata
+11301	Salsa teriyaki, preconfezionata
+11302	Salsa all'acetosella, preconfezionata
+13998	Coulis di frutti rossi (lamponi, fragole, ribes rosso, ribes nero)
+15013	Crema di marroni o confettura di castagne, preconfezionata
+15058	Arachidi caramellate (chouchou)
+15201	Pasta di mandorle, preconfezionata
+19437	Formaggio di capra impanato da dorare, preconfezionato
+19688	Baba al rum, banco frigo
+20194	Fagioli bianchi in salsa di pomodoro, in scatola
+20240	Piperade basca (peperoni e pomodori stufati con cipolla e aglio), preconfezionata
+20262	Padellata di verdure condite senza funghi, surgelata, cruda
+20273	Padellata di verdure condite in stile asiatico o wok di verdure, surgelata, cruda
+20274	Padellata di verdure condite grigliate, in stile meridionale o mediterraneo, surgelata, cruda
+20498	Padellata di verdure condite con funghi (tipo campagnola), surgelata
+20914	Hamburger vegetale di soia
+23000	Torta, alimento medio
+23001	Cheesecake, preconfezionato
+23005	Paris-Brest (pasta choux con crema al pralinato)
+23006	Foresta nera, torta tipo pan di spagna al cioccolato con crema a più strati, con o senza ciliegie
+23007	Torta mousse alla frutta su pan di spagna, tipo specchio, bavarese
+23008	Torta Opéra (entremet)
+23009	Fraisier o framboisier (torta pan di spagna con fragole o lamponi)
+23021	Baba al rum, artigianale
+23022	Canelé (dolcetto bordolese)
+23023	Kouign amann (dolce bretone a strati di burro e zucchero caramellato), preconfezionato
+23024	Macaron morbido farcito con confettura o crema
+23027	Macaron secco (biscotto)
+23030	Tronchetto di Natale (bûche de Noël)
+23031	Brownie al cioccolato con frutta a guscio, preconfezionato
+23032	Brownie al cioccolato, preconfezionato
+23033	Rocher al cocco o congolais (dolcetto al cocco), preconfezionato
+23050	Torta di Savoia (pan di spagna soffice)
+23080	Quatre-quarts (plumcake con burro, uova, zucchero e farina in parti uguali), artigianale
+23081	Quatre-quarts (plumcake con burro, uova, zucchero e farina in parti uguali), preconfezionato
+23082	Barretta dolce (tipo plumcake), preconfezionata
+23103	Torta soffice al limone, preconfezionata
+23120	Torta bretone farcita con crema di prugne, preconfezionata
+23121	Far breton (budino bretone) con prugne
+23122	Kouign amann (dolce bretone a strati di burro e zucchero caramellato), artigianale
+23200	Pan di spezie (pain d'épices), preconfezionato
+23220	Pan di spezie farcito alla frutta (nonnette), preconfezionato
+23300	Baklava (dolce orientale a base di mandorle e sciroppo)
+23301	Corno di gazzella (dolce orientale a base di mandorle, a forma di mezzaluna, ricoperto di zucchero a velo)
+23455	Bignè alla crema, non specificato (chantilly o pasticcera)
+23456	Bignè alla crema chantilly, tipo Saint-Honoré
+23457	Bignè alla crema pasticcera
+23467	Chouquette (bignè zuccherato)
+23472	Profiteroles (bignè) con gelato alla vaniglia e salsa al cioccolato
+23477	Eclair (bignè allungato)
+23479	Crostata di frutta con crema pasticcera
+23480	Fagottino di mele (pasta sfoglia)
+23481	Crostata normanna alle mele (farcia di farina, uova, panna, zucchero, calvados), artigianale
+23485	Crostata al limone
+23490	Crostata o tartelletta alle mele
+23491	Crostata alle fragole, artigianale
+23493	Crumble di mele, preconfezionato
+23494	Crostata alle albicocche
+23495	Crostata ai frutti rossi
+23496	Torta tatin alle mele (torta rovesciata caramellata)
+23497	Crostata al cioccolato, artigianale
+23498	Crostata o tartelletta alla frutta, alimento medio
+23525	Flan pasticcere alle uova (tipo parigino)
+23531	Charlotte alla frutta
+23540	Torta moka o torta al caffè
+23585	Torta al cioccolato, preconfezionata
+23586	Torta al cioccolato tipo fondente (cuore morbido), preconfezionata
+23588	Torta o plumcake allo yogurt, preconfezionato
+23594	Torta soffice semplice tipo pan di spagna, preconfezionata
+23680	Galette des rois (torta sfoglia dell'Epifania) farcita alla mela
+23684	Galette des rois (torta sfoglia dell'Epifania) farcita alla frangipane, o Pithiviers
+23799	Crepe semplice, preconfezionata, banco frigo
+23800	Crepe semplice, preconfezionata, a temperatura ambiente
+23801	Galette di grano saraceno, semplice, morbida (da farcire), preconfezionata
+23802	Torta basca con crema pasticcera
+23803	Torta basca alle ciliegie
+23804	Crepe farcita al cioccolato e cereali soffiati croccanti, preconfezionata
+23815	Crepe farcita allo zucchero, preconfezionata
+23820	Crepe farcita con confettura, fatta in casa
+23821	Crepe farcita al cioccolato o alla crema spalmabile al cioccolato e nocciole, fatta in casa
+23827	Pancake dolce, preconfezionato
+23828	Pancake farcito con crema spalmabile al cioccolato e nocciole, preconfezionato
+23829	Crepe farcita al cioccolato, preconfezionata
+23830	Crepe farcita alla fragola, preconfezionata
+23849	Waffle sottile farcito al miele, caramello o zucchero di canna, preconfezionato
+23850	Waffle di Bruxelles o di Liegi, semplice, artigianale
+23851	Waffle soffice (tipo Bruxelles o Liegi), semplice o zuccherato, preconfezionato
+23852	Waffle soffice (tipo Bruxelles o Liegi), al cioccolato, preconfezionato
+23853	Waffle croccante (sottile o secco), semplice o zuccherato, preconfezionato
+23880	Bombolone o donut morbido, senza farcitura, spolverato di zucchero
+23881	Bombolone o donut farcito alla frutta (tipo confettura), preconfezionato
+23885	Bombolone o donut farcito o ricoperto al cioccolato o cioccolato e nocciola, preconfezionato
+23900	Pasticceria dolce, alimento medio
+23909	Plumcake alla frutta (candita e/o uvetta), preconfezionato
+23925	Torta marmorizzata al cioccolato, preconfezionata
+23935	Torta soffice semplice, preconfezionata
+23937	Torta soffice alla frutta, preconfezionata
+23938	Torta soffice con frutta a guscio, tipo gateau creusois, preconfezionata
+23939	Torta soffice farcita al cioccolato, tipo mini-cake, mini rotolo, orsetto..., preconfezionata
+23941	Tortina soffice ripiena di frutta, tipo mini-rotolo o mini-plumcake, preconfezionata
+23943	Tortina soffice con gocce di cioccolato, tipo mini-plumcake, preconfezionata
+23944	Tortina soffice ripiena di cioccolato e ricoperta di cioccolato, preconfezionata
+23945	Tortina soffice ripiena di cioccolato e latte, ricoperta di cioccolato, preconfezionata
+23951	Muffin ai frutti (mirtilli e altri), preconfezionato
+23952	Muffin al cioccolato, preconfezionato
+24000	Biscotto secco, non specificato
+24001	Biscotto secco, semplice
+24002	Biscotto secco a tenore garantito di vitamine
+24003	Biscotto secco a tenore garantito di vitamine e minerali
+24004	Biscotto secco alla frutta, iposodico o a tenore ridotto di sale
+24006	Biscotto secco di soia, arricchito di vitamine e minerali
+24008	Biscotto secco ripieno di frutta, light
+24009	Speculoos (biscotto speziato belga)
+24010	Biscotto secco con grasso vegetale
+24011	Biscotto secco, assortimento
+24012	Biscotto secco al cioccolato, senza zuccheri aggiunti, con dolcificanti, arricchito di vitamine
+24013	Biscotto secco, senza zuccheri aggiunti, con dolcificante
+24014	Biscotto secco con copertura di cioccolato e ripieno al latte
+24015	Biscotto secco al burro
+24016	Biscotto secco con copertura di cioccolato
+24017	Biscotto secco al burro, al cioccolato (copertura o gocce)
+24018	Biscotto secco al burro, senza glutine
+24019	Biscotto secco al cioccolato, senza glutine
+24020	Biscotto secco ai cereali integrali
+24021	Biscotto secco al burro, di frumento integrale
+24028	Biscotto secco al sesamo, non arricchito
+24029	Biscotto secco al sesamo, arricchito di vitamine e minerali
+24031	Biscotto secco senza cioccolato, light
+24034	Biscotto secco per la prima colazione, senza cioccolato, non arricchito
+24035	Biscotto secco per la prima colazione, light di zuccheri
+24036	Biscotto secco al cioccolato, non arricchito
+24037	Biscotto secco ripieno di pasta o purea di frutta (es. fico)
+24038	Biscotto secco di pasta frolla, ricoperto di cioccolato
+24040	Biscotto secco per la prima colazione, al cioccolato, non arricchito
+24041	Biscotto secco per la prima colazione, tutti i gusti, arricchito di vitamine e minerali
+24042	Biscotto secco al cioccolato, arricchito di vitamine e minerali
+24048	Biscotto secco di pasta frolla, tipo galletta, non puro burro
+24049	Biscotto secco di pasta frolla, tipo galletta, al burro
+24050	Biscotto secco di pasta frolla, tipo galletta, al burro e cioccolato
+24051	Biscotto di pan di spagna, ricoperto di cioccolato, tipo barchetta
+24052	Biscotto secco (crostatina), ricoperto di cioccolato, preconfezionato
+24054	Biscotto secco di pasta frolla, tipo galletta, alla frutta
+24056	Fiorentina (biscotto al cioccolato e alle mandorle)
+24057	Biscotto secco di pasta frolla, ripieno di frutta, tipo lunette de Romans (biscotto francese a forma di occhiali)
+24061	Biscotto meringato ripieno (cioccolato, nocciola, cocco…), ricoperto o a base di cioccolato
+24070	Biscotto secco al cocco
+24071	Frollino artigianale
+24224	Biscotto al cioccolato ripieno (sandwich), gusto vaniglia, rotondo, nero e bianco
+24225	Merenda secca ripiena (sandwich), gusto latte o vaniglia
+24230	Merenda secca ripiena (sandwich), gusto cioccolato, di frumento integrale
+24231	Merenda secca ripiena (sandwich), gusto cioccolato
+24240	Merenda secca ripiena (sandwich), gusto frutta
+24300	Wafer (a ventaglio, a sigaro…), senza ripieno
+24311	Wafer ripieno e/o ricoperto di cioccolato
+24312	Wafer ripieno di frutta a guscio (nocciola, mandorla, pralinato, ecc.), con o senza cioccolato
+24313	Wafer ripieno di vaniglia
+24320	Wafer ripieno di frutta
+24370	Crêpe dentelle (cialda sottile bretone), semplice
+24371	Crêpe dentelle (cialda sottile bretone), ricoperta di cioccolato
+24430	Savoiardo
+24441	Biscotto secco, tipo lingua di gatto o sigaretta russa
+24520	Meringa
+24614	Biscotto secco croccante alle mandorle (es. canistrelli)
+24615	Biscotto secco sottile o tegolino, alle mandorle
+24616	Biscotto secco sottile o tegolino, gusto limone o arancia
+24630	Madeleine al puro burro, preconfezionata
+24631	Madeleine al cioccolato (copertura, gocce o ripieno…), preconfezionata
+24632	Madeleine comune, preconfezionata
+24654	Biscotto secco o galletta d'avena, ricoperto di cioccolato
+24655	Biscotto secco o galletta d'avena
+24656	Cookie ai cranberry e cioccolato bianco, preconfezionato
+24657	Biscotto secco a bastoncino o treccia, ricoperto di cioccolato
+24658	Biscotto secco di pasta sfoglia, tipo palmier o altro, ricoperto di cioccolato
+24659	Biscotto secco di pasta sfoglia, tipo palmier o altro, preconfezionato
+24660	Biscotto secco di pasta sfoglia, tipo palmier o altro, artigianale
+24663	Crostata di pere alla frangipane
+24664	Tortina alle mandorle tipo financier, preconfezionata
+24666	Millefoglie
+24674	Tortina soffice senza glutine (plumcake, madeleine…), preconfezionata
+24675	Tortina soffice senza glutine (plumcake, brownie…), al cioccolato, preconfezionata
+24676	Cookie al cioccolato e frutta a guscio (nocciole, mandorle, noci pecan…), preconfezionato
+24678	Biscotto di pan di spagna, ricoperto di frutta, tipo barchetta
+24679	Biscotto secco (crostatina), ricoperto di frutta, preconfezionato
+24680	Biscotto soffice ripieno all'arancia e ricoperto di zucchero a velo
+24684	Cookie al cioccolato, preconfezionato
+24685	Cono classico per gelato
+24686	Biscotto di pan di spagna, ripieno di frutta (es. arancia, ciliegia…), ricoperto di cioccolato
+24687	Cookie con gocce di cioccolato e cocco, preconfezionato
+24998	Pesce bianco in salsa, preconfezionato (alimento medio)
+25001	Blanquette di vitello (spezzatino in salsa bianca), preconfezionata
+25002	Cassoulet (stufato di fagioli bianchi, carne e salsiccia), in scatola
+25003	Crauti alsaziani con carni (choucroute garnie), preconfezionati
+25009	Hachis parmentier (sformato di patate e carne macinata), preconfezionato
+25010	Carne di maiale salmistrata o salsiccia con lenticchie, preconfezionato
+25013	Pot-au-feu (bollito di carne e verdure), preconfezionato
+25018	Ratatouille cucinata, preconfezionata
+25019	Ravioli al manzo, in salsa di pomodoro, in scatola
+25020	Soufflé al formaggio
+25026	Spinaci alla crema, preconfezionati
+25029	Couscous al montone
+25031	Paella, preconfezionata
+25033	Boeuf bourguignon (spezzatino di manzo al vino rosso), preconfezionato
+25035	Spezzatino di agnello al curry, preconfezionato
+25037	Gratin o cassolette di pesce e/o frutti di mare, preconfezionato, crudo
+25038	Gratin o cassolette di pesce e/o frutti di mare, preconfezionato, cotto
+25043	Couscous alla carne o al pollo, light, preconfezionato
+25052	Melanzane al gratin, preconfezionate
+25056	Gratin dauphinois (patate gratinate alla panna), preconfezionato
+25057	Padellata di patate prefritte, con pancetta o pollo e altro, senza verdure verdi, preconfezionata
+25058	Anatra in salsa (al pepe verde, alla cacciatora, ecc.), preconfezionata
+25063	Coniglio alla senape, preconfezionato
+25065	Manzo alle carote, preconfezionato
+25071	Potée auvergnate (bollito di maiale con cavolo, carote e patate)
+25073	Indivia belga al prosciutto, preconfezionata
+25077	Salmone in salsa all'acetosella, preconfezionato
+25081	Lasagne o cannelloni alla carne (bolognese), preconfezionati
+25085	Pasta alla bolognese (spaghetti, tagliatelle…), preconfezionata
+25086	Pesce bianco alla bordolese (pangrattato, olio…), preconfezionato
+25088	Riso cantonese, preconfezionato
+25089	Cordon bleu di pollo, preconfezionato
+25098	Cassoulet al maiale, in scatola
+25099	Cassoulet all'anatra o all'oca, in scatola
+25101	Cavolfiore al gratin, preconfezionato
+25103	Pomodoro farcito, preconfezionato
+25106	Cavolo farcito, preconfezionato
+25107	Couscous al pesce
+25108	Samosa o brick farcito, preconfezionato, cotto
+25110	Ravioli cinesi al vapore con gamberetti, cotti
+25111	Chili con carne, preconfezionato
+25121	Coq au vin (pollo al vino rosso)
+25122	Pasta al gratin con prosciutto, preconfezionata
+25123	Moussaka, preconfezionata
+25124	Navarin di agnello (spezzatino) con verdure
+25125	Involtino di vitello
+25126	Involtino di pollo
+25127	Couscous reale (con più carni), preconfezionato
+25128	Pesce bianco alla provenzale o nizzarda (salsa di pomodoro), preconfezionato
+25131	Lasagne o cannelloni alle verdure, preconfezionati, cotti
+25135	Pasta alla carbonara (spaghetti, tagliatelle…), preconfezionata
+25137	Tartiflette (patate, formaggio reblochon, pancetta…), preconfezionata
+25138	Couscous al pollo
+25139	Lasagne o cannelloni al pesce, preconfezionati
+25140	Pesce bianco alla fiorentina (salsa agli spinaci), preconfezionato
+25141	Pesce bianco alla marinara (salsa con cipolle, vino bianco e cozze), preconfezionato
+25142	Pesce bianco in salsa di senape, preconfezionato
+25143	Pesce bianco alla parigina (salsa ai funghi), preconfezionato
+25145	Pesce bianco al dragoncello, preconfezionato
+25146	Pesce bianco in salsa di acetosella, preconfezionato
+25149	Pasta fresca ripiena (es. ravioli, tortellini), al formaggio, preconfezionata, cotta
+25150	Couscous di verdure, preconfezionato
+25151	Sfogliatina salata al pesce e/o frutti di mare, preconfezionata, da cuocere
+25152	Couscous alla carne, preconfezionato
+25154	Pesce al gratin con purè di patate o brandade, preconfezionato
+25155	Pasta fresca ripiena (es. ravioli, tortellini), al formaggio e verdure, preconfezionata, cotta
+25157	Pasta fresca ripiena (es. ravioli, tortellini), al manzo (es. bolognese), preconfezionata, cruda
+25158	Pasta fresca ripiena (es. ravioli, tortellini), al manzo (es. bolognese), preconfezionata, cotta
+25159	Tajine di montone, preconfezionato
+25162	Verdure al gratin, preconfezionate
+25163	Polpette di manzo, cotte
+25164	Ossobuco di vitello alla milanese (stinco di maiale, verdure, vino bianco)
+25169	Specialità cinese tipo dim sum al vapore, preconfezionata, cotta
+25172	Carne in salsa (alimento medio)
+25173	Scaloppina impanata alla viennese o alla milanese, di vitello, cotta
+25174	Pollo al curry e latte di cocco, preconfezionato
+25175	Meloukhia (piatto a base di manzo e corete, verdura simile al malva di giuta), fatto in casa
+25181	Pasta fresca ripiena (es. ravioli, tortellini), al formaggio, preconfezionata, cruda
+25182	Pasta fresca ripiena (es. ravioli, tortellini), al formaggio e verdure, preconfezionata, cruda
+25183	Noodle con gamberetti, preconfezionati, saltati in padella
+25186	Polpette di maiale e manzo (alla svedese), preconfezionate, crude
+25187	Risotto alle verdure, preconfezionato
+25188	Risotto ai frutti di mare, preconfezionato
+25189	Risotto ai formaggi, preconfezionato
+25190	Pollo alla basca, preconfezionato
+25192	Ravioli alle verdure, in salsa di pomodoro, in scatola
+25193	Pasta fresca ripiena (es. ravioli, tortellini), alle verdure, preconfezionata, cotta
+25194	Polpette di manzo e agnello (tipo kefta), preconfezionate, crude
+25195	Parmentier di anatra (sformato con purè di patate), preconfezionato, da cuocere
+25196	Riste di melanzane (melanzane, pomodori, cipolle), preconfezionata
+25198	Pasta in salsa ai formaggi (spaghetti, tagliatelle…), preconfezionata
+25199	Polpetta o galletta di verdure, prefritta, surgelata
+25200	Spalla di maiale alla diavola, preconfezionata
+25201	Lingua di manzo in salsa madeira, preconfezionata
+25203	Pasta fresca ripiena (es. ravioli, tortellini), alle verdure, preconfezionata, cruda
+25204	Tajine di pollo, preconfezionato
+25205	Chop suey (maiale o pollo, verdure), preconfezionato
+25207	Maiale al caramello, preconfezionato
+25208	Polpetta o galletta di verdure, prefritta, surgelata, cotta
+25210	Salmone farcito, preconfezionato
+25211	Polpette di manzo, in salsa di pomodoro, preconfezionate
+25213	Involtino di vitello, preconfezionato, arrosto/cotto al forno
+25216	Pasta fresca ripiena (es. ravioli, tortellini), cotta (alimento medio)
+25217	Foglia di vite farcita al riso o dolma, scolata, preconfezionata
+25219	Lasagne o cannelloni alle verdure e formaggio di capra, preconfezionati, cotti
+25220	Crauti cucinati con pancetta, senza contorno, scolati, cotti
+25221	Polpette di manzo e agnello (tipo kefta), preconfezionate, cotte
+25222	Polpette di maiale e manzo (alla svedese), preconfezionate, cotte
+25223	Bocconcini o trito vegetale di soia e frumento (adatto a vegani), preconfezionato
+25224	Bocconcini o trito di soia e frumento (non adatto a vegani), preconfezionato
+25225	Nuggets o crocchetta impanata di frumento (senza soia), preconfezionato
+25226	Nuggets o crocchetta impanata di soia e frumento (non adatto a vegani), preconfezionato
+25227	Nuggets o crocchetta impanata di soia e frumento (adatto a vegani), preconfezionato
+25228	Impanato di soia e frumento (non adatto a vegani)
+25229	Bastoncino impanato di soia e frumento (adatto a vegani), preconfezionato
+25230	Impanato di soia, frumento e formaggio, tipo cordon bleu, preconfezionato
+25231	Ravioli al tofu, in salsa di pomodoro, preconfezionati
+25233	Galletta di cereali al formaggio (senza soia), preconfezionata
+25234	Galletta di cereali alle verdure (senza soia), preconfezionata
+25238	Verdure al gratin, fatte in casa
+25242	Paella (pollo, frutti di mare, chorizo, merluzzo), fatta in casa
+25243	Noodle asiatici istantanei, aromatizzati, cotti
+25396	Sfogliatina salata al prosciutto e formaggio, preconfezionata
+25398	Sfogliatina salata al formaggio, preconfezionata, da cuocere
+25399	Sfogliatina salata alle lumache, preconfezionata
+25400	Croque-monsieur (toast al prosciutto e formaggio), con burro, fatto in casa
+25401	Sfogliatina salata al formaggio, preconfezionata, cotta
+25402	Sfogliatina salata alla carne, preconfezionata
+25403	Hot dog, preconfezionato
+25404	Pizza margherita, preconfezionata
+25405	Quiche lorraine, preconfezionata
+25409	Crêpe salata al prosciutto e besciamella, preconfezionata
+25410	Crêpe salata al prosciutto, formaggio e besciamella, preconfezionata
+25411	Crêpe salata ai funghi e besciamella, preconfezionata, surgelata
+25412	Bouchée à la reine (vol-au-vent) con carne, pollame o quenelle
+25413	Hamburger, da fast food
+25414	Cheeseburger, da fast food
+25415	Cheeseburger doppio, da fast food
+25416	Burger di pesce, da fast food
+25417	Torta salata alle verdure, preconfezionata
+25418	Cornetto (croissant) salato al prosciutto e formaggio, fatto in casa
+25419	Involtino primavera
+25428	Kebab in pita, con verdure crude
+25429	Kebab in baguette, con verdure crude
+25431	Sandwich in baguette, con tonno, verdure crude e maionese, fatto in casa
+25434	Panino tostato con prosciutto crudo, mozzarella e pomodoro
+25435	Pizza prosciutto e formaggio, preconfezionata
+25437	Gougère (bignè salato al formaggio)
+25438	Samosa o brick farcito, fatto in casa, cotto
+25444	Torta salata al formaggio, preconfezionata
+25454	Torta salata alla provenzale, preconfezionata
+25456	Sushi o maki ai prodotti del mare
+25457	Pizza alla bolognese, con carne, preconfezionata
+25459	Burrito al manzo
+25460	Fajita al pollo, preparata in casa con un kit
+25462	Pizza al chorizo o salame, preconfezionata
+25463	Pizza ai frutti di mare, preconfezionata
+25464	Pizza al salmone, preconfezionata
+25468	Pizza al caprino e pancetta, preconfezionata
+25472	Pizza alle verdure o pizza quattro stagioni, preconfezionata
+25475	Sandwich in baguette, con prosciutto, uovo, verdure crude e burro
+25476	Sandwich in baguette, con pollo, verdure crude e maionese, fatto in casa
+25477	Pizza funghi e formaggio, preconfezionata
+25478	Pizza ai formaggi, preconfezionata
+25485	Sandwich in baguette, con prosciutto ed emmental, preconfezionato
+25488	Sandwich in baguette, con salmone affumicato e burro
+25490	Sandwich in baguette, con tonno, mais e verdure crude, preconfezionato
+25501	Panino tostato ai tre formaggi
+25502	Burger di pollo, da fast food
+25503	Bouchée à la reine (vol-au-vent) al pesce e frutti di mare, fatta in casa
+25504	Spiedino di pollame, crudo
+25505	Spiedino di manzo, crudo
+25506	Spiedino misto di carne
+25508	Sfogliatina salata al prosciutto e formaggio, fatta in casa
+25509	Preparato a base di formaggio per fonduta savoiarda, preconfezionato
+25511	Verdure ripiene (escluso pomodoro)
+25512	Nuggets di pollame, impanati, preconfezionati
+25513	Pan bagnat (panino nizzardo con tonno, acciughe, olive nere e verdure)
+25516	Pizza (alimento medio)
+25517	Sandwich in baguette, con prosciutto e burro, fatto in casa
+25518	Sandwich in baguette, con camembert e burro, fatto in casa
+25519	Sandwich in baguette, con pâté e cetriolini
+25520	Sandwich in baguette, con salame e burro, fatto in casa
+25521	Sandwich in baguette, con prosciutto, emmental e burro
+25522	Sandwich (alimento medio)
+25523	Toast o tartine salate, farciture varie, preconfezionati
+25524	Pomodoro alla provenzale, farcito con aglio e prezzemolo, fatto in casa
+25528	Pissaladière (focaccia con cipolle, acciughe e olive nere), preconfezionata
+25529	Torta salata alla cipolla, preconfezionata
+25530	Sandwich in baguette, con verdure crude varie e maionese
+25531	Sandwich in baguette, con tacchino, verdure crude e maionese
+25532	Sandwich in baguette, con uovo, verdure crude e maionese
+25533	Sandwich in baguette, con carne di maiale, verdure crude e maionese
+25535	Sandwich in baguette, con merguez, ketchup e senape
+25536	Sandwich in baguette, con salame e burro
+25538	Carpaccio di manzo, con marinata (olio, erbe, formaggio), fatto in casa
+25539	Spiedino di pesce
+25540	Spiedino di gamberi
+25541	Spiedino di agnello
+25542	Croque-madame (toast al prosciutto e formaggio con uovo fritto), fatto in casa
+25543	Sandwich in baguette (alimento medio)
+25546	Formaggio impanato al prosciutto, preconfezionato
+25547	Croque-monsieur (toast al prosciutto e formaggio), preconfezionato
+25548	Pizza prosciutto, formaggio e funghi o pizza regina, preconfezionata
+25549	Crêpe salata al formaggio e besciamella, preconfezionata
+25550	Tarte flambée (focaccia alsaziana con panna, cipolle e pancetta), preconfezionata
+25551	Frittella di carne, pollame o pesce, fatta in casa, cotta
+25552	Crêpe salata al prosciutto, formaggio, funghi e besciamella, preconfezionata
+25553	Torta salata ai porri, preconfezionata
+25555	Torta salata al salmone, preconfezionata
+25556	Frittella di verdure
+25557	Brick all'uovo (involtino di pasta fillo), fatto in casa, cotto
+25558	Samosa o brick al manzo, fatto in casa, cotto
+25559	Brick alla patata (involtino di pasta fillo), fatto in casa, cotto
+25560	Torta salata al riesling (maiale, vino riesling, funghi), preconfezionata
+25561	Torta salata al pomodoro, preconfezionata
+25562	Crêpe salata completa (uovo, prosciutto, formaggio), preconfezionata
+25564	Torta salata alle capesante, preconfezionata
+25565	Yakitori (spiedini giapponesi grigliati in salsa)
+25566	Spiedino di maiale, crudo
+25568	Pastilla al pollo (involtino marocchino), preconfezionata
+25570	Pizza pancetta, cipolle e formaggio, preconfezionata
+25571	Falafel (polpetta di ceci e/o fave), da asporto
+25572	Crêpe salata alle capesante, preconfezionata
+25573	Torta o quiche salata (alimento medio)
+25575	Sandwich in pane in cassetta integrale, con tonno e verdure crude, preconfezionato
+25576	Sandwich in pane in cassetta integrale, con prosciutto e formaggio, preconfezionato
+25577	Sandwich in pane in cassetta integrale, con pollo e verdure crude, preconfezionato
+25578	Sfogliatina salata (alimento medio)
+25580	Bouchée à la reine (vol-au-vent) farcita (alimento medio)
+25581	Crêpe salata ai funghi e besciamella, preconfezionata, cotta
+25582	Involtino primavera (nem) al pollo, preconfezionato, cotto
+25583	Involtino primavera (nem) al maiale, preconfezionato, cotto
+25584	Involtino primavera (nem) ai gamberi e/o granchio, preconfezionato, cotto
+25585	Spiedino di manzo, cotto
+25586	Spiedino di pollame, cotto
+25587	Parmentier di anatra (sformato di purè e carne), preconfezionato, cotto
+25588	Gratin di verdure in besciamella, preconfezionato, cotto
+25589	Polpetta vegetale di soia e/o grano, preconfezionata
+25590	Falafel (polpetta di ceci e/o fave), preconfezionato
+25591	Burger vegetale di lenticchie, soia e verdure, preconfezionato
+25592	Burger vegetale di grano (seitan) e verdure, preconfezionato
+25593	Burger vegetale di grano e soia (adatto a vegani), preconfezionato
+25594	Burger vegetale di grano e soia (non adatto a vegani), preconfezionato
+25595	Burger vegetale di soia e formaggio, preconfezionato
+25596	Burger vegetale di soia e verdure, preconfezionato
+25597	Burger vegetale di soia, formaggio e verdure, preconfezionato
+25599	Sandwich in pane in cassetta integrale, con prosciutto, preconfezionato
+25600	Insalata di sedano rapa alla rémoulade, preconfezionata
+25601	Insalata di tonno e verdure, in scatola
+25602	Insalata mista con carne o pesce, in scatola
+25605	Funghi alla greca, preconfezionati
+25606	Insalata di patate, fatta in casa
+25608	Tabulè (insalata di semola con verdure), preconfezionato
+25609	Insalata di patate alla piemontese, preconfezionata
+25610	Insalata di musetto di manzo, con salsa, preconfezionata
+25614	Insalata di riso, in scatola
+25615	Insalata di pasta al formaggio e verdure, con salsa
+25619	Insalata di pasta con verdure e pesce o carne, con salsa, preconfezionata
+25623	Torta salata al maroilles (formaggio francese), preconfezionata
+25625	Crêpe salata al pesce e/o frutti di mare, preconfezionata
+25626	Macedonia di verdure in insalata, con salsa, preconfezionata
+25628	Insalata Caesar al pollo (lattuga, formaggio, crostini, salsa), preconfezionata
+25629	Insalata vegetariana di bulgur e/o quinoa con verdure, preconfezionata
+25632	Sandwich in baguette, con tonno, verdure crude e maionese, da asporto
+25633	Sandwich in baguette, con prosciutto e burro, da asporto
+25634	Sandwich in baguette, con prosciutto ed emmental, da asporto
+25635	Lasagne o cannelloni al formaggio di capra e spinaci, preconfezionati
+25638	Sandwich in baguette, con pollo, verdure crude e maionese, da asporto
+25639	Sandwich in baguette, con salame e burro, da asporto
+25640	Sandwich in baguette, con camembert e burro, da asporto
+25641	Sandwich in pane in cassetta integrale, con salame, preconfezionato
+25642	Insalata di sedano rapa e carota alla rémoulade, preconfezionata
+25643	Burger di pollo, preconfezionato
+25644	Cheeseburger, preconfezionato
+25645	Sandwich in pane in cassetta integrale, con bacon e verdure crude, preconfezionato
+25646	Wrap vegetariano al formaggio e verdure crude
+25647	Wrap al pollo e verdure crude
+25648	Wrap al prosciutto e verdure crude
+25649	Crêpe salata al caprino e pancetta, preconfezionata
+25650	Sandwich in pane in cassetta integrale, con tonno, uovo e verdure crude, preconfezionato
+25651	Sandwich in pane in cassetta integrale, con salmone affumicato, preconfezionato
+25652	Sandwich in pane in cassetta integrale, con prosciutto, uovo e verdure crude, preconfezionato
+25653	Sandwich in pane in cassetta integrale, con prosciutto, formaggio e verdure crude, preconfezionato
+25654	Sandwich in pane in cassetta integrale, con prosciutto e verdure crude, preconfezionato
+25655	Sandwich in pane viennese, con prosciutto, uovo e verdure crude, preconfezionato
+25656	Sandwich in pane viennese, con tonno, uovo e verdure crude, preconfezionato
+25657	Sandwich in pane viennese, con pollo, uovo e verdure crude, preconfezionato
+25658	Sandwich in pane viennese, con pollo e verdure crude, preconfezionato
+25659	Sandwich in pane polare, con pollo e verdure crude, preconfezionato
+25660	Sandwich in pane polare, con salmone, preconfezionato
+25661	Sandwich in pane polare, con prosciutto e formaggio, preconfezionato
+25662	Sandwich in pane in cassetta integrale, con pollo, preconfezionato
+25663	Sandwich in baguette, con pollo e verdure crude, preconfezionato
+25664	Insalata di patate al tonno, preconfezionata
+25665	Insalata di patate alla salsiccia, preconfezionata
+25666	Insalata mista di verdure crude, salumi e formaggio, con salsa, preconfezionata
+25667	Insalata mista di verdure crude e prodotti del mare, con salsa, preconfezionata
+25668	Insalata mista di verdure crude, uovo e prodotti del mare, con salsa, preconfezionata
+25669	Insalata mista di verdure crude, pollo e formaggio, con salsa, preconfezionata
+25670	Insalata mista di verdure crude e pollo, con salsa, preconfezionata
+25671	Pizza al caprino, preconfezionata
+25674	Involtino primavera (nem), preconfezionato, cotto (alimento medio)
+25900	Zuppa di lenticchie, preconfezionata da riscaldare
+25901	Zuppa di pollame e verdure, preconfezionata da riscaldare
+25903	Zuppa di verdure varie, preconfezionata da riscaldare
+25904	Zuppa di pesce e/o crostacei, preconfezionata da riscaldare
+25905	Zuppa di verdure varie, disidratata e ricostituita
+25907	Zuppa di porri e patate, preconfezionata da riscaldare
+25908	Zuppa di pollame e vermicelli, preconfezionata da riscaldare
+25909	Brodo di carne e verdure tipo pot-au-feu, pronto al consumo
+25910	Zuppa di cipolle, preconfezionata da riscaldare
+25912	Zuppa di funghi, preconfezionata da riscaldare
+25913	Zuppa di carote, preconfezionata da riscaldare
+25914	Zuppa di pomodoro, preconfezionata da riscaldare
+25915	Zuppa chorba frik, a base di carne e frik (grano verde)
+25916	Minestrone, preconfezionato da riscaldare
+25917	Zuppa al pistou, disidratata e ricostituita
+25919	Zuppa di pesce e/o crostacei, disidratata e ricostituita
+25923	Zuppa asiatica, con pasta, disidratata e ricostituita
+25924	Zuppa marocchina, disidratata e ricostituita
+25925	Zuppa di porri e patate, disidratata e ricostituita
+25928	Zuppa di pollame e verdure, disidratata e ricostituita
+25930	Brodo di manzo, disidratato e ricostituito
+25932	Zuppa di asparagi, disidratata e ricostituita
+25933	Zuppa di pomodoro e vermicelli, preconfezionata da riscaldare
+25934	Zuppa di cereali e verdure, disidratata e ricostituita
+25935	Zuppa di pomodoro, disidratata e ricostituita
+25936	Zuppa di funghi, disidratata e ricostituita
+25942	Zuppa di cipolle, disidratata e ricostituita
+25945	Zuppa di zucca, preconfezionata da riscaldare
+25947	Brodo di pollame, disidratato e ricostituito
+25948	Brodo di verdure, disidratato e ricostituito
+25949	Zuppa di pomodoro e vermicelli, disidratata e ricostituita
+25950	Zuppa di pollame e vermicelli, disidratata e ricostituita
+25953	Zuppa al pistou, preconfezionata da riscaldare
+25954	Zuppa di zucca, disidratata e ricostituita
+25955	Zuppa asiatica, con pasta, preconfezionata da riscaldare
+25956	Minestrone, disidratato e ricostituito
+25957	Zuppa di crescione, disidratata e ricostituita
+25958	Zuppa di crescione, preconfezionata da riscaldare
+25962	Zuppa di verdure con formaggio, preconfezionata da riscaldare
+25963	Zuppa di verdure verdi, preconfezionata da riscaldare
+25964	Zuppa di verdure verdi, disidratata ricostituita
+25965	Zuppa di piselli spezzati, preconfezionata da riscaldare
+25967	Zuppa fredda tipo gazpacho, preconfezionata
+25968	Zuppa di asparagi, preconfezionata da riscaldare
+25969	Zuppa (alimento medio)
+25972	Zuppa di miso, disidratata ricostituita
+25973	Zuppa di verdure e vermicelli, disidratata ricostituita
+25974	Zuppa di verdure e vermicelli, preconfezionata da riscaldare
+25975	Zuppa di manzo e vermicelli, disidratata ricostituita
+25976	Zuppa asiatica con pollo e pasta, preconfezionata da riscaldare
+26140	Pesce cotto (alimento medio)
+26249	Pesce bianco, cotto (alimento medio)
+26256	Ficelle picarde (crepe con prosciutto e funghi in salsa al formaggio), preconfezionata
+26257	Insalata di carote grattugiate, con salsa, preconfezionata
+26258	Insalata di barbabietola, con salsa, preconfezionata
+26259	Coleslaw, insalata di cavolo e carote, con salsa, preconfezionata
+26260	Insalata di cetrioli con panna o fiocchi di latte, preconfezionata
+26261	Insalata di lenticchie e salsiccia affumicata, preconfezionata
+26262	Insalata greca, con salsa, preconfezionata
+26263	Insalata di riso con tonno e verdure, con salsa, preconfezionata
+26266	Cornetto (croissant) salato con prosciutto e formaggio, preconfezionato
+26267	Torta salata di spinaci e caprino, preconfezionata
+26268	Tielle sétoise (torta salata di calamari in sugo piccante di pomodoro), preconfezionata
+26269	Tabbouleh, insalata di semola con pollo, preconfezionato
+26270	Pizza al tonno, preconfezionata
+26271	Pizza kebab, preconfezionata
+26272	Pizza al pollo, preconfezionata
+26273	Pizza tipo raclette o tartiflette, con formaggio fuso e patate, preconfezionata
+26274	Pizza allo speck o al prosciutto crudo, preconfezionata
+26276	Insalata di pasta con surimi, con salsa, preconfezionata
+26277	Insalata Alaska con surimi, ananas e carote, con salsa, preconfezionata
+26278	Insalata di pasta con pollo, formaggio e verdure crude, con salsa, preconfezionata
+26279	Insalata di pasta con pollo, uovo, formaggio e verdure crude, con salsa, preconfezionata
+26280	Insalata di pasta con prosciutto crudo, formaggio e verdure crude, con salsa, preconfezionata
+26281	Insalata di cavolo rosso, con salsa, preconfezionata
+26282	Insalata di pasta con pollo e verdure crude, con salsa, preconfezionata
+30181	Macinato vegetale a base di soia, preconfezionato
+30886	Gelatina di frutta, altri frutti o misto di frutti (extra o classica)
+30887	Marmellata, altri frutti o misto di frutti, light in zuccheri (extra o classica)
+30888	Marmellata di altri agrumi o misto di agrumi (extra o classica)
+30889	Marmellata d'arancia, light in zuccheri
+30990	Marmellata di more (extra o classica)
+30991	Gelatina di more (extra o classica)
+30992	Marmellata di rabarbaro (extra o classica)
+30993	Marmellata di pesche (extra o classica)
+30994	Marmellata di fichi (extra o classica)
+30995	Marmellata di fragole, light in zuccheri
+30996	Marmellata di albicocche, light in zuccheri
+30997	Marmellata di lamponi, light in zuccheri
+30998	Gelatina di lamponi (extra o classica)
+30999	Marmellata, tutti i tipi di frutta, zuccheri non specificati (alimento medio)
+31000	Barretta al cioccolato con biscotto
+31001	Barretta al cioccolato ricoperta, senza biscotto
+31002	Barretta al cocco ricoperta di cioccolato
+31004	Cioccolato al latte, tavoletta
+31005	Cioccolato fondente al 50% circa di cacao, tavoletta
+31006	Marmellata o gelatina, tutti i tipi di frutta, non light in zuccheri (alimento medio)
+31007	Gomma da masticare, zuccherata
+31009	Cioccolato al latte con cereali croccanti, tavoletta
+31010	Cioccolato bianco, tavoletta
+31012	Barretta o dolciume al cioccolato con latte
+31013	Sorbetto, stecco
+31014	Pasta di frutta
+31018	Cioccolato al latte con frutta secca (nocciole, mandorle, uvetta, pralina), tavoletta
+31020	Cioccolato al latte senza zuccheri aggiunti, con dolcificanti, tavoletta
+31021	Scorza d'arancia candita
+31023	Marrone candito (marron glacé)
+31024	Marmellata di fragole (extra o classica)
+31026	Cioccolato bianco con frutta secca (nocciole, mandorle, uvetta, pralina), tavoletta
+31027	Frutta candita
+31028	Caramella confettata
+31030	Cioccolato fondente senza zuccheri aggiunti, con dolcificanti, tavoletta
+31032	Crema da spalmare al cioccolato e nocciole
+31035	Barretta gelato al cioccolato
+31036	Confetto alla mandorla
+31037	Marmellata di albicocche (extra o classica)
+31038	Marmellata di ciliegie (extra o classica)
+31039	Marmellata d'arancia (extra o classica)
+31040	Confiture de lait (dulce de leche)
+31041	Confetto al cioccolato
+31042	Arachide confettata ricoperta di cioccolato
+31050	Marshmallow
+31052	Pralina alla mandorla
+31053	Marmellata di prugne, ad es. mirabelle, quetsche, regina claudia (extra o classica)
+31054	Gomma da masticare, senza zuccheri
+31059	Caramella dura e lecca-lecca
+31060	Caramella gelificata (gommosa)
+31062	Marmellata di lamponi (extra o classica)
+31063	Cioccolatino ripieno di frutta secca e/o pralina
+31066	Rocher al cioccolato ripieno di pralina
+31068	Marmellata di mirtilli (extra o classica)
+31069	Cioccolato fondente alla frutta (arancia, lampone, pera), tavoletta
+31070	Cioccolato fondente con frutta secca (nocciole, mandorle, uvetta, pralina), tavoletta
+31071	Barretta al cioccolato con frutta secca
+31072	Cioccolato fondente ripieno di crema alla menta
+31073	Torta morbida farcita al cioccolato e latte, ricoperta di cioccolato, preconfezionata, banco frigo
+31074	Cioccolato fondente al 70% circa di cacao, da degustazione, tavoletta
+31080	Cioccolato fondente ripieno di pralina, tavoletta
+31081	Caramella morbida, al caramello
+31082	Preparazione di frutta mista, dolcificata (contenuto di zuccheri intermedio tra marmellata light e marmellata classica)
+31083	Marmellata, altri frutti o misto di frutti (extra o classica)
+31084	Cioccolato al latte ripieno di pralina, tavoletta
+31085	Cioccolato fondente al 40% e più di cacao, da pasticceria, tavoletta
+31091	Cioccolatino ripieno di wafer o biscotto
+31092	Calisson di Aix-en-Provence (dolcetto di marzapane e melone candito)
+31093	Marshmallow ricoperto di cioccolato
+31094	Caramella dura, al caramello
+31095	Gelatina di ribes (extra o classica)
+31097	Caramella morbida
+31098	Barretta di cioccolato al latte con torrone
+31100	Barretta di cereali per la prima colazione al latte, al cioccolato o no, arricchita di vitamine e minerali
+31101	Barretta di cereali "equilibrio" alla frutta, arricchita di vitamine e minerali
+31102	Barretta di cereali "equilibrio" al cioccolato, arricchita di vitamine e minerali
+31104	Barretta di cereali dietetica ipocalorica
+31106	Barretta di cereali al cioccolato
+31112	Caramella gelificata alla liquirizia, tipo rotolo o stecco
+31113	Barretta di cereali alla frutta
+31114	Barretta di cereali alle mandorle o nocciole
+31115	Barretta di cereali al cioccolato e alla frutta
+31120	Cioccolato, tavoletta (alimento medio)
+31121	Gomma da masticare, zuccheri non specificati (alimento medio)
+31122	Caramella morbida al caramello ricoperta di cioccolato
+31124	Caramella dura tipo collana, fischietto, lecca-lecca o pastiglia, al destrosio
+31125	Pastiglia rinfrescante, senza zuccheri
+31126	Pastiglia rinfrescante, zuccherata
+31127	Torrone morbido
+31128	Caramella dura e lecca-lecca, senza zuccheri
+31129	Preparazione di frutta mista (minimo 35% di frutta, con zuccheri e altri ingredienti)
+32000	Chicchi di grano soffiato al miele o caramello, arricchiti di vitamine e minerali
+32001	Cereali per la prima colazione al cioccolato, non farciti, arricchiti di vitamine e minerali
+32003	Cereali per la prima colazione (alimento medio)
+32004	Muesli (alimento medio)
+32005	Fiocchi di mais naturali, arricchiti di vitamine e minerali
+32006	Riso soffiato naturale, arricchito di vitamine e minerali
+32008	Cereali per la prima colazione ricchi di fibre, al cioccolato, arricchiti di vitamine e minerali
+32012	Riso soffiato al cioccolato, non arricchito di vitamine e minerali
+32013	Cereali per la prima colazione al cioccolato, non farciti, non arricchiti di vitamine e minerali
+32014	Fiocchi di mais naturali, non arricchiti di vitamine e minerali
+32016	Cereali per la prima colazione farciti al cioccolato o cioccolato-nocciole, arricchiti di vitamine e minerali
+32017	Cereali per la prima colazione farciti al cioccolato o cioccolato-nocciole, non arricchiti di vitamine e minerali
+32018	Cereali per la prima colazione farciti al latte o alla vaniglia, arricchiti di vitamine e minerali
+32022	Fiocchi di cereali al cioccolato, con o senza frutta a guscio, arricchiti di vitamine e minerali
+32023	Fiocchi di cereali alla frutta, arricchiti di vitamine e minerali
+32025	Fiocchi di cereali alla frutta a guscio, arricchiti di vitamine e minerali
+32028	Fiocchi di cereali al cioccolato, con o senza frutta a guscio, non arricchiti di vitamine e minerali
+32029	Fiocchi di cereali alla frutta, non arricchiti di vitamine e minerali
+32030	Fiocchi di cereali, naturali, zuccherati, arricchiti di vitamine e minerali
+32031	Cereali per la prima colazione, arricchiti di vitamine e minerali (alimento medio)
+32032	Cereali per la prima colazione, non arricchiti di vitamine e minerali (alimento medio)
+32033	Cereali per la prima colazione ricchi di fibre, alla frutta o frutta a guscio, arricchiti di vitamine e minerali
+32034	Cereali per la prima colazione ricchi di fibre, alla frutta o frutta a guscio, non arricchiti di vitamine e minerali
+32035	Cereali per la prima colazione ricchi di fibre, naturali, arricchiti di vitamine e minerali
+32036	Cereali per la prima colazione ricchi di fibre, naturali, non arricchiti di vitamine e minerali
+32037	Cereali per la prima colazione al cioccolato e caramello, estrusi, arricchiti di vitamine e minerali
+32038	Cereali per la prima colazione al cioccolato e caramello, estrusi, non arricchiti di vitamine e minerali
+32039	Cereali per la prima colazione farciti al latte o alla vaniglia, non arricchiti di vitamine e minerali
+32040	Chicchi di grano soffiato al miele o caramello, non arricchiti di vitamine e minerali
+32041	Mix di fiocchi di cereali, naturale, non arricchito di vitamine e minerali
+32042	Fiocchi di cereali, naturali, zuccherati, non arricchiti di vitamine e minerali
+32043	Fiocchi di cereali, naturali, senza zuccheri aggiunti, non arricchiti di vitamine e minerali
+32107	Fiocchi di mais glassati allo zucchero, non arricchiti di vitamine e minerali
+32108	Muesli croccante alla frutta, con o senza frutta a guscio e/o semi, non arricchito di vitamine e minerali
+32109	Muesli croccante al cioccolato, non arricchito di vitamine e minerali
+32110	Muesli in fiocchi con frutta, frutta a guscio e/o semi, arricchito di vitamine e minerali
+32111	Muesli croccante alla frutta, con o senza frutta a guscio e/o semi, arricchito di vitamine e minerali
+32112	Muesli croccante al cioccolato, arricchito di vitamine e minerali
+32113	Muesli in fiocchi con frutta, frutta a guscio e/o semi, senza zuccheri aggiunti, non arricchito di vitamine e minerali
+32116	Cereali per la prima colazione molto ricchi di fibre, naturali, arricchiti di vitamine e minerali
+32121	Fiocchi di mais glassati allo zucchero, arricchiti di vitamine e minerali
+32129	Palline di mais soffiato al miele, non arricchite di vitamine e minerali
+32130	Grano khorasan integrale soffiato
+32131	Riso soffiato al cioccolato, arricchito di vitamine e minerali
+32133	Palline di mais soffiato al miele, arricchite di vitamine e minerali
+32138	Muesli in fiocchi con frutta, frutta a guscio e/o semi, non arricchito di vitamine e minerali
+32139	Muesli arricchito di vitamine e minerali (alimento medio)
+32140	Fiocchi d'avena
+32141	Muesli non arricchito di vitamine e minerali (alimento medio)
+32142	Cereali per la prima colazione al miele o caramello, soffiati o estrusi, arricchiti di vitamine e minerali
+32143	Cereali per la prima colazione al miele o caramello, soffiati o estrusi, non arricchiti di vitamine e minerali
+32144	Muesli croccante solo con frutta a guscio e/o semi, arricchito di vitamine e minerali
+32145	Muesli croccante solo con frutta a guscio e/o semi, non arricchito di vitamine e minerali
+36027	Nuggets o crocchetta impanata di pollo, preconfezionati
+36035	Pollo, alette marinate, preconfezionate, arrosto o cotte al forno
+36036	Cotoletta di pollo impanata, alla milanese, cotta
+36318	Cotoletta di tacchino impanata, alla milanese, cotta
+39401	Pesca Melba
+39502	Dessert gelato tipo vacherin (meringata gelata)
+39503	Gelato, stecco ricoperto di cioccolato
+39509	Gelato, cono (formato standard)
+39512	Dessert gelato tipo sundae (coppa gelato)
+39515	Gelato, in vaschetta
+39516	Dessert gelato con sfoglia croccante, da condividere
+39517	Gelato allo yogurt
+39518	Omelette norvegese (torta gelato flambé)
+39519	Pera Belle Hélène
+39520	Gelato gourmet, in vaschetta
+39521	Gelato gourmet, in vasetto
+39522	Gelato, mini cono
+39523	Gelato, vasetto individuale
+39524	Sorbetto, in vaschetta
+39525	Sorbetto, vasetto individuale
+39526	Ghiacciolo
+39527	Gelato, vaschetta o vasetto (alimento medio)
+39528	Sorbetto, cono
+39529	Torrone gelato (nougat glacé)
+39530	Limone o arancia ghiacciata (sorbetto)
+39531	Gelato, vasetto per bambini
+39532	Coppa gelato tipo caffè o cioccolato liégeois, con panna montata
+39533	Tronchetto gelato
+39534	Coppa gelato gusto pesca Melba o pera Belle-Hélène
+39535	Gelato, stecco ricoperto di frutta
+39700	Crema inglese, preconfezionata
+51502	Meloukhia, salsa di foglie di corchorus (cucina egiziana e nordafricana), artigianale

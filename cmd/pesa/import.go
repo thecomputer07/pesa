@@ -14,7 +14,7 @@ import (
 // runImport dispatches `pesa import <target> <path> [flags]`.
 func runImport(args []string) {
 	if len(args) < 1 {
-		fmt.Fprintln(os.Stderr, "usage: pesa import <crea|bda|off> [...]")
+		fmt.Fprintln(os.Stderr, "usage: pesa import <crea|bda|off|ciqual> [...]")
 		os.Exit(2)
 	}
 	sub := args[0]
@@ -26,6 +26,8 @@ func runImport(args []string) {
 		runImportBDA(rest)
 	case "off":
 		runImportOFF(rest)
+	case "ciqual":
+		runImportCiqual(rest)
 	case "crea-live":
 		runImportCREALive(rest)
 	case "wiki-images":
@@ -229,6 +231,41 @@ func runImportBDA(args []string) {
 		"unchanged", report.Unchanged,
 		"quarantined", report.Quarantined,
 		"superseded_by_crea", report.SupersededByCREA,
+		"errors", len(report.Errors))
+	if len(report.Errors) > 0 {
+		for _, e := range report.Errors {
+			slog.Warn("row error", "detail", e)
+		}
+		os.Exit(1)
+	}
+}
+
+func runImportCiqual(args []string) {
+	fs := flag.NewFlagSet("import ciqual", flag.ExitOnError)
+	dryRun := fs.Bool("dry-run", false, "parse and check without writing")
+	if err := fs.Parse(args); err != nil {
+		os.Exit(2)
+	}
+	if fs.NArg() < 1 {
+		fmt.Fprintln(os.Stderr, "usage: pesa import ciqual <dir con alim_*.xml e compo_*.xml> [--dry-run]")
+		os.Exit(2)
+	}
+	cfg := mustConfig()
+	db := openDB(cfg)
+	defer func() { _ = db.Close() }()
+
+	opts := importer.ImportOpts{SourceCode: "ciqual", Basis: importer.BasisEdible, DryRun: *dryRun}
+	report, err := importer.ImportCiqual(context.Background(), db, fs.Arg(0), opts)
+	if err != nil {
+		slog.Error("import ciqual", "err", err)
+		os.Exit(1)
+	}
+	slog.Info("import ciqual complete",
+		"total", report.TotalRows,
+		"inserted", report.InsertedFoods,
+		"updated", report.UpdatedFoods,
+		"unchanged", report.Unchanged,
+		"quarantined", report.Quarantined,
 		"errors", len(report.Errors))
 	if len(report.Errors) > 0 {
 		for _, e := range report.Errors {

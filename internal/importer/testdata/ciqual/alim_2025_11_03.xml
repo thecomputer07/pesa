@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<TABLE>
+   <ALIM>
+      <alim_code> 1000 </alim_code>
+      <alim_nom_fr> Pastis </alim_nom_fr>
+      <alim_nom_eng> Pastis (anise-flavoured spirit) </alim_nom_eng>
+      <alim_nom_sci missing=" " />
+      <alim_grp_code> 06 </alim_grp_code>
+      <alim_ssgrp_code> 0603 </alim_ssgrp_code>
+      <alim_ssssgrp_code> 060303 </alim_ssssgrp_code>
+      <facteur_Jones> 6.25 </facteur_Jones>
+   </ALIM>
+   <ALIM>
+      <alim_code> 25456 </alim_code>
+      <alim_nom_fr> Sushi ou maki aux produits de la mer </alim_nom_fr>
+      <alim_nom_eng> Sushi or maki, with seafood products </alim_nom_eng>
+      <alim_nom_sci missing=" " />
+      <alim_grp_code> 01 </alim_grp_code>
+      <alim_ssgrp_code> 0103 </alim_ssgrp_code>
+      <alim_ssssgrp_code> 010305 </alim_ssssgrp_code>
+      <facteur_Jones> 6.25 </facteur_Jones>
+   </ALIM>
+</TABLE>
