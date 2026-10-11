@@ -249,7 +249,9 @@ func ImportOFF(ctx context.Context, db *sql.DB, opts OFFOpts) (*ImportReport, er
 		if resp.PageCount > 0 && page >= resp.PageCount {
 			break
 		}
-		if len(resp.Hits) < opts.PageSize {
+		// The v2 API can return a few less than page_size mid-stream (99 of
+		// 100): only an empty page or the last declared page ends it there.
+		if !opts.ByScans && len(resp.Hits) < opts.PageSize {
 			break
 		}
 		page++
