@@ -185,9 +185,20 @@ func importOneRow(ctx context.Context, db *sql.DB, sourceID int64, row FoodRow, 
 	case err != nil:
 		return err
 	default:
+		// Same content is only "unchanged" if it actually became a food: a
+		// row quarantined last time must get another chance (the checks may
+		// have been fixed since).
 		if existingHash == row.ContentHash {
-			report.Unchanged++
-			return nil
+			var n int
+			if err := db.QueryRowContext(ctx,
+				`SELECT count(*) FROM foods WHERE source_id=$1 AND source_record_id=$2`,
+				sourceID, existingRecID).Scan(&n); err != nil {
+				return err
+			}
+			if n > 0 {
+				report.Unchanged++
+				return nil
+			}
 		}
 	}
 

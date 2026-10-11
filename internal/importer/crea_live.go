@@ -21,24 +21,27 @@ import (
 // CREALiveOpts controlla l'import live dal sito alimentinutrizione.it (CREA).
 type CREALiveOpts struct {
 	ImportOpts
-	IndexURL   string        // default: ricerca-per-alimento
-	BaseURL    string        // default: https://www.alimentinutrizione.it
-	Limit      int           // 0 = tutti
-	RateDelay  time.Duration // default 2s (rispetto del server)
-	UserAgent  string
-	HTTPClient *http.Client
+	IndexURL string // default: ricerca-per-alimento
+	BaseURL  string // default: https://www.alimentinutrizione.it
+	Limit    int    // 0 = tutti
+	// OnlyMissing skips index entries that are already foods (fills gaps
+	// without re-fetching ~830 pages).
+	OnlyMissing bool
+	RateDelay   time.Duration // default 2s (rispetto del server)
+	UserAgent   string
+	HTTPClient  *http.Client
 }
 
 var creaNutrientMap = map[string]func(*FoodRow, float64){
-	"Acqua (g)":                       func(r *FoodRow, v float64) { r.WaterG = &v },
-	"Energia (kcal)":                  func(r *FoodRow, v float64) { r.Kcal = &v },
-	"Proteine (g)":                    func(r *FoodRow, v float64) { r.ProteinG = &v },
-	"Lipidi (g)":                      func(r *FoodRow, v float64) { r.FatG = &v },
-	"Carboidrati disponibili (g)":     func(r *FoodRow, v float64) { r.CarbG = &v },
-	"Zuccheri solubili (g)":           func(r *FoodRow, v float64) { r.SugarG = &v },
-	"Fibra totale (g)":                func(r *FoodRow, v float64) { r.FiberG = &v },
-	"Alcool (g)":                      func(r *FoodRow, v float64) { r.AlcoholG = &v },
-	"Sodio (mg)":                      func(r *FoodRow, v float64) { sg := v * 2.5 / 1000.0; r.SaltG = &sg },
+	"Acqua (g)":                   func(r *FoodRow, v float64) { r.WaterG = &v },
+	"Energia (kcal)":              func(r *FoodRow, v float64) { r.Kcal = &v },
+	"Proteine (g)":                func(r *FoodRow, v float64) { r.ProteinG = &v },
+	"Lipidi (g)":                  func(r *FoodRow, v float64) { r.FatG = &v },
+	"Carboidrati disponibili (g)": func(r *FoodRow, v float64) { r.CarbG = &v },
+	"Zuccheri solubili (g)":       func(r *FoodRow, v float64) { r.SugarG = &v },
+	"Fibra totale (g)":            func(r *FoodRow, v float64) { r.FiberG = &v },
+	"Alcool (g)":                  func(r *FoodRow, v float64) { r.AlcoholG = &v },
+	"Sodio (mg)":                  func(r *FoodRow, v float64) { sg := v * 2.5 / 1000.0; r.SaltG = &sg },
 }
 
 var crearNumRe = regexp.MustCompile(`-?\d+(?:[.,]\d+)?`)
@@ -77,6 +80,12 @@ func ImportCREALive(ctx context.Context, db *sql.DB, opts CREALiveOpts) (*Import
 	if err != nil {
 		return nil, fmt.Errorf("index: %w", err)
 	}
+	if opts.OnlyMissing {
+		urls, err = dropCREAInCatalog(ctx, db, sourceID, urls)
+		if err != nil {
+			return nil, err
+		}
+	}
 	if opts.Limit > 0 && len(urls) > opts.Limit {
 		urls = urls[:opts.Limit]
 	}
@@ -113,6 +122,33 @@ func ImportCREALive(ctx context.Context, db *sql.DB, opts CREALiveOpts) (*Import
 		return report, err
 	}
 	return report, nil
+}
+
+// dropCREAInCatalog keeps only index entries that are not foods yet.
+func dropCREAInCatalog(ctx context.Context, db *sql.DB, sourceID int64, in []creaIndexEntry) ([]creaIndexEntry, error) {
+	rows, err := db.QueryContext(ctx, `
+		SELECT r.external_id FROM foods f
+		  JOIN food_source_records r ON r.id = f.source_record_id
+		 WHERE f.source_id = $1`, sourceID)
+	if err != nil {
+		return nil, err
+	}
+	defer func() { _ = rows.Close() }()
+	have := map[string]bool{}
+	for rows.Next() {
+		var id string
+		if err := rows.Scan(&id); err != nil {
+			return nil, err
+		}
+		have[id] = true
+	}
+	out := in[:0]
+	for _, e := range in {
+		if !have[e.code] {
+			out = append(out, e)
+		}
+	}
+	return out, rows.Err()
 }
 
 type creaIndexEntry struct {

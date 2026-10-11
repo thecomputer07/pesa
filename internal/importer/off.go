@@ -10,6 +10,7 @@ import (
 	"io"
 	"log/slog"
 	"net/http"
+	"regexp"
 	"net/url"
 	"strings"
 	"time"
@@ -18,36 +19,41 @@ import (
 // OFFOpts controls the Open Food Facts bulk import.
 type OFFOpts struct {
 	ImportOpts
-	Country    string        // es. "italy"
-	Limit      int           // max prodotti totali (0 = no cap)
-	PageSize   int           // default 100
-	RateDelay  time.Duration // delay tra richieste (default 1s)
-	UserAgent  string
-	MinCarb    bool // se true, scarta prodotti senza carbohydrates_100g
+	Country   string        // es. "italy"
+	Limit     int           // max prodotti totali (0 = no cap)
+	PageSize  int           // default 100
+	RateDelay time.Duration // delay tra richieste (default 1s)
+	UserAgent string
+	MinCarb   bool // se true, scarta prodotti senza carbohydrates_100g
+	// ByScans orders by unique_scans_n (how many people scanned the product:
+	// the best proxy for "most eaten and drunk") via the classic v2 API.
+	// search-a-licious' popularity_key put Herbalife and nameless products
+	// first and caps at 10 000 results.
+	ByScans    bool
 	HTTPClient *http.Client
 }
 
 type offNutriments struct {
-	Energy100g  *float64 `json:"energy-kcal_100g"`
-	ProteinG    *float64 `json:"proteins_100g"`
-	FatG        *float64 `json:"fat_100g"`
-	CarbG       *float64 `json:"carbohydrates_100g"`
+	Energy100g *float64 `json:"energy-kcal_100g"`
+	ProteinG   *float64 `json:"proteins_100g"`
+	FatG       *float64 `json:"fat_100g"`
+	CarbG      *float64 `json:"carbohydrates_100g"`
 	// fallback when OFF only has the "prepared" value (see off.FromOFF)
 	CarbPreparedG *float64 `json:"carbohydrates_prepared_100g"`
-	SugarG      *float64 `json:"sugars_100g"`
-	FiberG      *float64 `json:"fiber_100g"`
-	SaltG       *float64 `json:"salt_100g"`
+	SugarG        *float64 `json:"sugars_100g"`
+	FiberG        *float64 `json:"fiber_100g"`
+	SaltG         *float64 `json:"salt_100g"`
 }
 
 type offProduct struct {
-	Code              string         `json:"code"`
-	ProductName       string         `json:"product_name"`
-	ProductNameIT     string         `json:"product_name_it"`
-	Categories        string         `json:"categories"`
-	Nutriments        *offNutriments `json:"nutriments"`
-	ImageFrontURL     string         `json:"image_front_url"`
-	ImageFrontSmall   string         `json:"image_front_small_url"`
-	ImageURL          string         `json:"image_url"`
+	Code            string         `json:"code"`
+	ProductName     string         `json:"product_name"`
+	ProductNameIT   string         `json:"product_name_it"`
+	Categories      string         `json:"categories"`
+	Nutriments      *offNutriments `json:"nutriments"`
+	ImageFrontURL   string         `json:"image_front_url"`
+	ImageFrontSmall string         `json:"image_front_small_url"`
+	ImageURL        string         `json:"image_url"`
 	// search-a-licious restituisce brands come array, l'API v1 come stringa: accettiamo entrambi.
 	Brands json.RawMessage `json:"brands"`
 }
@@ -65,18 +71,37 @@ func (p offProduct) firstBrand() string {
 	if len(p.Brands) == 0 {
 		return ""
 	}
-	var arr []string
-	if err := json.Unmarshal(p.Brands, &arr); err == nil {
-		if len(arr) > 0 {
-			return arr[0]
+	var list []string
+	if err := json.Unmarshal(p.Brands, &list); err != nil {
+		var s string
+		if err := json.Unmarshal(p.Brands, &s); err != nil {
+			return ""
 		}
-		return ""
+		list = strings.Split(s, ",")
 	}
-	var s string
-	if err := json.Unmarshal(p.Brands, &s); err == nil {
-		return s
+	return pickBrand(list)
+}
+
+// companyRe matches legal entities ("COCA-COLA SERVICES SA/NV", "Barilla G.
+// e R. Fratelli SpA"): the API v2 lists them next to the consumer brand.
+var companyRe = regexp.MustCompile(`(?i)(^|[\s,])(s\.?p\.?a\.?|s\.?r\.?l\.?|sas|sa/nv|s\.?a\.?|n\.?v\.?|gmbh|ag|ab|bv|ltd|limited|inc|llc|services|company|division|commerciale|produits|fratelli|group)([\s,.]|$)`)
+
+// pickBrand returns the first consumer brand, skipping company names.
+func pickBrand(list []string) string {
+	first := ""
+	for _, b := range list {
+		b = strings.TrimSpace(b)
+		if b == "" {
+			continue
+		}
+		if first == "" {
+			first = b
+		}
+		if !companyRe.MatchString(b) {
+			return b
+		}
 	}
-	return ""
+	return first
 }
 
 // Risposta di search-a-licious (https://search.openfoodfacts.org/docs).
@@ -105,6 +130,9 @@ func ImportOFF(ctx context.Context, db *sql.DB, opts OFFOpts) (*ImportReport, er
 	}
 	if opts.RateDelay <= 0 {
 		opts.RateDelay = time.Second
+		if opts.ByScans {
+			opts.RateDelay = 7 * time.Second // v2 search: 10 req/min
+		}
 	}
 	if opts.UserAgent == "" {
 		opts.UserAgent = "Pesa/0.1.0 (+https://pesadia.com)"
@@ -257,16 +285,33 @@ func upsertFoodImage(ctx context.Context, db *sql.DB, sourceID int64, externalID
 	return err
 }
 
+// offV2Response is the classic /api/v2/search shape.
+type offV2Response struct {
+	Count    int          `json:"count"`
+	Products []offProduct `json:"products"`
+}
+
 func fetchOFFPage(ctx context.Context, opts OFFOpts, page int) (*offSearchResponse, error) {
-	// search-a-licious è l'endpoint OFF consigliato per bulk search (ElasticSearch-backed).
-	// Doc: https://search.openfoodfacts.org/docs
+	const fields = "code,product_name,product_name_it,categories,nutriments,brands,image_url,image_front_url,image_front_small_url"
 	q := url.Values{}
-	q.Set("q", fmt.Sprintf(`countries_tags:"en:%s"`, opts.Country))
-	q.Set("sort_by", "popularity_key")
-	q.Set("fields", "code,product_name,product_name_it,categories,nutriments,brands,image_url,image_front_url,image_front_small_url")
-	q.Set("page_size", fmt.Sprintf("%d", opts.PageSize))
-	q.Set("page", fmt.Sprintf("%d", page))
-	u := "https://search.openfoodfacts.org/search?" + q.Encode()
+	var u string
+	if opts.ByScans {
+		q.Set("countries_tags_en", opts.Country)
+		q.Set("sort_by", "unique_scans_n")
+		q.Set("fields", fields)
+		q.Set("page_size", fmt.Sprintf("%d", opts.PageSize))
+		q.Set("page", fmt.Sprintf("%d", page))
+		u = "https://world.openfoodfacts.org/api/v2/search?" + q.Encode()
+	} else {
+		// search-a-licious è l'endpoint OFF consigliato per bulk search (ElasticSearch-backed).
+		// Doc: https://search.openfoodfacts.org/docs
+		q.Set("q", fmt.Sprintf(`countries_tags:"en:%s"`, opts.Country))
+		q.Set("sort_by", "popularity_key")
+		q.Set("fields", fields)
+		q.Set("page_size", fmt.Sprintf("%d", opts.PageSize))
+		q.Set("page", fmt.Sprintf("%d", page))
+		u = "https://search.openfoodfacts.org/search?" + q.Encode()
+	}
 
 	var lastErr error
 	backoff := 2 * time.Second
@@ -283,8 +328,17 @@ func fetchOFFPage(ctx context.Context, opts OFFOpts, page int) (*offSearchRespon
 			lastErr = err
 		} else if resp.StatusCode == 200 {
 			var out offSearchResponse
-			dec := json.NewDecoder(resp.Body)
-			derr := dec.Decode(&out)
+			var derr error
+			if opts.ByScans {
+				var v2 offV2Response
+				derr = json.NewDecoder(resp.Body).Decode(&v2)
+				out = offSearchResponse{Count: v2.Count, Page: page, PageSize: opts.PageSize, Hits: v2.Products}
+				if opts.PageSize > 0 {
+					out.PageCount = (v2.Count + opts.PageSize - 1) / opts.PageSize
+				}
+			} else {
+				derr = json.NewDecoder(resp.Body).Decode(&out)
+			}
 			_ = resp.Body.Close()
 			if derr != nil {
 				return nil, derr

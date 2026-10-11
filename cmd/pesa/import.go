@@ -45,6 +45,7 @@ func runImportCREALive(args []string) {
 	limit := fs.Int("limit", 0, "max alimenti (0 = tutti)")
 	rateMs := fs.Int("rate-ms", 2000, "delay tra richieste in ms")
 	dryRun := fs.Bool("dry-run", false, "parse e check senza scrivere")
+	missing := fs.Bool("missing", false, "solo gli alimenti dell'indice non ancora in catalogo")
 	if err := fs.Parse(args); err != nil {
 		os.Exit(2)
 	}
@@ -52,9 +53,10 @@ func runImportCREALive(args []string) {
 	db := openDB(cfg)
 	defer func() { _ = db.Close() }()
 	opts := importer.CREALiveOpts{
-		ImportOpts: importer.ImportOpts{SourceCode: "crea", Basis: importer.BasisEdible, DryRun: *dryRun},
-		Limit:      *limit,
-		RateDelay:  time.Duration(*rateMs) * time.Millisecond,
+		OnlyMissing: *missing,
+		ImportOpts:  importer.ImportOpts{SourceCode: "crea", Basis: importer.BasisEdible, DryRun: *dryRun},
+		Limit:       *limit,
+		RateDelay:   time.Duration(*rateMs) * time.Millisecond,
 	}
 	report, err := importer.ImportCREALive(context.Background(), db, opts)
 	if err != nil {
@@ -111,6 +113,7 @@ func runImportOFF(args []string) {
 	pageSize := fs.Int("page-size", 100, "prodotti per pagina")
 	rateMs := fs.Int("rate-ms", 1000, "delay tra richieste API in millisecondi")
 	minCarb := fs.Bool("min-carb", true, "scarta prodotti senza carbohydrates_100g")
+	byScans := fs.Bool("by-scans", false, "ordina per numero di scansioni (i piu' consumati) via API v2; rate-ms consigliato >= 7000")
 	dryRun := fs.Bool("dry-run", false, "parse e check senza scrivere")
 	if err := fs.Parse(args); err != nil {
 		os.Exit(2)
@@ -131,6 +134,10 @@ func runImportOFF(args []string) {
 		PageSize:  *pageSize,
 		RateDelay: time.Duration(*rateMs) * time.Millisecond,
 		MinCarb:   *minCarb,
+		ByScans:   *byScans,
+	}
+	if *byScans && *rateMs == 1000 {
+		opts.RateDelay = 0 // let the importer pick the v2 rate limit
 	}
 	report, err := importer.ImportOFF(context.Background(), db, opts)
 	if err != nil {

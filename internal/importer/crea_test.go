@@ -87,3 +87,29 @@ func TestNormalize_EdiblePassthrough(t *testing.T) {
 		t.Errorf("passthrough broken: %v", *out.Kcal)
 	}
 }
+
+// Fibre is 2 kcal/g: CREA "Carciofi, crudi" (33 kcal, 2.7 p, 0.2 f, 2.5 c,
+// 5.5 fibre) must pass — it was quarantined when fibre was ignored.
+func TestSanityCheck_FibreCountsTowardsKcal(t *testing.T) {
+	f := func(v float64) *float64 { return &v }
+	r := FoodRow{Kcal: f(33), ProteinG: f(2.7), FatG: f(0.2), CarbG: f(2.5), FiberG: f(5.5)}
+	if res := SanityCheck(r); !res.OK {
+		t.Fatalf("artichoke rejected: %v", res.Reasons)
+	}
+}
+
+func TestPickBrand_SkipsCompanies(t *testing.T) {
+	cases := map[string][]string{
+		"Coca-Cola":     {"COCA-COLA SERVICES SA/NV", " Coca-Cola"},
+		"Nutella":       {"Nutella", " FERRERO FRANCE COMMERCIALE"},
+		"wasa":          {"wasa", " Barilla Sverige AB"},
+		"Mulino Bianco": {"Barilla G. e R. Fratelli SpA", " Mulino Bianco", " Mulino Bianco - Barilla"},
+		"Barilla":       {"Barilla", " Barilla G. e R. Fratelli SpA"},
+		"Lindt":         {"Lindt"},
+	}
+	for want, in := range cases {
+		if got := pickBrand(in); got != want {
+			t.Errorf("pickBrand(%q) = %q, want %q", in, got, want)
+		}
+	}
+}
