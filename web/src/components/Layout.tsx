@@ -35,12 +35,7 @@ export default function Layout() {
       >
         <div className="max-w-5xl mx-auto px-4 py-3 flex items-center gap-6">
           <NavLink to="/" className="flex items-center gap-2 no-underline">
-            <span
-              aria-hidden="true"
-              className="inline-block w-8 h-8 rounded-lg bg-[color:var(--color-brand-600)] text-white grid place-items-center font-bold"
-            >
-              P
-            </span>
+            <img src="/icon.svg" alt="" aria-hidden="true" width={32} height={32} className="w-8 h-8" />
             <span className="font-semibold text-lg text-[color:var(--color-ink)]">Pesa</span>
           </NavLink>
 

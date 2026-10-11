@@ -1,15 +1,37 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Pesa">
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#2563eb"/>
-      <stop offset="100%" stop-color="#1e40af"/>
+      <stop offset="0" stop-color="#2563eb"/>
+      <stop offset="1" stop-color="#1e3a8a"/>
+    </linearGradient>
+    <linearGradient id="grain" gradientUnits="userSpaceOnUse" x1="0" y1="60" x2="0" y2="196">
+      <stop offset="0" stop-color="#fcd34d"/>
+      <stop offset="1" stop-color="#f59e0b"/>
     </linearGradient>
   </defs>
-  <rect width="512" height="512" rx="96" ry="96" fill="url(#bg)"/>
-  <!-- Stylised "P" monogram + scale needle dot -->
-  <g fill="#ffffff">
-    <path d="M146 112h132c58 0 96 38 96 92 0 56-40 94-100 94h-66v102h-62V112zm62 58v70h58c26 0 44-14 44-35 0-22-18-35-44-35h-58z"/>
-    <circle cx="370" cy="378" r="22" opacity="0.9"/>
+  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
+  <!-- Kitchen scale weighing a wheat ear: the carbohydrate being measured. -->
+  <g transform="translate(0 4)">
+    <!-- wheat ear -->
+    <path d="M256 190V92" stroke="url(#grain)" stroke-width="7" stroke-linecap="round"/>
+    <g fill="url(#grain)">
+      <ellipse cx="256" cy="80" rx="11" ry="22"/>
+      <ellipse cx="240" cy="112" rx="11" ry="22" transform="rotate(-40 240 112)"/>
+      <ellipse cx="272" cy="112" rx="11" ry="22" transform="rotate(40 272 112)"/>
+      <ellipse cx="240" cy="142" rx="11" ry="22" transform="rotate(-40 240 142)"/>
+      <ellipse cx="272" cy="142" rx="11" ry="22" transform="rotate(40 272 142)"/>
+      <ellipse cx="240" cy="172" rx="11" ry="22" transform="rotate(-40 240 172)"/>
+      <ellipse cx="272" cy="172" rx="11" ry="22" transform="rotate(40 272 172)"/>
+    </g>
+    <!-- plate + stem -->
+    <rect x="132" y="188" width="248" height="24" rx="12" fill="#fff"/>
+    <rect x="238" y="210" width="36" height="16" fill="#fff"/>
+    <!-- body -->
+    <rect x="124" y="224" width="264" height="196" rx="52" fill="#fff"/>
+    <!-- dial -->
+    <circle cx="256" cy="324" r="62" fill="#1d4ed8"/>
+    <path d="M207 344a52 52 0 0 1 98 0" fill="none" stroke="#93c5fd" stroke-width="9" stroke-linecap="round"/>
+    <path d="M256 326l30-36" stroke="#fcd34d" stroke-width="12" stroke-linecap="round"/>
+    <circle cx="256" cy="326" r="13" fill="#fff"/>
   </g>
 </svg>
