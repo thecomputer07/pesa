@@ -34,7 +34,7 @@ If you have specific clinical needs — for example a form of diabetes, phenylke
 
 Pesa integrates four sources, each visibly credited on every food item:
 
-- **CREA — Alimenti e Nutrizione** (alimentinutrizione.it): Italian governmental standard, about 900 base foods. License: CC BY-NC-SA.
+- **CREA — Alimenti e Nutrizione** (alimentinutrizione.it): Italian governmental standard, about 830 base foods. Reuse allowed with attribution (CC BY 3.0).
 - **Ciqual — ANSES** (ciqual.anses.fr): French food composition table, used only for what CREA does not cover — composite dishes (sushi, pizzas, sandwiches, soups), sweets, ice creams and sauces. Names translated into Italian by Pesa, values unchanged. Licence Ouverte / Etalab 2.0.
 - **USDA FoodData Central** (fdc.nal.usda.gov): United States Department of Agriculture database, used only for sushi types (maki, nigiri, uramaki) and Japanese food. Names translated into Italian by Pesa; carbohydrates are reported as available (fibre excluded), as in CREA. Public domain.
 - **Open Food Facts** (openfoodfacts.org): collaborative database of packaged products with barcodes, ODbL license. Used by the scanner.

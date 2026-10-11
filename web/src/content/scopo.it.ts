@@ -32,7 +32,7 @@ Se hai esigenze cliniche specifiche — ad esempio diabete, fenilchetonuria, cel
 
 Pesa integra quattro fonti, tutte citate in modo visibile per ogni alimento:
 
-- **CREA — Alimenti e Nutrizione** (alimentinutrizione.it): standard governativo italiano, circa 900 alimenti di base. Licenza CC BY-NC-SA.
+- **CREA — Alimenti e Nutrizione** (alimentinutrizione.it): standard governativo italiano, circa 830 alimenti di base. Riuso consentito citando la fonte (CC BY 3.0).
 - **Ciqual — ANSES** (ciqual.anses.fr): tabella francese di composizione degli alimenti, usata solo per ciò che CREA non copre — piatti composti (sushi, pizze, panini, zuppe), dolci, gelati e salse. Nomi tradotti in italiano da Pesa, valori invariati. Licenza Ouverte / Etalab 2.0.
 - **USDA FoodData Central** (fdc.nal.usda.gov): banca dati del Dipartimento dell'Agricoltura degli Stati Uniti, usata solo per i tipi di sushi (maki, nigiri, uramaki) e la cucina giapponese. Nomi tradotti in italiano da Pesa; i carboidrati sono riportati come "disponibili" (fibre escluse) come in CREA. Pubblico dominio.
 - **Open Food Facts** (openfoodfacts.org): banca dati collaborativa di prodotti confezionati con barcode, licenza ODbL. Usata per lo scanner.
