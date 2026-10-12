@@ -80,6 +80,7 @@ func Load() (*Config, error) {
 		ErasureHashSalt:   os.Getenv("PESA_ERASURE_HASH_SALT"),
 		ExportTokenSecret: os.Getenv("PESA_EXPORT_TOKEN_SECRET"),
 		ImageCacheDir:     getenv("PESA_IMAGE_CACHE_DIR", ".cache/images"),
+		RedisAddr:         os.Getenv("REDIS_ADDR"),
 	}
 	if v := os.Getenv("PESA_IMAGE_CACHE_MAX_BYTES"); v != "" {
 		n, err := strconv.ParseInt(v, 10, 64)

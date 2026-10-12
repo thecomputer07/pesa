@@ -47,3 +47,16 @@ func TestExportSecretRequiredInProd(t *testing.T) {
 		t.Fatalf("unexpected: %v", err)
 	}
 }
+
+func TestRedisAddrFromEnv(t *testing.T) {
+	t.Setenv("PESA_ENV", "dev")
+	t.Setenv("DATABASE_DSN", "postgres://u:p@h/db")
+	t.Setenv("REDIS_ADDR", "redis:6379")
+	c, err := Load()
+	if err != nil {
+		t.Fatalf("unexpected: %v", err)
+	}
+	if c.RedisAddr != "redis:6379" {
+		t.Fatalf("RedisAddr = %q", c.RedisAddr)
+	}
+}
