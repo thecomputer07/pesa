@@ -14,6 +14,8 @@ import type {
 } from "../../lib/sync/types";
 import FoodPicker, { type FoodPickerPick } from "../food/FoodPicker";
 import WeightInput from "../WeightInput";
+import StateToggle, { type FoodState } from "../StateToggle";
+import { getFood, type FoodDetail } from "../../lib/api";
 import ConfirmDialog from "../ConfirmDialog";
 
 export interface EditorItem {
@@ -54,10 +56,62 @@ export default function RecipeEditor({ clientId, userId }: RecipeEditorProps) {
   const [pending, setPending] = useState<{ food: FoodPickerPick; grams: number | null } | null>(
     null,
   );
+  // Raw/cooked twin of the pending ingredient (CREA pairs, migration 00026).
+  const [twin, setTwin] = useState<{ id: number; state: FoodState } | null>(null);
+  // Weight of the finished (cooked) dish; empty = sum of the ingredients.
+  const [cookedTotal, setCookedTotal] = useState<number | null>(null);
 
   useEffect(() => {
     if (existing) setName(existing.name);
   }, [existing]);
+
+  // When an ingredient is picked, look up whether it has a raw/cooked twin.
+  const pendingId = pending?.food.id;
+  useEffect(() => {
+    setTwin(null);
+    if (!pendingId) return;
+    let alive = true;
+    getFood(pendingId)
+      .then((d) => {
+        if (!alive) return;
+        const mine = toFoodState(d.state);
+        const other = (d.siblings ?? []).find((s) => toFoodState(s.state) !== mine);
+        if (other) setTwin({ id: other.id, state: toFoodState(other.state) });
+      })
+      .catch(() => {
+        /* offline: no toggle, the picked food is used as is */
+      });
+    return () => {
+      alive = false;
+    };
+  }, [pendingId]);
+
+  async function switchPendingState(next: FoodState) {
+    if (!pending || !twin || twin.state !== next) return;
+    try {
+      const d: FoodDetail = await getFood(twin.id);
+      setPending((p) =>
+        p
+          ? {
+              ...p,
+              food: {
+                id: d.id,
+                name_it: d.name_it,
+                kcal: d.kcal,
+                carb_g: d.carb_g,
+                protein_g: d.protein_g,
+                fat_g: d.fat_g,
+                sugar_g: d.sugar_g,
+                fiber_g: d.fiber_g,
+                state: d.state,
+              },
+            }
+          : p,
+      );
+    } catch {
+      /* keep the current one */
+    }
+  }
 
   useEffect(() => {
     if (existingItems && existingItems.length > 0 && items.length === 0) {
@@ -77,14 +131,25 @@ export default function RecipeEditor({ clientId, userId }: RecipeEditorProps) {
   }, [existingItems]);
 
   const sumGrams = items.reduce((s, i) => s + i.grams, 0);
+  // The saved total: the cooked weight when given, else the ingredients' sum.
+  const totalGrams = cookedTotal && cookedTotal > 0 ? cookedTotal : sumGrams;
   const aggregate = useMemo(
     () =>
       aggregateRecipe(
         items.map((i) => ({ grams: i.grams, snapshot: i.per100Snapshot })),
         1,
+        totalGrams,
       ),
-    [items],
+    [items, totalGrams],
   );
+
+  // An existing recipe saved with a cooked weight different from the sum.
+  useEffect(() => {
+    if (existing?.total_grams && existingItems && existingItems.length > 0) {
+      const sum = existingItems.filter((i) => !i.deleted_at_ms).reduce((s, i) => s + i.grams, 0);
+      if (Math.abs(existing.total_grams - sum) > 0.5) setCookedTotal(existing.total_grams);
+    }
+  }, [existing, existingItems]);
 
   function onFoodPicked(food: FoodPickerPick) {
     setPending({ food, grams: 100 });
@@ -141,7 +206,7 @@ export default function RecipeEditor({ clientId, userId }: RecipeEditorProps) {
       user_id: userId,
       name: name.trim(),
       servings: 1,
-      total_grams: sumGrams > 0 ? sumGrams : null,
+      total_grams: totalGrams > 0 ? totalGrams : null,
       notes: null,
       updated_at_ms: now,
       deleted_at_ms: null,
@@ -152,7 +217,7 @@ export default function RecipeEditor({ clientId, userId }: RecipeEditorProps) {
       deleted_at_ms: null,
       name: recipeRow.name,
       servings: 1,
-      total_grams: sumGrams > 0 ? sumGrams : null,
+      total_grams: totalGrams > 0 ? totalGrams : null,
       notes: null,
     };
     await db.transaction("rw", db.recipes, db.recipe_items, db.outbox, async (tx) => {
@@ -280,8 +345,17 @@ export default function RecipeEditor({ clientId, userId }: RecipeEditorProps) {
 
         {pending ? (
           <div className="flex items-center gap-2 p-2 border border-[color:var(--color-brand-500)] rounded-xl bg-[color:var(--color-brand-50)]">
-            <span className="flex-1 min-w-0 truncate text-sm" title={pending.food.name_it}>
-              {pending.food.name_it}
+            <span className="flex-1 min-w-0 text-sm" title={pending.food.name_it}>
+              <span className="block truncate">{pending.food.name_it}</span>
+              {twin ? (
+                <span className="mt-2 block max-w-[14rem]">
+                  <StateToggle
+                    value={toFoodState(pending.food.state)}
+                    availableStates={["crudo", "cotto"]}
+                    onChange={(next) => void switchPendingState(next)}
+                  />
+                </span>
+              ) : null}
             </span>
             <div className="shrink-0">
               <WeightInput
@@ -347,6 +421,29 @@ export default function RecipeEditor({ clientId, userId }: RecipeEditorProps) {
           <p className="text-xs text-[color:var(--color-ink-muted)]">
             Gli ingredienti verranno ridimensionati proporzionalmente.
           </p>
+
+          <label className="block pt-3">
+            <span className="block text-sm font-medium">Peso finale della ricetta cotta (facoltativo)</span>
+            <span className="block text-xs text-[color:var(--color-ink-muted)] mb-1">
+              Pesa la pentola piena meno la pentola vuota. La pasta assorbe acqua, l'arrosto ne perde:
+              senza questo dato i valori per 100 g sono quelli degli ingredienti crudi.
+            </span>
+            <span className="flex items-center gap-2">
+              <input
+                type="text"
+                inputMode="decimal"
+                placeholder={String(sumGrams)}
+                value={cookedTotal ?? ""}
+                onChange={(e) => {
+                  const v = e.target.value.replace(",", ".");
+                  const n = Number(v);
+                  setCookedTotal(v === "" ? null : Number.isFinite(n) && n >= 0 ? n : cookedTotal);
+                }}
+                className="w-28 border border-[color:var(--color-border)] bg-white px-3 py-2 text-sm text-right tabular-nums"
+              />
+              <span className="text-sm text-[color:var(--color-ink-muted)]">g</span>
+            </span>
+          </label>
         </section>
       ) : null}
 
@@ -393,6 +490,10 @@ export default function RecipeEditor({ clientId, userId }: RecipeEditorProps) {
       />
     </form>
   );
+}
+
+function toFoodState(s?: string): FoodState {
+  return s === "cooked" || s === "cotto" ? "cotto" : "crudo";
 }
 
 function Kv({

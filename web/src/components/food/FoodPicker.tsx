@@ -2,6 +2,7 @@ import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
 import { searchFoods, type FoodSearchResult } from "../../lib/api";
+import { localSearch } from "../../lib/db/search";
 
 export interface FoodPickerPick {
   id: number;
@@ -13,6 +14,39 @@ export interface FoodPickerPick {
   carb_g?: number;
   sugar_g?: number;
   fiber_g?: number;
+  state?: string;
+}
+
+/**
+ * Online search, falling back to the foods cached on this device when the
+ * network fails (offline): the diary and recipes stay usable without signal.
+ */
+async function searchWithOfflineFallback(q: string, limit: number, signal?: AbortSignal) {
+  try {
+    return await searchFoods(q, { limit, signal });
+  } catch (err) {
+    if (signal?.aborted) throw err;
+    const rows = await localSearch(q, { limit });
+    return {
+      offline: true,
+      results: rows.map(
+        (r): FoodSearchResult => ({
+          id: r.id,
+          name_it: r.name_it,
+          name_en: r.name_en,
+          category: r.category,
+          state: r.state,
+          kcal: r.kcal,
+          carb_g: r.carb_g,
+          protein_g: r.protein_g,
+          fat_g: r.fat_g,
+          sugar_g: r.sugar_g,
+          fiber_g: r.fiber_g,
+          source: { code: r.source_code, license: r.source_license, license_url: r.source_license_url },
+        }),
+      ),
+    };
+  }
 }
 
 export interface FoodPickerProps {
@@ -62,7 +96,7 @@ export default function FoodPicker({
   const enabled = debounced.length >= minChars;
   const { data, isFetching, isError } = useQuery({
     queryKey: ["foods-search", debounced, limit],
-    queryFn: ({ signal }) => searchFoods(debounced, { limit, signal }),
+    queryFn: ({ signal }) => searchWithOfflineFallback(debounced, limit, signal),
     enabled,
     staleTime: 30_000,
   });
@@ -86,6 +120,7 @@ export default function FoodPicker({
       carb_g: food.carb_g,
       sugar_g: food.sugar_g,
       fiber_g: food.fiber_g,
+      state: food.state,
     });
     setQuery("");
     setDebounced("");
@@ -197,6 +232,11 @@ export default function FoodPicker({
                     />
                   ) : null}
                   <span className="truncate">{food.name_it}</span>
+                  {food.state === "cooked" ? (
+                    <span className="shrink-0 rounded-md bg-[color:var(--color-carb-50)] px-1.5 py-0.5 text-[11px] font-medium text-[color:var(--color-carb-700)]">
+                      cotto
+                    </span>
+                  ) : null}
                 </span>
                 {typeof food.kcal === "number" ? (
                   <span className="shrink-0 text-xs text-[color:var(--color-ink-muted)]">
