@@ -12,6 +12,7 @@ import { installVisibilityFallback, registerBackgroundSync } from "./lib/sync/bg
 import { flushOutbox } from "./lib/sync/worker";
 import { pullDelta } from "./lib/sync/pull";
 import "./styles/tailwind.css";
+import { refreshMyFoods, syncCatalog } from "./lib/catalog/sync";
 
 initSentry();
 
@@ -20,7 +21,16 @@ initSentry();
 installVisibilityFallback();
 void registerBackgroundSync();
 if (typeof navigator !== "undefined" && navigator.onLine) {
-  void pullDelta().then(() => flushOutbox());
+  // Recipes become foods on the server: refresh the local copy after the sync.
+  void pullDelta()
+    .then(() => flushOutbox())
+    .then(() => refreshMyFoods());
+}
+
+// Offline catalog: first run downloads it, later only the changes (throttled).
+void syncCatalog();
+if (typeof window !== "undefined") {
+  window.addEventListener("online", () => void syncCatalog());
 }
 
 ReactDOM.createRoot(document.getElementById("root")!).render(

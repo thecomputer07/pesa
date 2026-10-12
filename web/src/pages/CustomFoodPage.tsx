@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { apiFetch } from "../lib/api";
 import ConfirmDialog from "../components/ConfirmDialog";
 import { removeCustomFood } from "../lib/customFoods";
+import { refreshMyFoods } from "../lib/catalog/sync";
 
 type Form = {
   name_it: string;
@@ -145,6 +146,8 @@ export default function CustomFoodPage() {
         setError(txt || `Errore ${res.status}`);
         return;
       }
+      // Local copy for offline search (awaited: the detail page reads it).
+      await refreshMyFoods();
       if (isEdit) {
         navigate(`/alimento/${editId}`);
       } else {

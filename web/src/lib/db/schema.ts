@@ -30,6 +30,23 @@ export interface CachedFood {
   /** lowercased, accent-folded tokens for local FTS */
   search_tokens: string;
   updated_at: string;
+  // Fields below come from the full catalog download (lib/catalog/sync.ts).
+  synonyms?: string;
+  parent_id?: number;
+  edible_pct?: number;
+  water_g?: number;
+  ash_g?: number;
+  alcohol_g?: number;
+  salt_g?: number;
+  thumb_url?: string;
+  /** Barcode, Open Food Facts products only. */
+  ean?: string;
+  last_imported_at?: string;
+  /** 1 = row of the public catalog download. */
+  cat?: 1;
+  /** 1 = one of the signed-in user's own foods (custom foods, recipe foods). */
+  mine?: 1;
+  recipe_client_id?: string;
 }
 
 export interface SyncMeta {
@@ -82,5 +99,10 @@ db.version(2).stores({
 db.version(3)
   .stores({ meal_templates: null })
   .upgrade((tx) => tx.table("outbox").where("kind").equals("meal_template").delete());
+
+// v4: full offline catalog — barcode and crudo/cotto lookups, catalog/own flags.
+db.version(4).stores({
+  foods: "id, name_it, state, category, source_code, ean, parent_id, cat, mine",
+});
 
 export { db };

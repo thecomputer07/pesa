@@ -44,6 +44,8 @@ type foodsSearchResultDTO struct {
 	FiberG   *float64       `json:"fiber_g,omitempty"`
 	ThumbURL *string        `json:"thumb_url,omitempty"`
 	Source   foodsSourceDTO `json:"source"`
+	// Set on /foods/mine?recipes=1 rows that stand for one of the user's recipes.
+	RecipeClientID *string `json:"recipe_client_id,omitempty"`
 }
 
 type foodsSearchResponseDTO struct {
@@ -122,17 +124,22 @@ func (h *Foods) Mine(w http.ResponseWriter, r *http.Request) {
 		problem.Write(w, r, http.StatusUnauthorized, "unauthorized", "authentication required")
 		return
 	}
+	// recipes=1 (offline copy for local search) also returns the foods that
+	// stand for recipes; the "my foods" page leaves them to the recipes page.
+	withRecipes := r.URL.Query().Get("recipes") == "1"
 	rows, err := h.DB.QueryContext(r.Context(), `
 		SELECT f.id, f.name_it, f.name_en, f.category, f.state,
 		       f.kcal, f.carb_g, f.protein_g, f.fat_g, f.sugar_g, f.fiber_g,
 		       s.code, s.license, s.license_url,
-		       (SELECT url FROM food_images WHERE food_id = f.id ORDER BY id LIMIT 1) AS thumb_url
+		       (SELECT url FROM food_images WHERE food_id = f.id ORDER BY id LIMIT 1) AS thumb_url,
+		       rc.client_id
 		  FROM foods f
 		  JOIN food_sources s ON s.id = f.source_id
+		  LEFT JOIN recipes rc ON rc.id = f.recipe_id
 		 WHERE f.user_id = $1
-		   AND f.recipe_id IS NULL -- recipes are managed on their own page
+		   AND ($2 OR f.recipe_id IS NULL)
 		   AND f.superseded_by IS NULL
-		 ORDER BY f.id DESC`, userID)
+		 ORDER BY f.id DESC`, userID, withRecipes)
 	if err != nil {
 		problem.Write(w, r, http.StatusInternalServerError, "internal", err.Error())
 		return
@@ -145,12 +152,14 @@ func (h *Foods) Mine(w http.ResponseWriter, r *http.Request) {
 		if err := rows.Scan(
 			&f.ID, &f.NameIT, &f.NameEN, &f.Category, &f.State,
 			&f.Kcal, &f.CarbG, &f.ProteinG, &f.FatG, &f.SugarG, &f.FiberG,
-			&f.SourceCode, &f.License, &f.LicenseURL, &f.ThumbURL,
+			&f.SourceCode, &f.License, &f.LicenseURL, &f.ThumbURL, &f.RecipeClientID,
 		); err != nil {
 			problem.Write(w, r, http.StatusInternalServerError, "internal", err.Error())
 			return
 		}
-		out = append(out, toSearchDTO(f))
+		dto := toSearchDTO(f)
+		dto.RecipeClientID = nullStrPtr(f.RecipeClientID)
+		out = append(out, dto)
 	}
 	resp := foodsSearchResponseDTO{Results: out, Total: len(out), Page: 1, Limit: len(out)}
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")

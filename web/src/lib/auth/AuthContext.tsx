@@ -9,6 +9,7 @@ import {
   type ReactNode,
 } from "react";
 import { ApiError, apiFetch } from "../api";
+import { clearMyFoods, syncMyFoods } from "../catalog/sync";
 
 export interface AuthUser {
   id: number;
@@ -115,6 +116,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       mountedRef.current = false;
     };
   }, [refresh]);
+
+  // The user's own foods live on the device only while they are signed in.
+  const userId = user?.id;
+  useEffect(() => {
+    if (loading) return;
+    if (userId) void syncMyFoods(userId);
+    else void clearMyFoods();
+  }, [userId, loading]);
 
   const login = useCallback(
     async (email: string, password: string) => {

@@ -86,7 +86,7 @@
       },
       "offline": {
         "title": "Works offline",
-        "body": "Once the catalog is cached, you can search and compute without a network connection."
+        "body": "After the first visit the whole catalog stays on your phone: search, food pages, calculations, diary and known barcodes work without a connection."
       },
       "sources": {
         "title": "Official sources, cited",

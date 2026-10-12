@@ -2,7 +2,8 @@ import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
 import { searchFoods, type FoodSearchResult } from "../../lib/api";
-import { localSearch } from "../../lib/db/search";
+import { localSearch, toSearchResult } from "../../lib/db/search";
+import { catalogReady } from "../../lib/catalog/sync";
 
 export interface FoodPickerPick {
   id: number;
@@ -18,34 +19,20 @@ export interface FoodPickerPick {
 }
 
 /**
- * Online search, falling back to the foods cached on this device when the
- * network fails (offline): the diary and recipes stay usable without signal.
+ * Local search when the catalog is on the device; otherwise online search,
+ * falling back to the foods cached on this device when the network fails:
+ * the diary and recipes stay usable without signal.
  */
 async function searchWithOfflineFallback(q: string, limit: number, signal?: AbortSignal) {
+  if (await catalogReady()) {
+    return { results: (await localSearch(q, { limit })).map(toSearchResult) };
+  }
   try {
     return await searchFoods(q, { limit, signal });
   } catch (err) {
     if (signal?.aborted) throw err;
     const rows = await localSearch(q, { limit });
-    return {
-      offline: true,
-      results: rows.map(
-        (r): FoodSearchResult => ({
-          id: r.id,
-          name_it: r.name_it,
-          name_en: r.name_en,
-          category: r.category,
-          state: r.state,
-          kcal: r.kcal,
-          carb_g: r.carb_g,
-          protein_g: r.protein_g,
-          fat_g: r.fat_g,
-          sugar_g: r.sugar_g,
-          fiber_g: r.fiber_g,
-          source: { code: r.source_code, license: r.source_license, license_url: r.source_license_url },
-        }),
-      ),
-    };
+    return { offline: true, results: rows.map(toSearchResult) };
   }
 }
 

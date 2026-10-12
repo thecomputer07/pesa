@@ -27,44 +27,8 @@ export default defineConfig({
       injectManifest: {
         globPatterns: ["**/*.{js,css,html,svg,woff2,png,ico}"],
       },
-      workbox: {
-        globPatterns: ["**/*.{js,css,html,svg,woff2,png,ico}"],
-        navigateFallback: "/index.html",
-        navigateFallbackDenylist: [/^\/api\//, /^\/healthz/, /^\/readyz/],
-        cleanupOutdatedCaches: true,
-        clientsClaim: false,
-        skipWaiting: false,
-        runtimeCaching: [
-          {
-            urlPattern: ({ url }) => url.pathname.startsWith("/api/v1/foods/search"),
-            handler: "NetworkFirst",
-            options: {
-              cacheName: "pesa-foods-search",
-              networkTimeoutSeconds: 3,
-              expiration: { maxEntries: 200, maxAgeSeconds: 60 * 60 * 24 * 7 },
-              cacheableResponse: { statuses: [0, 200] },
-            },
-          },
-          {
-            urlPattern: ({ url }) => /^\/api\/v1\/foods\/\d+$/.test(url.pathname),
-            handler: "StaleWhileRevalidate",
-            options: {
-              cacheName: "pesa-foods-detail",
-              expiration: { maxEntries: 500, maxAgeSeconds: 60 * 60 * 24 * 30 },
-              cacheableResponse: { statuses: [0, 200] },
-            },
-          },
-          {
-            urlPattern: ({ request }) => request.destination === "font",
-            handler: "CacheFirst",
-            options: {
-              cacheName: "pesa-fonts",
-              expiration: { maxEntries: 30, maxAgeSeconds: 60 * 60 * 24 * 365 },
-              cacheableResponse: { statuses: [0, 200] },
-            },
-          },
-        ],
-      },
+      // Routing and runtime caching live in src/sw/sw.ts (injectManifest
+      // ignores the `workbox` options).
       devOptions: { enabled: false },
     }),
   ],

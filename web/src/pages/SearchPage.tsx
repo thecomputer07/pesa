@@ -6,8 +6,9 @@ import Icon from "../components/ui/Icon";
 import SearchBox from "../components/SearchBox";
 import ResultList from "../components/ResultList";
 import { searchFoods, type FoodSearchResult, type SearchSource } from "../lib/api";
-import { localSearch } from "../lib/db/search";
+import { localSearch, toSearchResult } from "../lib/db/search";
 import { upsertFoods } from "../lib/db/sync";
+import { catalogReady } from "../lib/catalog/sync";
 import { useAuth } from "../lib/auth/AuthContext";
 
 const SOURCE_KEY = "pesa.search.source";
@@ -39,6 +40,11 @@ export default function SearchPage() {
   const { data, isLoading, error, isError } = useQuery({
     queryKey: ["foods", "search", q, source],
     queryFn: async ({ signal }) => {
+      // Catalog on the device: search locally, no request at all.
+      if (await catalogReady()) {
+        const rows = await localSearch(q, { limit: 20, source: source || undefined });
+        return { results: rows.map(toSearchResult), total: rows.length, page: 1, limit: 20 };
+      }
       const resp = await searchFoods(q, { limit: 20, page: 1, source: source || undefined, signal });
       // Warm local cache on the side (fire-and-forget).
       void upsertFoods(resp.results);
@@ -59,26 +65,7 @@ export default function SearchPage() {
     void (async () => {
       const rows = await localSearch(q);
       if (!alive) return;
-      setFallback(
-        rows.map((r) => ({
-          id: r.id,
-          name_it: r.name_it,
-          name_en: r.name_en,
-          category: r.category,
-          state: r.state,
-          kcal: r.kcal,
-          carb_g: r.carb_g,
-          protein_g: r.protein_g,
-          fat_g: r.fat_g,
-          sugar_g: r.sugar_g,
-          fiber_g: r.fiber_g,
-          source: {
-            code: r.source_code,
-            license: r.source_license,
-            license_url: r.source_license_url,
-          },
-        })),
-      );
+      setFallback(rows.map(toSearchResult));
     })();
     return () => {
       alive = false;

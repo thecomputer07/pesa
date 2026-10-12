@@ -1,6 +1,7 @@
 import { deleteCustomFood } from "./api";
 import { queryClient } from "./queryClient";
 import { db } from "./db/schema";
+import { invalidateSearchIndex } from "./db/search";
 
 /**
  * Deletes one of the user's custom foods and forgets every local copy, so it
@@ -13,6 +14,7 @@ export async function removeCustomFood(id: number): Promise<string | null> {
   if (err) return err;
   try {
     await db.foods.delete(id);
+    invalidateSearchIndex();
     await db.favorites.where("food_id").equals(id).delete();
   } catch {
     /* local cache unavailable: the server state is what matters */

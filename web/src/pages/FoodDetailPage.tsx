@@ -15,6 +15,7 @@ import FavoriteToggle from "../components/favorites/FavoriteToggle";
 import { useAuth } from "../lib/auth/AuthContext";
 import { useFormatGrams } from "../lib/format";
 import Icon from "../components/ui/Icon";
+import { findFoodByEan, localFoodDetail } from "../lib/catalog/detail";
 
 function isValidCarb(v: string): boolean {
   const n = Number(v.replace(",", "."));
@@ -47,6 +48,9 @@ export default function FoodDetailPage() {
     queryKey: offEan ? ["off-barcode", offEan] : ["foods", id],
     queryFn: async ({ signal }) => {
       if (offEan) {
+        // Known product: straight from the offline catalog (the render redirects).
+        const known = await findFoodByEan(offEan);
+        if (known) return (await localFoodDetail(known.id)) ?? getFood(known.id, { signal });
         const res = await apiFetch(`/foods/barcode/${encodeURIComponent(offEan)}`, { signal });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const body = (await res.json()) as Awaited<ReturnType<typeof getFood>>;
@@ -54,7 +58,9 @@ export default function FoodDetailPage() {
         if (body.id > 0) return getFood(body.id, { signal });
         return body;
       }
-      return getFood(id, { signal });
+      // Public food: from the offline catalog, no request. Own foods and
+      // recipe foods (edit/delete rights) come from the server.
+      return (await localFoodDetail(id)) ?? getFood(id, { signal });
     },
     enabled: !!offEan || (Number.isFinite(id) && id > 0),
     staleTime: 10 * 60 * 1000,

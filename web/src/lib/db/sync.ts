@@ -1,8 +1,8 @@
 import { db, type CachedFood } from "./schema";
-import { searchFoods, type FoodSearchResult } from "../api";
+import type { FoodSearchResult } from "../api";
+import { invalidateSearchIndex } from "./search";
 
 const ETAG_KEY = "foods.etag";
-const LAST_SYNC_KEY = "foods.last_sync_at";
 
 /** Normalise text → lowercase, NFD-strip accents, trim punctuation. */
 export function normalise(s: string): string {
@@ -43,36 +43,21 @@ function toCached(r: FoodSearchResult): CachedFood {
   };
 }
 
-/** Upsert a batch of foods into the local cache. */
+/**
+ * Caches foods seen in online search results, for offline use before the full
+ * catalog is on the device. Rows from the catalog or the user's own foods are
+ * richer and stay as they are.
+ */
 export async function upsertFoods(rows: FoodSearchResult[]): Promise<number> {
   if (rows.length === 0) return 0;
-  const mapped = rows.map(toCached);
+  const existing = await db.foods.bulkGet(rows.map((r) => r.id));
+  const mapped = rows
+    .filter((_, i) => !existing[i]?.cat && !existing[i]?.mine)
+    .map(toCached);
+  if (mapped.length === 0) return 0;
   await db.foods.bulkPut(mapped);
+  invalidateSearchIndex();
   return mapped.length;
-}
-
-/**
- * Warm-cache the first N pages of the catalog for offline use.
- * Uses the existing /search endpoint with an empty-ish query until a
- * dedicated /catalog endpoint ships (Phase 4).
- */
-export async function warmCache(
-  seedQueries: string[] = ["a", "e", "i", "o", "u"],
-  perQuery = 50,
-  signal?: AbortSignal,
-): Promise<{ imported: number }> {
-  let imported = 0;
-  for (const q of seedQueries) {
-    if (signal?.aborted) break;
-    try {
-      const resp = await searchFoods(q, { limit: perQuery, page: 1, signal });
-      imported += await upsertFoods(resp.results);
-    } catch {
-      // network issue — skip; partial warm-cache is fine
-    }
-  }
-  await setMeta(LAST_SYNC_KEY, new Date().toISOString());
-  return { imported };
 }
 
 export async function getMeta(key: string): Promise<string | undefined> {

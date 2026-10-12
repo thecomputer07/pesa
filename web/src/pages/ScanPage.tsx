@@ -8,6 +8,7 @@ import {
 } from "../components/scanner/permissionMachine";
 import PermissionPrompt from "../components/scanner/PermissionPrompt";
 import ManualEntry from "../components/scanner/ManualEntry";
+import { findFoodByEan } from "../lib/catalog/detail";
 
 // Lazy-load the camera component so @zxing/browser stays out of the main chunk.
 const BarcodeScanner = lazy(() => import("../components/scanner/BarcodeScanner"));
@@ -56,6 +57,12 @@ export default function ScanPage() {
 
   const resolve = useCallback(
     async (ean: string) => {
+      // Product already in the offline catalog: no request, works offline.
+      const known = await findFoodByEan(ean).catch(() => undefined);
+      if (known) {
+        navigate(`/alimento/${known.id}`);
+        return;
+      }
       try {
         const resp = await fetch(`/api/v1/foods/barcode/${encodeURIComponent(ean)}`);
         if (resp.status === 200) {
