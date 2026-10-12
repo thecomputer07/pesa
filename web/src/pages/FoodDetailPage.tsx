@@ -2,7 +2,9 @@ import { useMemo, useState } from "react";
 import { Link, Navigate, useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
-import { getFood, apiFetch } from "../lib/api";
+import { getFood, apiFetch, ApiError } from "../lib/api";
+import ConfirmDialog from "../components/ConfirmDialog";
+import { removeCustomFood } from "../lib/customFoods";
 import { scaleFromPer100g } from "../lib/calc";
 import WeightInput from "../components/WeightInput";
 import StateToggle, { type FoodState } from "../components/StateToggle";
@@ -39,7 +41,9 @@ export default function FoodDetailPage() {
   // Scanned product without carbohydrates on OFF: value from the label.
   const [labelCarb, setLabelCarb] = useState("");
 
-  const { data: food, isLoading, isError } = useQuery({
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const { data: food, isLoading, isError, error } = useQuery({
     queryKey: offEan ? ["off-barcode", offEan] : ["foods", id],
     queryFn: async ({ signal }) => {
       if (offEan) {
@@ -74,10 +78,14 @@ export default function FoodDetailPage() {
     );
   }
   if (isError || !food) {
+    const gone = error instanceof ApiError && error.status === 404;
     return (
-      <p role="alert" className="py-8 text-center text-sm text-red-700">
-        {t("search.error")}
-      </p>
+      <div role="alert" className="surface mx-auto max-w-md p-8 text-center">
+        <p className="font-medium">{gone ? "Questo alimento non esiste più." : t("search.error")}</p>
+        <Link to="/cerca" className="mt-4 inline-block text-sm">
+          {t("nav.search")}
+        </Link>
+      </div>
     );
   }
 
@@ -135,6 +143,42 @@ export default function FoodDetailPage() {
         </div>
         {!offEan ? <FavoriteToggle foodId={id} /> : null}
       </header>
+
+      {food.is_mine ? (
+        <div className="flex flex-wrap items-center gap-2 -mt-2">
+          <span className="text-xs text-[color:var(--color-ink-faint)] mr-1">Alimento creato da te</span>
+          <Link to={`/alimento/${id}/modifica`} className="btn-quiet !py-1.5 !min-h-9 text-sm">
+            Modifica
+          </Link>
+          <button
+            type="button"
+            onClick={() => setConfirmDelete(true)}
+            className="px-3 !min-h-9 rounded-[var(--radius-control)] text-sm font-medium text-red-700 border border-red-200 bg-white hover:bg-red-50"
+          >
+            Elimina
+          </button>
+          {deleteError ? (
+            <p role="alert" className="basis-full text-sm text-red-700">
+              {deleteError}
+            </p>
+          ) : null}
+          <ConfirmDialog
+            open={confirmDelete}
+            title="Eliminare l'alimento?"
+            message={`"${food.name_it}" verrà eliminato. L'azione è irreversibile.`}
+            confirmLabel="Elimina"
+            variant="danger"
+            onConfirm={async () => {
+              setConfirmDelete(false);
+              setDeleteError(null);
+              const err = await removeCustomFood(id);
+              if (err) setDeleteError(err);
+              else navigate("/miei-alimenti", { replace: true });
+            }}
+            onCancel={() => setConfirmDelete(false)}
+          />
+        </div>
+      ) : null}
 
       {offEan && user ? (
         <section className="surface p-5 text-sm">

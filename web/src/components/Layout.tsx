@@ -18,10 +18,13 @@ export default function Layout() {
     ...(user
       ? [
           { to: "/diario", label: t("nav.diary"), icon: "diary" as IconName },
+          { to: "/preferiti", label: t("nav.favorites"), icon: "heart" as IconName },
           { to: "/ricette", label: t("nav.recipes"), icon: "recipe" as IconName },
         ]
       : [{ to: "/scopo", label: t("nav.scope"), icon: "info" as IconName }]),
   ];
+  // Phone tab bar: five slots at most (Recipes stays in the account menu).
+  const tabs = primary.filter((item) => item.to !== "/ricette").slice(0, 5);
 
   const pill = ({ isActive }: { isActive: boolean }) =>
     [
@@ -102,8 +105,8 @@ export default function Layout() {
         aria-label={t("a11y.primaryNav")}
         className="md:hidden fixed bottom-0 inset-x-0 z-30 border-t border-black/[0.06] bg-white/85 backdrop-blur-xl backdrop-saturate-150 pb-[env(safe-area-inset-bottom)]"
       >
-        <ul className="grid grid-cols-4 h-16">
-          {primary.slice(0, 4).map((item) => (
+        <ul className={`grid h-16 ${tabs.length === 5 ? "grid-cols-5" : "grid-cols-4"}`}>
+          {tabs.map((item) => (
             <li key={item.to}>
               <NavLink
                 to={item.to}

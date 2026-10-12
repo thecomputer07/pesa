@@ -133,6 +133,8 @@ export const FoodDetailSchema = z.object({
   last_imported_at: z.string().optional(),
   images: z.array(FoodImageSchema).default([]),
   thumb_url: z.string().optional(),
+  // The current user's own custom food: can be edited and deleted.
+  is_mine: z.boolean().optional(),
   siblings: z
     .array(
       z.object({
@@ -161,6 +163,22 @@ export function searchFoods(
   return request(`/foods/search?${params.toString()}`, FoodSearchResponseSchema, {
     signal: opts.signal,
   });
+}
+
+/**
+ * Deletes one of the user's own custom foods. Resolves with null on success,
+ * or with a message to show (the server explains e.g. "used in the diary").
+ */
+export async function deleteCustomFood(id: number): Promise<string | null> {
+  const res = await apiFetch(`/foods/custom/${id}`, { method: "DELETE" });
+  if (res.ok || res.status === 204) return null;
+  try {
+    const body = (await res.json()) as { detail?: string };
+    if (body.detail) return body.detail;
+  } catch {
+    /* not JSON */
+  }
+  return `Errore ${res.status}`;
 }
 
 export function getFood(id: number, opts: { signal?: AbortSignal } = {}): Promise<FoodDetail> {

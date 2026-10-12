@@ -3,9 +3,25 @@ import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { apiFetch, type FoodSearchResult } from "../lib/api";
 import ResultCard from "../components/ResultCard";
+import ConfirmDialog from "../components/ConfirmDialog";
+import { removeCustomFood } from "../lib/customFoods";
 
 export default function MyFoodsPage() {
   const [q, setQ] = useState("");
+  const [toDelete, setToDelete] = useState<FoodSearchResult | null>(null);
+  const [deleting, setDeleting] = useState<number | null>(null);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+
+  async function confirmDelete() {
+    const food = toDelete;
+    setToDelete(null);
+    if (!food) return;
+    setDeleteError(null);
+    setDeleting(food.id);
+    const err = await removeCustomFood(food.id);
+    setDeleting(null);
+    if (err) setDeleteError(err);
+  }
   const { data, isLoading, error } = useQuery({
     queryKey: ["foods-mine"],
     queryFn: async () => {
@@ -60,6 +76,11 @@ export default function MyFoodsPage() {
             aria-label="Cerca alimenti personali"
             className="w-full border border-[color:var(--color-border)] rounded-xl px-3 py-2 text-sm"
           />
+          {deleteError ? (
+            <p role="alert" className="text-sm text-red-700">
+              {deleteError}
+            </p>
+          ) : null}
           {filtered.length === 0 ? (
             <p className="text-sm text-[color:var(--color-ink-muted)] py-4 text-center">
               Nessun alimento corrisponde a "{q}".
@@ -74,7 +95,16 @@ export default function MyFoodsPage() {
               <ul className="list-none m-0 p-0">
                 <ResultCard food={food} />
               </ul>
-              <div className="border-t border-[color:var(--color-border)] px-3 py-2 flex justify-end">
+              <div className="border-t border-[color:var(--color-border)] px-3 py-2 flex justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={() => setToDelete(food)}
+                  disabled={deleting === food.id}
+                  className="text-xs px-3 !min-h-9 border border-red-200 text-red-700 rounded-xl hover:bg-red-50 disabled:opacity-50"
+                  aria-label={`Elimina ${food.name_it}`}
+                >
+                  {deleting === food.id ? "Eliminazione…" : "Elimina"}
+                </button>
                 <Link
                   to={`/alimento/${food.id}/modifica`}
                   className="text-xs px-3 py-1.5 border border-[color:var(--color-border)] rounded-xl hover:bg-[color:var(--color-brand-50)] no-underline"
@@ -88,6 +118,15 @@ export default function MyFoodsPage() {
           </ul>
         </>
       )}
+      <ConfirmDialog
+        open={toDelete != null}
+        title="Eliminare l'alimento?"
+        message={toDelete ? `"${toDelete.name_it}" verrà eliminato. L'azione è irreversibile.` : undefined}
+        confirmLabel="Elimina"
+        variant="danger"
+        onConfirm={confirmDelete}
+        onCancel={() => setToDelete(null)}
+      />
     </section>
   );
 }

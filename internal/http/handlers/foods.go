@@ -101,9 +101,14 @@ func (h *Foods) Search(w http.ResponseWriter, r *http.Request) {
 	for _, f := range results {
 		resp.Results = append(resp.Results, toSearchDTO(f))
 	}
-	// Cache per-utente breve: i risultati dipendono da user_id (custom foods privati).
+	// Logged in, results include the user's own foods: no browser cache, or a
+	// food just created or deleted would show up late. Anonymous: 30 s.
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	w.Header().Set("Cache-Control", "private, max-age=30, must-revalidate")
+	if userID > 0 {
+		w.Header().Set("Cache-Control", "private, no-store")
+	} else {
+		w.Header().Set("Cache-Control", "private, max-age=30, must-revalidate")
+	}
 	w.Header().Set("Vary", "Cookie")
 	w.WriteHeader(http.StatusOK)
 	_ = json.NewEncoder(w).Encode(resp)
@@ -147,7 +152,7 @@ func (h *Foods) Mine(w http.ResponseWriter, r *http.Request) {
 	}
 	resp := foodsSearchResponseDTO{Results: out, Total: len(out), Page: 1, Limit: len(out)}
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	w.Header().Set("Cache-Control", "private, max-age=10, must-revalidate")
+	w.Header().Set("Cache-Control", "private, no-store")
 	w.Header().Set("Vary", "Cookie")
 	_ = json.NewEncoder(w).Encode(resp)
 }
@@ -312,7 +317,14 @@ func (h *Foods) Delete(w http.ResponseWriter, r *http.Request) {
 	res, err := h.DB.ExecContext(r.Context(),
 		`DELETE FROM foods WHERE id = $1 AND user_id = $2`, id, userID)
 	if err != nil {
-		problem.Write(w, r, http.StatusInternalServerError, "delete-failed", err.Error())
+		// meal_items / recipe_items reference foods without cascade: a food
+		// still used in the diary or a recipe cannot go (23503 = FK violation).
+		if strings.Contains(err.Error(), "23503") {
+			problem.Write(w, r, http.StatusConflict, "food-in-use",
+				"Questo alimento è usato nel diario o in una ricetta: toglilo da lì prima di eliminarlo.")
+			return
+		}
+		problem.Write(w, r, http.StatusInternalServerError, "delete-failed", "delete failed")
 		return
 	}
 	n, _ := res.RowsAffected()
@@ -351,12 +363,24 @@ func (h *Foods) Detail(w http.ResponseWriter, r *http.Request) {
 		problem.Write(w, r, http.StatusInternalServerError, "internal-error", "detail failed")
 		return
 	}
-	if food == nil {
+	// A custom food is private: only its owner sees it (404 for anyone else,
+	// so its existence doesn't leak either), and never via a shared cache.
+	userID := middleware.UserIDFrom(r.Context())
+	if food == nil || (food.UserID.Valid && food.UserID.Int64 != userID) {
 		problem.Write(w, r, http.StatusNotFound, "food-not-found", "no food with that id")
 		return
 	}
 	siblings, _ := repo.LoadSiblings(r.Context(), h.DB, food.ID, food.ParentFoodID)
-	writeJSONCached(w, http.StatusOK, toDetailDTO(food, imgs, siblings))
+	dto := toDetailDTO(food, imgs, siblings)
+	if food.UserID.Valid {
+		dto.IsMine = true
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
+		w.Header().Set("Cache-Control", "private, no-store")
+		w.WriteHeader(http.StatusOK)
+		_ = json.NewEncoder(w).Encode(dto)
+		return
+	}
+	writeJSONCached(w, http.StatusOK, dto)
 }
 
 // --- helpers ---
@@ -424,29 +448,31 @@ type foodImageDTO struct {
 }
 
 type foodDetailDTO struct {
-	ID              int64          `json:"id"`
-	NameIT          string         `json:"name_it"`
-	NameEN          *string        `json:"name_en,omitempty"`
-	Category        *string        `json:"category,omitempty"`
-	State           string         `json:"state"`
-	EdiblePct       float64        `json:"edible_pct"`
-	Kcal            *float64       `json:"kcal,omitempty"`
-	ProteinG        *float64       `json:"protein_g,omitempty"`
-	FatG            *float64       `json:"fat_g,omitempty"`
-	CarbG           *float64       `json:"carb_g,omitempty"`
-	SugarG          *float64       `json:"sugar_g,omitempty"`
-	FiberG          *float64       `json:"fiber_g,omitempty"`
-	WaterG          *float64       `json:"water_g,omitempty"`
-	AshG            *float64       `json:"ash_g,omitempty"`
-	AlcoholG        *float64       `json:"alcohol_g,omitempty"`
-	SaltG           *float64       `json:"salt_g,omitempty"`
-	Attribution     string         `json:"attribution"`
-	License         string         `json:"license"`
-	LicenseURL      *string        `json:"license_url,omitempty"`
-	SourceURL       *string        `json:"source_url,omitempty"`
-	LastImportedAt  *string        `json:"last_imported_at,omitempty"`
-	Images          []foodImageDTO   `json:"images"`
-	Siblings        []foodSiblingDTO `json:"siblings"`
+	ID             int64            `json:"id"`
+	NameIT         string           `json:"name_it"`
+	NameEN         *string          `json:"name_en,omitempty"`
+	Category       *string          `json:"category,omitempty"`
+	State          string           `json:"state"`
+	EdiblePct      float64          `json:"edible_pct"`
+	Kcal           *float64         `json:"kcal,omitempty"`
+	ProteinG       *float64         `json:"protein_g,omitempty"`
+	FatG           *float64         `json:"fat_g,omitempty"`
+	CarbG          *float64         `json:"carb_g,omitempty"`
+	SugarG         *float64         `json:"sugar_g,omitempty"`
+	FiberG         *float64         `json:"fiber_g,omitempty"`
+	WaterG         *float64         `json:"water_g,omitempty"`
+	AshG           *float64         `json:"ash_g,omitempty"`
+	AlcoholG       *float64         `json:"alcohol_g,omitempty"`
+	SaltG          *float64         `json:"salt_g,omitempty"`
+	Attribution    string           `json:"attribution"`
+	License        string           `json:"license"`
+	LicenseURL     *string          `json:"license_url,omitempty"`
+	SourceURL      *string          `json:"source_url,omitempty"`
+	LastImportedAt *string          `json:"last_imported_at,omitempty"`
+	Images         []foodImageDTO   `json:"images"`
+	Siblings       []foodSiblingDTO `json:"siblings"`
+	// IsMine: the current user's own custom food (can edit / delete).
+	IsMine bool `json:"is_mine,omitempty"`
 }
 
 type foodSiblingDTO struct {
@@ -462,29 +488,29 @@ func toDetailDTO(f *repo.Food, imgs []repo.FoodImage, siblings []repo.FoodSiblin
 		lastImp = &s
 	}
 	out := foodDetailDTO{
-		ID:              f.ID,
-		NameIT:          f.NameIT,
-		NameEN:          nullStrPtr(f.NameEN),
-		Category:        nullStrPtr(f.Category),
-		State:           f.State,
-		EdiblePct:       f.EdiblePct,
-		Kcal:            nullFloatPtr(f.Kcal),
-		ProteinG:        nullFloatPtr(f.ProteinG),
-		FatG:            nullFloatPtr(f.FatG),
-		CarbG:           nullFloatPtr(f.CarbG),
-		SugarG:          nullFloatPtr(f.SugarG),
-		FiberG:          nullFloatPtr(f.FiberG),
-		WaterG:          nullFloatPtr(f.WaterG),
-		AshG:            nullFloatPtr(f.AshG),
-		AlcoholG:        nullFloatPtr(f.AlcoholG),
-		SaltG:           nullFloatPtr(f.SaltG),
-		Attribution:     f.AttributionText,
-		License:         f.License,
-		LicenseURL:      nullStrPtr(f.LicenseURL),
-		SourceURL:       nullStrPtr(f.SourceURL),
-		LastImportedAt:  lastImp,
-		Images:          make([]foodImageDTO, 0, len(imgs)),
-		Siblings:        make([]foodSiblingDTO, 0, len(siblings)),
+		ID:             f.ID,
+		NameIT:         f.NameIT,
+		NameEN:         nullStrPtr(f.NameEN),
+		Category:       nullStrPtr(f.Category),
+		State:          f.State,
+		EdiblePct:      f.EdiblePct,
+		Kcal:           nullFloatPtr(f.Kcal),
+		ProteinG:       nullFloatPtr(f.ProteinG),
+		FatG:           nullFloatPtr(f.FatG),
+		CarbG:          nullFloatPtr(f.CarbG),
+		SugarG:         nullFloatPtr(f.SugarG),
+		FiberG:         nullFloatPtr(f.FiberG),
+		WaterG:         nullFloatPtr(f.WaterG),
+		AshG:           nullFloatPtr(f.AshG),
+		AlcoholG:       nullFloatPtr(f.AlcoholG),
+		SaltG:          nullFloatPtr(f.SaltG),
+		Attribution:    f.AttributionText,
+		License:        f.License,
+		LicenseURL:     nullStrPtr(f.LicenseURL),
+		SourceURL:      nullStrPtr(f.SourceURL),
+		LastImportedAt: lastImp,
+		Images:         make([]foodImageDTO, 0, len(imgs)),
+		Siblings:       make([]foodSiblingDTO, 0, len(siblings)),
 	}
 	for _, im := range imgs {
 		out.Images = append(out.Images, foodImageDTO{

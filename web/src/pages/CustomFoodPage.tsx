@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { apiFetch } from "../lib/api";
 import ConfirmDialog from "../components/ConfirmDialog";
+import { removeCustomFood } from "../lib/customFoods";
 
 type Form = {
   name_it: string;
@@ -93,13 +94,12 @@ export default function CustomFoodPage() {
     setConfirmDelete(false);
     setDeleting(true);
     try {
-      const res = await apiFetch(`/foods/custom/${editId}`, { method: "DELETE" });
-      if (!res.ok && res.status !== 204) {
-        const txt = await res.text().catch(() => "");
-        setError(txt || `Errore ${res.status}`);
+      const err = await removeCustomFood(Number(editId));
+      if (err) {
+        setError(err);
         return;
       }
-      navigate("/miei-alimenti");
+      navigate("/miei-alimenti", { replace: true });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Errore imprevisto");
     } finally {

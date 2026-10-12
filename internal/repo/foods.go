@@ -38,7 +38,9 @@ type Food struct {
 	LastImportedAt  sql.NullTime
 	ParentFoodID    sql.NullInt64
 	ThumbURL        sql.NullString
-	Score           float64
+	// UserID is set for a user's private custom food (GetFoodByID only).
+	UserID sql.NullInt64
+	Score  float64
 }
 
 // FoodImage is the external-image row shape.
@@ -231,7 +233,7 @@ func SearchFoodsFiltered(ctx context.Context, db *sql.DB, userID int64, query, s
 	    CROSS JOIN LATERAL (SELECT CASE WHEN position(' — ' IN f.name_it) > 0
 	                                    THEN substr(f.name_it, position(' — ' IN f.name_it) + 3)
 	                                    ELSE f.name_it END AS pname) p
-	   WHERE NOT EXISTS (SELECT 1 FROM unnest($5::text[]) AS w(re) WHERE `+searchHaystack+` !~ w.re)
+	   WHERE NOT EXISTS (SELECT 1 FROM unnest($5::text[]) AS w(re) WHERE ` + searchHaystack + ` !~ w.re)
 	     AND f.superseded_by IS NULL
 	     AND (f.user_id IS NULL OR f.user_id = $8)
 	     AND (($9 = '') OR ($9 = 'mine' AND f.user_id IS NOT NULL) OR (s.code = $9))
@@ -293,7 +295,7 @@ func SearchFoodsFiltered(ctx context.Context, db *sql.DB, userID int64, query, s
 	              THEN substr(f.name_it, position(' — ' IN f.name_it) + 3)
 	              ELSE f.name_it END), '\s+', ' ', 'g'))) FROM foods f
 	  JOIN food_sources s ON s.id = f.source_id
-	 WHERE NOT EXISTS (SELECT 1 FROM unnest($1::text[]) AS w(re) WHERE `+searchHaystack+` !~ w.re)
+	 WHERE NOT EXISTS (SELECT 1 FROM unnest($1::text[]) AS w(re) WHERE ` + searchHaystack + ` !~ w.re)
 	   AND f.superseded_by IS NULL
 	   AND (f.user_id IS NULL OR f.user_id = $2)
 	   AND (($3 = '') OR ($3 = 'mine' AND f.user_id IS NOT NULL) OR (s.code = $3))`
@@ -386,7 +388,7 @@ func GetFoodByID(ctx context.Context, db *sql.DB, id int64) (*Food, []FoodImage,
 		       f.name_it, f.name_en, f.synonyms, f.category, f.state,
 		       f.edible_pct, f.kcal, f.protein_g, f.fat_g, f.carb_g, f.sugar_g,
 		       f.fiber_g, f.water_g, f.ash_g, f.alcohol_g, f.salt_g,
-		       f.last_imported_at, f.superseded_by, f.parent_food_id
+		       f.last_imported_at, f.superseded_by, f.parent_food_id, f.user_id
 		  FROM foods f
 		  JOIN food_sources s ON s.id = f.source_id
 		 WHERE f.id = $1`, id)
@@ -398,7 +400,7 @@ func GetFoodByID(ctx context.Context, db *sql.DB, id int64) (*Food, []FoodImage,
 		&f.NameIT, &f.NameEN, &f.Synonyms, &f.Category, &f.State,
 		&f.EdiblePct, &f.Kcal, &f.ProteinG, &f.FatG, &f.CarbG, &f.SugarG,
 		&f.FiberG, &f.WaterG, &f.AshG, &f.AlcoholG, &f.SaltG,
-		&f.LastImportedAt, &superseded, &f.ParentFoodID)
+		&f.LastImportedAt, &superseded, &f.ParentFoodID, &f.UserID)
 	if err == sql.ErrNoRows {
 		return nil, nil, nil
 	}
