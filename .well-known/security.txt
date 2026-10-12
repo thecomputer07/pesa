@@ -1,7 +1,0 @@
-Contact: mailto:security@pesadia.com
-Expires: {{DATA_SECURITY_TXT_EXPIRES}}
-Encryption: https://pesadia.com/.well-known/pgp-key.txt
-Preferred-Languages: it, en
-Canonical: https://pesadia.com/.well-known/security.txt
-Policy: https://pesadia.com/SECURITY.md
-Hiring: https://pesadia.com/jobs
