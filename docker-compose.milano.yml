@@ -59,6 +59,20 @@ services:
       retries: 20
       start_period: 10s
 
+  # Cache condivisa delle risposte pubbliche (ricerca anonima, schede alimento).
+  # Solo rete interna, nessuna porta; niente persistenza: e' solo una cache.
+  # Se Redis cade il backend continua a leggere Postgres.
+  redis:
+    image: redis:7-alpine
+    container_name: pesa-redis
+    restart: unless-stopped
+    command: ["redis-server", "--save", "", "--appendonly", "no", "--maxmemory", "128mb", "--maxmemory-policy", "allkeys-lru"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
   migrate:
     build:
       context: .
@@ -105,6 +119,7 @@ services:
       PESA_IMAGE_CACHE_DIR: /home/pesa/.cache/images
       PESA_CACHE_DIR: /home/pesa/.cache/exports
       AUTOCERT_ENABLED: "false"
+      REDIS_ADDR: redis:6379
       # Log permanente (sopravvive ai deploy), ruotato dall'host: deploy/logrotate/pesa.
       PESA_LOG_FILE: /var/log/pesa/backend.log
     ports:

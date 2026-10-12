@@ -4,25 +4,37 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/go-chi/chi/v5"
 
 	"github.com/thecomputer07/pesa/internal/http/middleware"
 	"github.com/thecomputer07/pesa/internal/http/problem"
 	"github.com/thecomputer07/pesa/internal/repo"
+	"github.com/thecomputer07/pesa/internal/service/cache"
 )
 
 // Foods groups the /api/v1/foods endpoints with their DB handle.
 type Foods struct {
 	DB *sql.DB
+	// Cache keeps public responses (anonymous search, public food detail).
+	// Never the user's own foods. Noop without Redis.
+	Cache cache.Cache
 }
 
+// Cache TTLs: the public catalog changes with imports and scanned products.
+const (
+	searchCacheTTL = 5 * time.Minute
+	detailCacheTTL = time.Hour
+)
+
 // NewFoods is a tiny constructor used from router.go.
-func NewFoods(db *sql.DB) *Foods { return &Foods{DB: db} }
+func NewFoods(db *sql.DB) *Foods { return &Foods{DB: db, Cache: cache.Noop{}} }
 
 type foodsSourceDTO struct {
 	Code       string  `json:"code"`
@@ -89,6 +101,15 @@ func (h *Foods) Search(w http.ResponseWriter, r *http.Request) {
 	}
 
 	userID := middleware.UserIDFrom(r.Context())
+	// Anonymous results are the same for everyone: shared cache.
+	cacheKey := ""
+	if userID == 0 && source != "mine" {
+		cacheKey = fmt.Sprintf("search:%s:%d:%d:%s", source, limit, page, strings.Join(strings.Fields(strings.ToLower(q)), " "))
+		if body, ok := h.Cache.Get(r.Context(), cacheKey); ok {
+			writeSearchBody(w, userID, body)
+			return
+		}
+	}
 	results, total, err := repo.SearchFoodsFiltered(r.Context(), h.DB, userID, q, source, limit, page)
 	if err != nil {
 		problem.Write(w, r, http.StatusInternalServerError, "internal-error", "search failed")
@@ -104,8 +125,20 @@ func (h *Foods) Search(w http.ResponseWriter, r *http.Request) {
 	for _, f := range results {
 		resp.Results = append(resp.Results, toSearchDTO(f))
 	}
-	// Logged in, results include the user's own foods: no browser cache, or a
-	// food just created or deleted would show up late. Anonymous: 30 s.
+	body, err := json.Marshal(resp)
+	if err != nil {
+		problem.Write(w, r, http.StatusInternalServerError, "internal-error", "search failed")
+		return
+	}
+	if cacheKey != "" {
+		h.Cache.Set(r.Context(), cacheKey, body, searchCacheTTL)
+	}
+	writeSearchBody(w, userID, body)
+}
+
+// writeSearchBody: logged in, results include the user's own foods: no browser
+// cache, or a food just created or deleted would show up late. Anonymous: 30 s.
+func writeSearchBody(w http.ResponseWriter, userID int64, body []byte) {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	if userID > 0 {
 		w.Header().Set("Cache-Control", "private, no-store")
@@ -114,7 +147,7 @@ func (h *Foods) Search(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Header().Set("Vary", "Cookie")
 	w.WriteHeader(http.StatusOK)
-	_ = json.NewEncoder(w).Encode(resp)
+	_, _ = w.Write(append(body, '\n'))
 }
 
 // Mine handles GET /api/v1/foods/mine — lista dei custom food dell'utente.
@@ -384,6 +417,12 @@ func (h *Foods) Detail(w http.ResponseWriter, r *http.Request) {
 		problem.Write(w, r, http.StatusBadRequest, "invalid-id", "id must be a positive integer")
 		return
 	}
+	// Only public foods are ever stored under this key (see below).
+	cacheKey := "food:" + strconv.FormatInt(id, 10)
+	if body, ok := h.Cache.Get(r.Context(), cacheKey); ok {
+		writePublicJSON(w, body)
+		return
+	}
 	food, imgs, err := repo.GetFoodByID(r.Context(), h.DB, id)
 	if err != nil {
 		problem.Write(w, r, http.StatusInternalServerError, "internal-error", "detail failed")
@@ -409,7 +448,22 @@ func (h *Foods) Detail(w http.ResponseWriter, r *http.Request) {
 		_ = json.NewEncoder(w).Encode(dto)
 		return
 	}
-	writeJSONCached(w, http.StatusOK, dto)
+	body, err := json.Marshal(dto)
+	if err != nil {
+		problem.Write(w, r, http.StatusInternalServerError, "internal-error", "detail failed")
+		return
+	}
+	h.Cache.Set(r.Context(), cacheKey, body, detailCacheTTL)
+	writePublicJSON(w, body)
+}
+
+// writePublicJSON writes catalog data that is the same for everyone.
+func writePublicJSON(w http.ResponseWriter, body []byte) {
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	// Public catalog data: browsers 5 min, Cloudflare 1 h.
+	w.Header().Set("Cache-Control", "public, max-age=300, s-maxage=3600")
+	w.WriteHeader(http.StatusOK)
+	_, _ = w.Write(append(body, '\n'))
 }
 
 // --- helpers ---
@@ -423,14 +477,6 @@ func parseIntDefault(s string, def int) int {
 		return def
 	}
 	return n
-}
-
-func writeJSONCached(w http.ResponseWriter, status int, body interface{}) {
-	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	// Public catalog data: browsers 5 min, Cloudflare 1 h.
-	w.Header().Set("Cache-Control", "public, max-age=300, s-maxage=3600")
-	w.WriteHeader(status)
-	_ = json.NewEncoder(w).Encode(body)
 }
 
 func nullStrPtr(ns sql.NullString) *string {

@@ -18,6 +18,7 @@ import (
 	"github.com/thecomputer07/pesa/internal/http/health"
 	mw "github.com/thecomputer07/pesa/internal/http/middleware"
 	"github.com/thecomputer07/pesa/internal/service"
+	"github.com/thecomputer07/pesa/internal/service/cache"
 	"github.com/thecomputer07/pesa/internal/service/erasure"
 	"github.com/thecomputer07/pesa/internal/service/imagecache"
 	"github.com/thecomputer07/pesa/internal/service/off"
@@ -64,6 +65,7 @@ func NewRouter(d Deps) stdhttp.Handler {
 
 	h := handlers.New(d.Auth, d.Session, d.Cfg.Env == "prod")
 	foods := handlers.NewFoods(d.DB)
+	foods.Cache = cache.New(d.Cfg.RedisAddr, "pesa:")
 	sync := handlers.NewSync(syncsvc.New(d.DB))
 
 	// Phase 5 wiring: image cache, OFF proxy, barcode handler, sources handler.

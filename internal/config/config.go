@@ -49,6 +49,9 @@ type Config struct {
 	// ExportTokenSecret signs the download tokens of personal-data exports.
 	ExportTokenSecret string
 
+	// RedisAddr ("host:port") enables the shared response cache; empty = off.
+	RedisAddr string
+
 	// Image cache (Phase 5 — plan-02).
 	ImageCacheDir      string
 	ImageCacheMaxBytes int64
