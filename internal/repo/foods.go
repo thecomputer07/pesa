@@ -40,7 +40,9 @@ type Food struct {
 	ThumbURL        sql.NullString
 	// UserID is set for a user's private custom food (GetFoodByID only).
 	UserID sql.NullInt64
-	Score  float64
+	// RecipeClientID is set when the food stands for a recipe (GetFoodByID only).
+	RecipeClientID sql.NullString
+	Score          float64
 }
 
 // FoodImage is the external-image row shape.
@@ -388,9 +390,10 @@ func GetFoodByID(ctx context.Context, db *sql.DB, id int64) (*Food, []FoodImage,
 		       f.name_it, f.name_en, f.synonyms, f.category, f.state,
 		       f.edible_pct, f.kcal, f.protein_g, f.fat_g, f.carb_g, f.sugar_g,
 		       f.fiber_g, f.water_g, f.ash_g, f.alcohol_g, f.salt_g,
-		       f.last_imported_at, f.superseded_by, f.parent_food_id, f.user_id
+		       f.last_imported_at, f.superseded_by, f.parent_food_id, f.user_id, rc.client_id
 		  FROM foods f
 		  JOIN food_sources s ON s.id = f.source_id
+		  LEFT JOIN recipes rc ON rc.id = f.recipe_id
 		 WHERE f.id = $1`, id)
 
 	var f Food
@@ -400,7 +403,7 @@ func GetFoodByID(ctx context.Context, db *sql.DB, id int64) (*Food, []FoodImage,
 		&f.NameIT, &f.NameEN, &f.Synonyms, &f.Category, &f.State,
 		&f.EdiblePct, &f.Kcal, &f.ProteinG, &f.FatG, &f.CarbG, &f.SugarG,
 		&f.FiberG, &f.WaterG, &f.AshG, &f.AlcoholG, &f.SaltG,
-		&f.LastImportedAt, &superseded, &f.ParentFoodID, &f.UserID)
+		&f.LastImportedAt, &superseded, &f.ParentFoodID, &f.UserID, &f.RecipeClientID)
 	if err == sql.ErrNoRows {
 		return nil, nil, nil
 	}

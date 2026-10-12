@@ -144,7 +144,16 @@ export default function FoodDetailPage() {
         {!offEan ? <FavoriteToggle foodId={id} /> : null}
       </header>
 
-      {food.is_mine ? (
+      {food.is_mine && food.recipe_client_id ? (
+        <div className="flex flex-wrap items-center gap-2 -mt-2">
+          <span className="text-xs text-[color:var(--color-ink-faint)] mr-1">
+            La tua ricetta: valori calcolati dagli ingredienti
+          </span>
+          <Link to={`/ricette/${food.recipe_client_id}`} className="btn-quiet !py-1.5 !min-h-9 text-sm">
+            Apri la ricetta
+          </Link>
+        </div>
+      ) : food.is_mine ? (
         <div className="flex flex-wrap items-center gap-2 -mt-2">
           <span className="text-xs text-[color:var(--color-ink-faint)] mr-1">Alimento creato da te</span>
           <Link to={`/alimento/${id}/modifica`} className="btn-quiet !py-1.5 !min-h-9 text-sm">

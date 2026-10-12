@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"log/slog"
 )
 
 // Service owns the sync application logic. Thin wrapper over *sql.DB — query
@@ -81,7 +82,28 @@ func (s *Service) UpsertBatch(ctx context.Context, userID int64, p BatchPayload)
 		return BatchResponse{}, fmt.Errorf("sync: commit: %w", err)
 	}
 	out.ServerCursor = maxCursor
+	s.refreshRecipeFoods(ctx, userID, p)
 	return out, nil
+}
+
+// refreshRecipeFoods keeps each touched recipe's food (migration 00036) in
+// step with its ingredients. After the commit and best-effort: the recipe is
+// saved either way, the next sync of that recipe retries.
+func (s *Service) refreshRecipeFoods(ctx context.Context, userID int64, p BatchPayload) {
+	ids := map[string]bool{}
+	for _, r := range p.Recipes {
+		ids[r.ClientID] = true
+	}
+	for _, ri := range p.RecipeItems {
+		ids[ri.RecipeClientID] = true
+	}
+	for clientID := range ids {
+		if _, err := s.db.ExecContext(ctx,
+			`SELECT pesa_refresh_recipe_food(id) FROM recipes WHERE user_id = $1 AND client_id = $2`,
+			userID, clientID); err != nil {
+			slog.Warn("refresh recipe food", "err", err)
+		}
+	}
 }
 
 // Pull returns delta of all entity types with server_updated_at_ms > since.

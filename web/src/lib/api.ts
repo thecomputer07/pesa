@@ -135,6 +135,8 @@ export const FoodDetailSchema = z.object({
   thumb_url: z.string().optional(),
   // The current user's own custom food: can be edited and deleted.
   is_mine: z.boolean().optional(),
+  // Set when the food stands for one of the user's recipes.
+  recipe_client_id: z.string().optional(),
   siblings: z
     .array(
       z.object({

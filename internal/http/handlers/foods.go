@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"context"
 	"database/sql"
 	"encoding/json"
 	"io"
@@ -129,6 +130,7 @@ func (h *Foods) Mine(w http.ResponseWriter, r *http.Request) {
 		  FROM foods f
 		  JOIN food_sources s ON s.id = f.source_id
 		 WHERE f.user_id = $1
+		   AND f.recipe_id IS NULL -- recipes are managed on their own page
 		   AND f.superseded_by IS NULL
 		 ORDER BY f.id DESC`, userID)
 	if err != nil {
@@ -260,6 +262,10 @@ func (h *Foods) Update(w http.ResponseWriter, r *http.Request) {
 		problem.Write(w, r, http.StatusForbidden, "forbidden", "not your food")
 		return
 	}
+	if isRecipeFood(r.Context(), h.DB, id) {
+		problem.Write(w, r, http.StatusConflict, "recipe-food", "Questo alimento è una ricetta: modificala dalla pagina Ricette.")
+		return
+	}
 
 	var in customFoodInput
 	if err := json.NewDecoder(io.LimitReader(r.Body, 4*1024)).Decode(&in); err != nil {
@@ -314,6 +320,10 @@ func (h *Foods) Delete(w http.ResponseWriter, r *http.Request) {
 		problem.Write(w, r, http.StatusBadRequest, "invalid-id", "id must be positive integer")
 		return
 	}
+	if isRecipeFood(r.Context(), h.DB, id) {
+		problem.Write(w, r, http.StatusConflict, "recipe-food", "Questo alimento è una ricetta: eliminala dalla pagina Ricette.")
+		return
+	}
 	res, err := h.DB.ExecContext(r.Context(),
 		`DELETE FROM foods WHERE id = $1 AND user_id = $2`, id, userID)
 	if err != nil {
@@ -333,6 +343,13 @@ func (h *Foods) Delete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.WriteHeader(http.StatusNoContent)
+}
+
+// isRecipeFood reports whether the food stands for a recipe (migration 00036).
+func isRecipeFood(ctx context.Context, db *sql.DB, id int64) bool {
+	var n int
+	_ = db.QueryRowContext(ctx, `SELECT count(*) FROM foods WHERE id = $1 AND recipe_id IS NOT NULL`, id).Scan(&n)
+	return n > 0
 }
 
 func nullString(s string) interface{} {
@@ -374,6 +391,9 @@ func (h *Foods) Detail(w http.ResponseWriter, r *http.Request) {
 	dto := toDetailDTO(food, imgs, siblings)
 	if food.UserID.Valid {
 		dto.IsMine = true
+		if food.RecipeClientID.Valid {
+			dto.RecipeClientID = strings.TrimSpace(food.RecipeClientID.String)
+		}
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.Header().Set("Cache-Control", "private, no-store")
 		w.WriteHeader(http.StatusOK)
@@ -473,6 +493,8 @@ type foodDetailDTO struct {
 	Siblings       []foodSiblingDTO `json:"siblings"`
 	// IsMine: the current user's own custom food (can edit / delete).
 	IsMine bool `json:"is_mine,omitempty"`
+	// RecipeClientID: the food stands for this recipe; edit the recipe instead.
+	RecipeClientID string `json:"recipe_client_id,omitempty"`
 }
 
 type foodSiblingDTO struct {

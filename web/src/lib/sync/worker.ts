@@ -1,4 +1,5 @@
 import { db } from "../db/schema";
+import { queryClient } from "../queryClient";
 import { drain, markFailed, readyToFlush } from "./outbox";
 import type {
   BatchPayload,
@@ -89,6 +90,12 @@ async function doFlush(): Promise<void> {
     }
   }
   if (toDrain.length) await drain(toDrain);
+
+  // A saved or deleted recipe changes its food on the server (migration
+  // 00036): refresh search and lists now, not after their cache expires.
+  if (batch.recipes?.length || batch.recipe_items?.length) {
+    void queryClient.invalidateQueries({ queryKey: ["foods"] });
+  }
 
   if (body.server_cursor > 0) {
     const prev = await db.meta.get("sync_cursor");
