@@ -7,7 +7,7 @@ import { invalidateSearchIndex } from "../db/search";
  * Offline catalog: the whole public food catalog lives in IndexedDB, so search,
  * food detail, calculations and known barcodes work without network.
  *
- *  - first run: GET /api/v1/catalog downloads everything (~19k foods, ~1 MB gzip);
+ *  - first run: GET /api/v1/catalog downloads everything (~19k foods, ~0.8 MB gzip);
  *  - later: at most every CHECK_EVERY_MS, GET /api/v1/catalog?since=<cursor>
  *    returns only what changed (often a 304: the ETag is the catalog version);
  *  - every FULL_EVERY_MS, or when the row count drifts from the server's,
@@ -93,9 +93,10 @@ function toCached(cols: string[], row: unknown[], sources: Map<string, CatalogSo
     ash_g: num(v("ash_g")),
     alcohol_g: num(v("alcohol_g")),
     salt_g: num(v("salt_g")),
-    thumb_url: str(v("thumb_url")),
+    // Photo URL from the id: /static/thumbs/{id} serves the food's first image.
+    thumb_url: v("has_thumb") === true ? `/static/thumbs/${Number(v("id"))}` : undefined,
     ean: str(v("ean")),
-    last_imported_at: str(v("last_imported_at")),
+    last_imported_at: str(v("last_imported_date")),
     source_code: code,
     source_license: src?.license ?? "",
     source_license_url: src?.license_url,

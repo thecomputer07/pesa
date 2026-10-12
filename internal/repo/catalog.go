@@ -12,7 +12,7 @@ var CatalogColumns = []string{
 	"id", "name_it", "name_en", "synonyms", "category", "state", "source",
 	"parent_id", "edible_pct", "kcal", "protein_g", "fat_g", "carb_g",
 	"sugar_g", "fiber_g", "water_g", "ash_g", "alcohol_g", "salt_g",
-	"thumb_url", "ean", "last_imported_at",
+	"has_thumb", "ean", "last_imported_date",
 }
 
 // CatalogRow is one public food, values in CatalogColumns order.
@@ -66,7 +66,7 @@ func LoadCatalog(ctx context.Context, db *sql.DB, sinceMs int64) ([]CatalogRow, 
 		SELECT f.id, f.name_it, f.name_en, f.synonyms, f.category, f.state, s.code,
 		       f.parent_food_id, f.edible_pct, f.kcal, f.protein_g, f.fat_g, f.carb_g,
 		       f.sugar_g, f.fiber_g, f.water_g, f.ash_g, f.alcohol_g, f.salt_g,
-		       im.url,
+		       im.url IS NOT NULL,
 		       CASE WHEN s.code = 'off' THEN r.external_id END,
 		       f.last_imported_at,
 		       f.superseded_by IS NOT NULL
@@ -90,7 +90,8 @@ func LoadCatalog(ctx context.Context, db *sql.DB, sinceMs int64) ([]CatalogRow, 
 		var (
 			id                                  int64
 			nameIT, state, src                  string
-			nameEN, syn, cat, thumb, ean        sql.NullString
+			nameEN, syn, cat, ean               sql.NullString
+			hasThumb                            bool
 			parent                              sql.NullInt64
 			edible                              float64
 			kcal, prot, fat, carb, sugar, fiber sql.NullFloat64
@@ -101,7 +102,7 @@ func LoadCatalog(ctx context.Context, db *sql.DB, sinceMs int64) ([]CatalogRow, 
 		if err := rows.Scan(&id, &nameIT, &nameEN, &syn, &cat, &state, &src,
 			&parent, &edible, &kcal, &prot, &fat, &carb,
 			&sugar, &fiber, &water, &ash, &alcohol, &salt,
-			&thumb, &ean, &imported, &superseded); err != nil {
+			&hasThumb, &ean, &imported, &superseded); err != nil {
 			return nil, nil, err
 		}
 		if superseded {
@@ -110,13 +111,13 @@ func LoadCatalog(ctx context.Context, db *sql.DB, sinceMs int64) ([]CatalogRow, 
 		}
 		var imp any
 		if imported.Valid {
-			imp = imported.Time.UTC().Format("2006-01-02T15:04:05Z")
+			imp = imported.Time.UTC().Format("2006-01-02")
 		}
 		out = append(out, CatalogRow{
 			id, nameIT, nullStr(nameEN), nullStr(syn), nullStr(cat), state, src,
 			nullInt(parent), edible, nullF(kcal), nullF(prot), nullF(fat), nullF(carb),
 			nullF(sugar), nullF(fiber), nullF(water), nullF(ash), nullF(alcohol), nullF(salt),
-			nullStr(thumb), nullStr(ean), imp,
+			hasThumb, nullStr(ean), imp,
 		})
 	}
 	return out, gone, rows.Err()

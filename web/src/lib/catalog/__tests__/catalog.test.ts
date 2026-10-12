@@ -9,7 +9,7 @@ const COLUMNS = [
   "id", "name_it", "name_en", "synonyms", "category", "state", "source",
   "parent_id", "edible_pct", "kcal", "protein_g", "fat_g", "carb_g",
   "sugar_g", "fiber_g", "water_g", "ash_g", "alcohol_g", "salt_g",
-  "thumb_url", "ean", "last_imported_at",
+  "has_thumb", "ean", "last_imported_date",
 ];
 
 function row(id: number, name: string, source: string, extra: Partial<Record<string, unknown>> = {}) {
@@ -17,7 +17,7 @@ function row(id: number, name: string, source: string, extra: Partial<Record<str
     id, name_it: name, name_en: null, synonyms: null, category: null, state: "raw",
     source, parent_id: null, edible_pct: 100, kcal: 100, protein_g: 1, fat_g: 1,
     carb_g: 20, sugar_g: 1, fiber_g: 1, water_g: null, ash_g: null, alcohol_g: null,
-    salt_g: null, thumb_url: null, ean: null, last_imported_at: null, ...extra,
+    salt_g: null, has_thumb: false, ean: null, last_imported_date: null, ...extra,
   };
   return COLUMNS.map((c) => v[c]);
 }
@@ -39,7 +39,7 @@ const FULL = {
     row(1, "Pasta di semola", "crea"),
     row(2, "Pasta di semola, cotta", "crea", { state: "cooked", parent_id: 1, carb_g: 30 }),
     row(3, "Barilla — Pasta di semola", "off", { ean: "8076800195057" }),
-    row(4, "De Cecco — Pasta di semola", "off", { thumb_url: "/static/images/off/a.jpg" }),
+    row(4, "De Cecco — Pasta di semola", "off", { has_thumb: true }),
     row(5, "Tè alla pesca", "crea"),
     row(6, "Estathé — Estathé Pesca", "off"),
     row(7, "Sushi salmone", "ciqual"),
@@ -85,6 +85,7 @@ describe("offline catalog", () => {
     // Barilla and De Cecco are the same OFF product name: one row, the one with a photo.
     expect(ids).toContain(4);
     expect(ids).not.toContain(3);
+    expect((await db.foods.get(4))?.thumb_url).toBe("/static/thumbs/4");
   });
 
   it("treats te/the/tea as the same word and drops stopwords", async () => {

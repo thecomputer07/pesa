@@ -35,6 +35,19 @@ registerRoute(
   }),
 );
 
+// Photo by food id (offline catalog): the photo of a food can change, so
+// serve the copy at once and refresh it in the background.
+registerRoute(
+  ({ url }) => url.origin === self.location.origin && url.pathname.startsWith("/static/thumbs/"),
+  new StaleWhileRevalidate({
+    cacheName: "pesa-thumbs",
+    plugins: [
+      new CacheableResponsePlugin({ statuses: [200] }),
+      new ExpirationPlugin({ maxEntries: 1000, maxAgeSeconds: 60 * 60 * 24 * 90, purgeOnQuotaError: true }),
+    ],
+  }),
+);
+
 // Legal pages (privacy, cookie): readable offline, refreshed in the background.
 registerRoute(
   ({ url }) => url.origin === self.location.origin && url.pathname.startsWith("/legal/"),

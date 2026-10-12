@@ -119,7 +119,9 @@ func NewRouter(d Deps) stdhttp.Handler {
 
 	// Cached third-party image surface (phase 5 — plan-02). Mounted before SPA fallback.
 	if images != nil {
+		images.DB = d.DB
 		r.Get("/static/images/{source}/{file}", images.Serve)
+		r.Get("/static/thumbs/{foodID}", images.Thumb)
 	}
 
 	// Sync surface (phase 4). Auth enforced in handler via middleware.UserIDFrom.

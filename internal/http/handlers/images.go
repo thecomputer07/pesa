@@ -2,11 +2,13 @@ package handlers
 
 import (
 	"context"
+	"database/sql"
 	"errors"
 	"net/http"
 	"os"
 	"regexp"
 	"strconv"
+	"strings"
 
 	"github.com/go-chi/chi/v5"
 
@@ -18,6 +20,8 @@ import (
 // Images serves cached third-party images with license metadata headers.
 type Images struct {
 	Store *imagecache.Store
+	// DB resolves /static/thumbs/{foodID} to the food's first image.
+	DB *sql.DB
 }
 
 // NewImages builds the handler bound to an imagecache.Store.
@@ -27,8 +31,39 @@ var imageFileRegex = regexp.MustCompile(`^[a-f0-9]{64}\.(jpg|png|webp|avif|gif)$
 
 // Serve handles GET /static/images/{source}/{file}.
 func (h *Images) Serve(w http.ResponseWriter, r *http.Request) {
-	source := chi.URLParam(r, "source")
-	file := chi.URLParam(r, "file")
+	h.serveFile(w, r, chi.URLParam(r, "source"), chi.URLParam(r, "file"), "public, max-age=2592000, immutable")
+}
+
+// Thumb handles GET /static/thumbs/{foodID}: the first photo of a public food.
+// The offline catalog only says whether a food has a photo; the URL is built
+// from the id (a 64-char file hash per row would double the catalog download).
+// Not immutable: the photo of a food can be replaced.
+func (h *Images) Thumb(w http.ResponseWriter, r *http.Request) {
+	id, err := strconv.ParseInt(chi.URLParam(r, "foodID"), 10, 64)
+	if err != nil || id <= 0 || h.DB == nil {
+		problem.Write(w, r, http.StatusNotFound, "image-not-found", "unknown food")
+		return
+	}
+	var url string
+	err = h.DB.QueryRowContext(r.Context(), `
+		SELECT i.url FROM food_images i JOIN foods f ON f.id = i.food_id
+		 WHERE i.food_id = $1 AND f.user_id IS NULL
+		 ORDER BY i.id LIMIT 1`, id).Scan(&url)
+	if err != nil {
+		problem.Write(w, r, http.StatusNotFound, "image-not-found", "no image")
+		return
+	}
+	rest, local := strings.CutPrefix(url, "/static/images/")
+	source, file, ok := strings.Cut(rest, "/")
+	if !local || !ok {
+		w.Header().Set("Cache-Control", "public, max-age=86400")
+		http.Redirect(w, r, url, http.StatusFound)
+		return
+	}
+	h.serveFile(w, r, source, file, "public, max-age=604800")
+}
+
+func (h *Images) serveFile(w http.ResponseWriter, r *http.Request, source, file, cacheControl string) {
 	if _, ok := imagecache.AllowedSources[source]; !ok {
 		problem.Write(w, r, http.StatusNotFound, "image-not-found", "unknown source")
 		return
@@ -60,7 +95,7 @@ func (h *Images) Serve(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", meta.ContentType)
-	w.Header().Set("Cache-Control", "public, max-age=2592000, immutable")
+	w.Header().Set("Cache-Control", cacheControl)
 	w.Header().Set("Content-Length", strconv.FormatInt(info.Size(), 10))
 	if meta.LicenseURL != "" {
 		w.Header().Set("Link", "<"+meta.LicenseURL+`>; rel="license"`)
