@@ -187,18 +187,33 @@ func spaHandler(dist fs.FS) stdhttp.HandlerFunc {
 	fileServer := stdhttp.FileServer(stdhttp.FS(dist))
 	return func(w stdhttp.ResponseWriter, r *stdhttp.Request) {
 		path := strings.TrimPrefix(r.URL.Path, "/")
-		if path == "" {
-			fileServer.ServeHTTP(w, r)
-			return
+		if path != "" {
+			if f, err := dist.Open(path); err == nil {
+				_ = f.Close()
+				w.Header().Set("Cache-Control", staticCacheControl(path))
+				fileServer.ServeHTTP(w, r)
+				return
+			}
+			// Fall back to index.html for client-side routing.
+			r.URL.Path = "/"
 		}
-		f, err := dist.Open(path)
-		if err == nil {
-			_ = f.Close()
-			fileServer.ServeHTTP(w, r)
-			return
-		}
-		// Fall back to index.html for client-side routing.
-		r.URL.Path = "/"
+		w.Header().Set("Cache-Control", "no-cache")
 		fileServer.ServeHTTP(w, r)
+	}
+}
+
+// staticCacheControl: Vite's hashed bundles never change (cache for a year,
+// also at the Cloudflare edge); everything else is revalidated so a deploy
+// shows up at once (index.html, sw.js, manifest) or within a day.
+func staticCacheControl(path string) string {
+	switch {
+	case strings.HasPrefix(path, "assets/"):
+		return "public, max-age=31536000, immutable"
+	case path == "index.html", path == "sw.js", strings.HasSuffix(path, ".webmanifest"):
+		return "no-cache"
+	case strings.HasPrefix(path, "legal/"):
+		return "public, max-age=0, must-revalidate, s-maxage=3600"
+	default: // icons, fonts, robots.txt
+		return "public, max-age=86400"
 	}
 }

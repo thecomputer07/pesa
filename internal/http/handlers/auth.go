@@ -52,12 +52,14 @@ func New(a *service.AuthService, sm *scs.SessionManager, secure bool) *Handlers 
 	}
 }
 
-// ClientIP extracts the best-effort client IP. Looks at X-Forwarded-For first
-// (trusted only behind a reverse proxy — caller decides), else RemoteAddr.
+// ClientIP extracts the client IP: X-Real-IP from the reverse proxy, else RemoteAddr.
 func ClientIP(r *http.Request) string {
-	if xff := r.Header.Get("X-Forwarded-For"); xff != "" {
-		parts := strings.Split(xff, ",")
-		return strings.TrimSpace(parts[0])
+	// X-Real-IP is set by Caddy from {client_ip}: the visitor's address even
+	// behind Cloudflare (CF-Connecting-IP from trusted proxies), and it always
+	// overwrites what the client sent. X-Forwarded-For is not used: behind
+	// Cloudflare its first entry can be forged by the client.
+	if ip := strings.TrimSpace(r.Header.Get("X-Real-IP")); ip != "" {
+		return ip
 	}
 	host, _, err := net.SplitHostPort(r.RemoteAddr)
 	if err != nil {

@@ -427,7 +427,8 @@ func parseIntDefault(s string, def int) int {
 
 func writeJSONCached(w http.ResponseWriter, status int, body interface{}) {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	w.Header().Set("Cache-Control", "public, max-age=300")
+	// Public catalog data: browsers 5 min, Cloudflare 1 h.
+	w.Header().Set("Cache-Control", "public, max-age=300, s-maxage=3600")
 	w.WriteHeader(status)
 	_ = json.NewEncoder(w).Encode(body)
 }

@@ -2,9 +2,20 @@
 # Dopo una modifica: `caddy reload --config /etc/caddy/Caddyfile --adapter caddyfile`
 # (NON `systemctl reload caddy`: l'unita' resta bloccata in "reloading").
 # Il file di log deve essere di caddy:caddy, altrimenti il reload fallisce.
+#
+# In cima al Caddyfile (opzioni globali, valgono per tutti i siti del server):
+# {
+# 	servers {
+# 		trusted_proxies static <range di https://www.cloudflare.com/ips-v4 e ips-v6>
+# 		client_ip_headers CF-Connecting-IP
+# 	}
+# }
 pesadia.com {
 	encode gzip
-	reverse_proxy 127.0.0.1:8080
+	reverse_proxy 127.0.0.1:8080 {
+		# IP del visitatore per rate limit e log (sovrascrive quello del client).
+		header_up X-Real-IP {client_ip}
+	}
 	header Strict-Transport-Security "max-age=31536000; includeSubDomains"
 	# Access log permanente (tempi di risposta): niente IP, header o token. 90 giorni.
 	log {
