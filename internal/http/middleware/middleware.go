@@ -42,5 +42,7 @@ func LocaleFrom(ctx context.Context) string {
 	return v
 }
 
-// globalLimiter is the singleton SEC-17 limiter (100 req/min/IP).
+// globalLimiter is the singleton SEC-17 limiter: per IP, burst 100, refill one
+// token every 6 ms (~10k req/min). Generous on purpose: assets and photos go
+// through the same router.
 var globalLimiter = service.NewKeyedLimiter(rate.Every(600*1e6/100), 100, 30*60*1e9) //nolint:gochecknoglobals
