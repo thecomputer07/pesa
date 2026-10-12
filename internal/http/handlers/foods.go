@@ -104,7 +104,7 @@ func (h *Foods) Search(w http.ResponseWriter, r *http.Request) {
 	// Anonymous results are the same for everyone: shared cache.
 	cacheKey := ""
 	if userID == 0 && source != "mine" {
-		cacheKey = fmt.Sprintf("search:%s:%d:%d:%s", source, limit, page, strings.Join(strings.Fields(strings.ToLower(q)), " "))
+		cacheKey = fmt.Sprintf("search:%d:%s:%d:%d:%s", catalogGen.Load(), source, limit, page, strings.Join(strings.Fields(strings.ToLower(q)), " "))
 		if body, ok := h.Cache.Get(r.Context(), cacheKey); ok {
 			writeSearchBody(w, userID, body)
 			return

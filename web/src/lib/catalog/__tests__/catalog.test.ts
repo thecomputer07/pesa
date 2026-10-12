@@ -63,7 +63,7 @@ describe("offline catalog", () => {
   beforeEach(async () => {
     await db.foods.clear();
     await db.meta.clear();
-    vi.stubGlobal("fetch", mockFetch({ "/api/v1/catalog": FULL }));
+    vi.stubGlobal("fetch", mockFetch({ "/api/v1/catalog/state": { cursor: 1000, count: 8 }, "/api/v1/catalog": FULL }));
     await syncCatalog({ force: true });
   });
   afterEach(() => vi.unstubAllGlobals());
@@ -121,11 +121,21 @@ describe("offline catalog", () => {
       gone: [7],
       rows: [row(9, "Riso basmati", "crea"), row(8, "Caffè espresso ristretto", "crea")],
     };
-    vi.stubGlobal("fetch", mockFetch({ "/api/v1/catalog?since=1000": delta }));
+    vi.stubGlobal(
+      "fetch",
+      mockFetch({ "/api/v1/catalog/state": { cursor: 2000, count: 8 }, "/api/v1/catalog?since=1000&v=2000": delta }),
+    );
     await syncCatalog({ force: true });
     expect(await db.foods.get(7)).toBeUndefined();
     expect((await db.foods.get(8))?.name_it).toBe("Caffè espresso ristretto");
     expect((await localSearch("basmati")).map((r) => r.id)).toEqual([9]);
+  });
+
+  it("asks only for the version when nothing changed", async () => {
+    const f = mockFetch({ "/api/v1/catalog/state": { cursor: 1000, count: 8 }, "/api/v1/catalog": FULL });
+    vi.stubGlobal("fetch", f);
+    await syncCatalog({ force: true });
+    expect(f.mock.calls.map((c) => String(c[0]))).toEqual(["/api/v1/catalog/state"]);
   });
 
   it("keeps the user's own foods on a full refresh and forgets them at logout", async () => {
@@ -133,6 +143,7 @@ describe("offline catalog", () => {
       id: 100, name_it: "Pane di mia nonna", state: "raw", source_code: "manual",
       source_license: "", search_tokens: "pane di mia nonna", updated_at: "", mine: 1,
     });
+    await db.meta.delete("catalog.cursor"); // next sync downloads everything again
     await syncCatalog({ force: true });
     expect(await db.foods.get(100)).toBeDefined();
     expect((await localSearch("nonna")).map((r) => r.id)).toEqual([100]);

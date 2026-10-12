@@ -114,7 +114,9 @@ func NewRouter(d Deps) stdhttp.Handler {
 	})
 
 	// Whole public catalog for offline search (PWA): full or delta since a cursor.
-	r.Get("/api/v1/catalog", handlers.NewCatalog(d.DB).Get)
+	catalog := handlers.NewCatalog(d.DB)
+	r.Get("/api/v1/catalog", catalog.Get)
+	r.Get("/api/v1/catalog/state", catalog.State)
 
 	// Sources attribution surface (phase 5 — plan-04).
 	r.Get("/api/v1/sources", sources.List)

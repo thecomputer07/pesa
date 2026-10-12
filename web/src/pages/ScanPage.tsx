@@ -9,6 +9,7 @@ import {
 import PermissionPrompt from "../components/scanner/PermissionPrompt";
 import ManualEntry from "../components/scanner/ManualEntry";
 import { findFoodByEan } from "../lib/catalog/detail";
+import { syncCatalog } from "../lib/catalog/sync";
 
 // Lazy-load the camera component so @zxing/browser stays out of the main chunk.
 const BarcodeScanner = lazy(() => import("../components/scanner/BarcodeScanner"));
@@ -68,6 +69,8 @@ export default function ScanPage() {
         if (resp.status === 200) {
           // id > 0: product is in the catalog (already there or just added)
           const body = (await resp.json().catch(() => ({}))) as { id?: number };
+          // A product new to the catalog: fetch it now so search finds it too.
+          if (body.id && body.id > 0) void syncCatalog({ force: true });
           navigate(body.id && body.id > 0 ? `/alimento/${body.id}` : `/alimento/off-${ean}`);
           return;
         }

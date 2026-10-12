@@ -77,6 +77,7 @@ func (h *Barcode) Lookup(w http.ResponseWriter, r *http.Request) {
 			p.ImageURL = dto.Images[0].URL
 		}
 		if id, err := importer.AddScannedOFF(r.Context(), h.DB, p); err == nil && id > 0 {
+			CatalogChanged()
 			writeJSON(w, http.StatusOK, existingFoodDTO{ID: id, Existing: false})
 			return
 		} else if err != nil {

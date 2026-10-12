@@ -31,6 +31,10 @@ if (typeof navigator !== "undefined" && navigator.onLine) {
 void syncCatalog();
 if (typeof window !== "undefined") {
   window.addEventListener("online", () => void syncCatalog());
+  // Back to the app (phone unlocked, tab shown): pick up foods scanned by others.
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible") void syncCatalog();
+  });
 }
 
 ReactDOM.createRoot(document.getElementById("root")!).render(

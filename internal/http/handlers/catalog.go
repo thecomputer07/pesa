@@ -8,6 +8,8 @@ import (
 	"net/http"
 	"strconv"
 	"sync"
+	"sync/atomic"
+	"time"
 
 	"github.com/thecomputer07/pesa/internal/http/problem"
 	"github.com/thecomputer07/pesa/internal/repo"
@@ -24,6 +26,17 @@ type Catalog struct {
 	fullAt   repo.CatalogState // state the cached full body was built for
 	fullBody []byte
 }
+
+// catalogGen changes whenever this process adds to the public catalog (a
+// scanned product): part of the search cache keys, so cached results that
+// miss the new food are not served any more. Starts from the boot time so
+// keys from a previous run are not reused.
+var catalogGen atomic.Int64 //nolint:gochecknoglobals
+
+func init() { catalogGen.Store(time.Now().UnixMilli()) }
+
+// CatalogChanged marks the public catalog as changed (see catalogGen).
+func CatalogChanged() { catalogGen.Add(1) }
 
 // NewCatalog builds a Catalog handler.
 func NewCatalog(db *sql.DB) *Catalog { return &Catalog{DB: db} }
@@ -54,8 +67,15 @@ func (h *Catalog) Get(w http.ResponseWriter, r *http.Request) {
 
 	etag := fmt.Sprintf(`"cat-%d-%d-%d"`, st.CursorMs, st.Count, since)
 	w.Header().Set("ETag", etag)
-	// Browsers revalidate (cheap 304); Cloudflare keeps it for a while.
-	w.Header().Set("Cache-Control", "public, max-age=0, must-revalidate, s-maxage=600")
+	if r.URL.Query().Get("v") != "" {
+		// ?v=<cursor from /catalog/state>: the URL names a catalog version, so
+		// the answer never goes stale and Cloudflare can keep it for good.
+		// A new food means a new cursor, a new URL, and a fresh answer.
+		w.Header().Set("Cache-Control", "public, max-age=31536000, immutable")
+	} else {
+		// Older clients: browsers revalidate (cheap 304), Cloudflare 10 min.
+		w.Header().Set("Cache-Control", "public, max-age=0, must-revalidate, s-maxage=600")
+	}
 	if r.Header.Get("If-None-Match") == etag {
 		w.WriteHeader(http.StatusNotModified)
 		return
@@ -74,6 +94,21 @@ func (h *Catalog) Get(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Header().Set("Content-Type", "application/json")
 	_, _ = w.Write(body)
+}
+
+// State handles GET /api/v1/catalog/state: the current catalog version, a
+// few bytes the app asks for often. Never cached, so a scanned product reaches
+// every device at its next check.
+func (h *Catalog) State(w http.ResponseWriter, r *http.Request) {
+	st, err := repo.LoadCatalogState(r.Context(), h.DB)
+	if err != nil {
+		slog.Error("catalog state", "err", err)
+		problem.Write(w, r, http.StatusInternalServerError, "internal-error", "catalog unavailable")
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Cache-Control", "no-store")
+	_ = json.NewEncoder(w).Encode(map[string]int64{"cursor": st.CursorMs, "count": int64(st.Count)})
 }
 
 // full returns the whole catalog, rebuilt only when the catalog state changes.

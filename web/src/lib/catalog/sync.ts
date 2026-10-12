@@ -7,11 +7,14 @@ import { invalidateSearchIndex } from "../db/search";
  * Offline catalog: the whole public food catalog lives in IndexedDB, so search,
  * food detail, calculations and known barcodes work without network.
  *
- *  - first run: GET /api/v1/catalog downloads everything (~19k foods, ~0.8 MB gzip);
- *  - later: at most every CHECK_EVERY_MS, GET /api/v1/catalog?since=<cursor>
- *    returns only what changed (often a 304: the ETag is the catalog version);
- *  - every FULL_EVERY_MS, or when the row count drifts from the server's,
- *    a full download replaces the local copy (catches deleted rows and photos).
+ *  - at most every CHECK_EVERY_MS (app start, back to the app, back online)
+ *    GET /api/v1/catalog/state returns the catalog version (a few bytes, never
+ *    cached): a product scanned by anyone shows up there at once;
+ *  - only when the version changed: GET /api/v1/catalog?since=<cursor>&v=<version>
+ *    returns what changed. The version in the URL makes every answer
+ *    cacheable for good at Cloudflare, with no purge needed;
+ *  - first run, every FULL_EVERY_MS, or when the row count drifts from the
+ *    server's: a full download (?v=<version>, ~0.8 MB gzip) replaces the local copy.
  */
 
 const CURSOR_KEY = "catalog.cursor";
@@ -19,10 +22,11 @@ const COUNT_KEY = "catalog.count";
 const CHECKED_KEY = "catalog.checked_at";
 const FULL_KEY = "catalog.full_at";
 const SOURCES_KEY = "catalog.sources";
-const ETAG_KEY = "catalog.etag";
 const MINE_KEY = "catalog.mine_at";
 
-const CHECK_EVERY_MS = 6 * 60 * 60 * 1000;
+const CHECK_EVERY_MS = 10 * 60 * 1000;
+/** The user's own foods change only through their own actions (refreshed then). */
+const MINE_EVERY_MS = 6 * 60 * 60 * 1000;
 const FULL_EVERY_MS = 30 * 24 * 60 * 60 * 1000;
 
 export interface CatalogSource {
@@ -132,25 +136,29 @@ async function doSync(force: boolean): Promise<void> {
   const fullAt = Number((await getMeta(FULL_KEY)) ?? 0);
   if (!force && cursor > 0 && now - checkedAt < CHECK_EVERY_MS) return;
 
-  const full = cursor === 0 || now - fullAt > FULL_EVERY_MS;
-  await fetchAndApply(full ? 0 : cursor);
+  const stateRes = await apiFetch("/catalog/state", { cache: "no-store" });
+  if (!stateRes.ok) throw new Error(`catalog state HTTP ${stateRes.status}`);
+  const state = (await stateRes.json()) as { cursor: number; count: number };
   await setMeta(CHECKED_KEY, String(now));
+
+  const full = cursor === 0 || now - fullAt > FULL_EVERY_MS;
+  const have = await db.foods.where("cat").equals(1).count();
+  if (!full && state.cursor === cursor && state.count === have) return;
+
+  await fetchAndApply(full ? 0 : cursor, state.cursor);
 
   // A delta cannot report hard-deleted rows: if the counts disagree, start over.
   if (!full) {
     const expected = Number((await getMeta(COUNT_KEY)) ?? 0);
-    const have = await db.foods.where("cat").equals(1).count();
-    if (expected > 0 && have !== expected) await fetchAndApply(0);
+    const after = await db.foods.where("cat").equals(1).count();
+    if (expected > 0 && after !== expected) await fetchAndApply(0, state.cursor);
   }
   requestPersistentStorage();
 }
 
-async function fetchAndApply(since: number): Promise<void> {
-  const headers: Record<string, string> = {};
-  const etag = await getMeta(ETAG_KEY);
-  if (etag && since > 0) headers["If-None-Match"] = etag;
-  const res = await apiFetch(since > 0 ? `/catalog?since=${since}` : "/catalog", { headers });
-  if (res.status === 304) return;
+async function fetchAndApply(since: number, version: number): Promise<void> {
+  const q = since > 0 ? `?since=${since}&v=${version}` : `?v=${version}`;
+  const res = await apiFetch(`/catalog${q}`);
   if (!res.ok) throw new Error(`catalog HTTP ${res.status}`);
   const body = (await res.json()) as CatalogResponse;
   const sources = new Map(body.sources.map((s) => [s.code, s]));
@@ -172,8 +180,6 @@ async function fetchAndApply(since: number): Promise<void> {
       ...(body.full ? [{ key: FULL_KEY, value: String(Date.now()) }] : []),
     ]);
   });
-  const newEtag = res.headers.get("ETag");
-  if (newEtag) await setMeta(ETAG_KEY, newEtag);
   invalidateSearchIndex();
 }
 
@@ -199,14 +205,14 @@ interface MineResponse {
 /**
  * Copies the signed-in user's own foods (custom foods and recipe foods) to the
  * device so they are found offline too. Private: removed by clearMyFoods() at
- * logout. `force` skips the "at most every CHECK_EVERY_MS" rule (after an edit).
+ * logout. `force` skips the "at most every MINE_EVERY_MS" rule (after an edit).
  */
 export async function syncMyFoods(userId: number, opts: { force?: boolean } = {}): Promise<void> {
   try {
     if (typeof navigator !== "undefined" && !navigator.onLine) return;
     // Stored as "<user id>:<ms>": another account on this device syncs at once.
     const [lastUser, lastAt] = ((await getMeta(MINE_KEY)) ?? "").split(":");
-    const fresh = lastUser === String(userId) && Date.now() - Number(lastAt) < CHECK_EVERY_MS;
+    const fresh = lastUser === String(userId) && Date.now() - Number(lastAt) < MINE_EVERY_MS;
     if (!opts.force && fresh) return;
     const res = await apiFetch("/foods/mine?recipes=1");
     if (!res.ok) return;
