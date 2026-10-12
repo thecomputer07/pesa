@@ -37,7 +37,7 @@ export function computeItemNutrients(
 
 export interface DayTotalsItem {
   grams: number;
-  /** Snapshot wins over food when present (recipe_item / meal_template items). */
+  /** Snapshot wins over food when present (recipe_item items). */
   snapshot?: Partial<Nutrients>;
   /** Per-100g values from the live foods cache (fallback when no snapshot). */
   food?: Partial<Nutrients>;

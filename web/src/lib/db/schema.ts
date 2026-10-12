@@ -3,7 +3,6 @@ import type {
   LocalFavorite,
   LocalMeal,
   LocalMealItem,
-  LocalMealTemplate,
   LocalRecipe,
   LocalRecipeItem,
   OutboxRow,
@@ -45,7 +44,6 @@ export type PesaDB = Dexie & {
   meal_items: EntityTable<LocalMealItem, "client_id">;
   recipes: EntityTable<LocalRecipe, "client_id">;
   recipe_items: EntityTable<LocalRecipeItem, "client_id">;
-  meal_templates: EntityTable<LocalMealTemplate, "client_id">;
   favorites: EntityTable<LocalFavorite, "client_id">;
   outbox: EntityTable<OutboxRow, "id">;
 };
@@ -78,5 +76,11 @@ db.version(2).stores({
   outbox:
     "++id, kind, client_id, next_attempt_at, attempts, blocked, created_at",
 });
+
+// v3: meal templates removed (feature dropped 2026-10-12). Drop the store and
+// any pending outbox rows for it, otherwise the sync would retry them forever.
+db.version(3)
+  .stores({ meal_templates: null })
+  .upgrade((tx) => tx.table("outbox").where("kind").equals("meal_template").delete());
 
 export { db };

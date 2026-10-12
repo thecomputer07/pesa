@@ -6,7 +6,7 @@ import { useAuth } from "./AuthContext";
  * transient boundary (parent gate will redirect before render settles).
  *
  * Kept as a tiny convenience hook so existing call-sites (DiaryPage,
- * RecipeEditorPage, MealTemplatesPage, FavoritesPage, FavoriteToggle) don't
+ * RecipeEditorPage, FavoritesPage, FavoriteToggle) don't
  * each need to destructure `useAuth()` for a single field.
  */
 export function useCurrentUserId(): number | null {

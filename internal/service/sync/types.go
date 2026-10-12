@@ -14,7 +14,6 @@ const (
 	KindMealItem     = "meal_item"
 	KindRecipe       = "recipe"
 	KindRecipeItem   = "recipe_item"
-	KindMealTemplate = "meal_template"
 	KindFavorite     = "favorite"
 )
 
@@ -88,16 +87,6 @@ type RecipeItemDTO struct {
 	SnapshotJSON   any     `json:"snapshot_json"    validate:"required"`
 }
 
-// MealTemplateDTO — payload_json stored verbatim.
-type MealTemplateDTO struct {
-	ClientID    string `json:"client_id"     validate:"required,uuid"`
-	UpdatedAtMs int64  `json:"updated_at_ms" validate:"required"`
-	DeletedAtMs *int64 `json:"deleted_at_ms,omitempty"`
-
-	Name        string `json:"name"         validate:"required,max=255"`
-	PayloadJSON any    `json:"payload_json" validate:"required"`
-}
-
 // FavoriteDTO — food_id references public catalog.
 type FavoriteDTO struct {
 	ClientID    string `json:"client_id"     validate:"required,uuid"`
@@ -113,7 +102,6 @@ type BatchPayload struct {
 	MealItems     []MealItemDTO     `json:"meal_items,omitempty"     validate:"max=200,dive"`
 	Recipes       []RecipeDTO       `json:"recipes,omitempty"        validate:"max=50,dive"`
 	RecipeItems   []RecipeItemDTO   `json:"recipe_items,omitempty"   validate:"max=200,dive"`
-	MealTemplates []MealTemplateDTO `json:"meal_templates,omitempty" validate:"max=50,dive"`
 	Favorites     []FavoriteDTO     `json:"favorites,omitempty"      validate:"max=200,dive"`
 }
 

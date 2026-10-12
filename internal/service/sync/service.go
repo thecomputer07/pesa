@@ -21,7 +21,7 @@ type Service struct {
 func New(db *sql.DB) *Service { return &Service{db: db} }
 
 // UpsertBatch applies a batch atomically-per-entity (one tx across all kinds).
-// Ordering: recipes → recipe_items → meals → meal_items → meal_templates → favorites.
+// Ordering: recipes → recipe_items → meals → meal_items → favorites.
 // Every row is LWW-reconciled vs current storage via updated_at_ms.
 func (s *Service) UpsertBatch(ctx context.Context, userID int64, p BatchPayload) (BatchResponse, error) {
 	if userID <= 0 {
@@ -59,13 +59,6 @@ func (s *Service) UpsertBatch(ctx context.Context, userID int64, p BatchPayload)
 	}
 	for _, mi := range p.MealItems {
 		rs, cur := s.upsertMealItem(ctx, tx, userID, mi)
-		out.Results = append(out.Results, rs)
-		if cur > maxCursor {
-			maxCursor = cur
-		}
-	}
-	for _, mt := range p.MealTemplates {
-		rs, cur := s.upsertMealTemplate(ctx, tx, userID, mt)
 		out.Results = append(out.Results, rs)
 		if cur > maxCursor {
 			maxCursor = cur
@@ -143,14 +136,6 @@ func (s *Service) Pull(ctx context.Context, userID int64, since int64) (PullResp
 		return PullResponse{}, err
 	} else {
 		out.RecipeItems = rItems
-		if cur > maxCursor {
-			maxCursor = cur
-		}
-	}
-	if tmpls, cur, err := s.pullMealTemplates(ctx, userID, since); err != nil {
-		return PullResponse{}, err
-	} else {
-		out.MealTemplates = tmpls
 		if cur > maxCursor {
 			maxCursor = cur
 		}
@@ -348,45 +333,6 @@ RETURNING id`,
 		`SELECT (EXTRACT(EPOCH FROM server_updated_at)*1000)::BIGINT FROM recipe_items WHERE recipe_id=$1 AND client_id=$2`,
 		recipeID, d.ClientID).Scan(&cur)
 	return RowStatus{Kind: KindRecipeItem, ClientID: d.ClientID, Status: StatusApplied, ServerID: id}, cur
-}
-
-// ---------- meal_template ----------
-
-func (s *Service) upsertMealTemplate(ctx context.Context, tx *sql.Tx, userID int64, d MealTemplateDTO) (RowStatus, int64) {
-	var existingUpdated sql.NullInt64
-	var existingID sql.NullInt64
-	err := tx.QueryRowContext(ctx,
-		`SELECT id, updated_at_ms FROM meal_templates WHERE user_id=$1 AND client_id=$2 FOR UPDATE`,
-		userID, d.ClientID).Scan(&existingID, &existingUpdated)
-	if err != nil && !errors.Is(err, sql.ErrNoRows) {
-		return RowStatus{Kind: KindMealTemplate, ClientID: d.ClientID, Status: StatusError, Reason: "select_failed"}, 0
-	}
-	if existingUpdated.Valid && d.UpdatedAtMs < existingUpdated.Int64 {
-		return RowStatus{Kind: KindMealTemplate, ClientID: d.ClientID, Status: StatusConflictSkipped, Reason: "older_timestamp", ServerID: existingID.Int64}, 0
-	}
-	payload, err := json.Marshal(d.PayloadJSON)
-	if err != nil {
-		return RowStatus{Kind: KindMealTemplate, ClientID: d.ClientID, Status: StatusError, Reason: "invalid_payload"}, 0
-	}
-	var id int64
-	err = tx.QueryRowContext(ctx, `
-INSERT INTO meal_templates (user_id, client_id, name, payload_json, updated_at_ms, deleted_at_ms)
-VALUES ($1, $2, $3, $4::jsonb, $5, $6)
-ON CONFLICT (user_id, client_id) DO UPDATE SET
-  name          = CASE WHEN EXCLUDED.updated_at_ms >= meal_templates.updated_at_ms THEN EXCLUDED.name          ELSE meal_templates.name          END,
-  payload_json  = CASE WHEN EXCLUDED.updated_at_ms >= meal_templates.updated_at_ms THEN EXCLUDED.payload_json  ELSE meal_templates.payload_json  END,
-  deleted_at_ms = CASE WHEN EXCLUDED.updated_at_ms >= meal_templates.updated_at_ms THEN EXCLUDED.deleted_at_ms ELSE meal_templates.deleted_at_ms END,
-  updated_at_ms = CASE WHEN EXCLUDED.updated_at_ms >= meal_templates.updated_at_ms THEN EXCLUDED.updated_at_ms ELSE meal_templates.updated_at_ms END
-RETURNING id`,
-		userID, d.ClientID, d.Name, string(payload), d.UpdatedAtMs, d.DeletedAtMs).Scan(&id)
-	if err != nil {
-		return RowStatus{Kind: KindMealTemplate, ClientID: d.ClientID, Status: StatusError, Reason: "upsert_failed"}, 0
-	}
-	if id == 0 && existingID.Valid {
-		id = existingID.Int64
-	}
-	cur := currentCursorMs(ctx, tx, "meal_templates", userID, d.ClientID)
-	return RowStatus{Kind: KindMealTemplate, ClientID: d.ClientID, Status: StatusApplied, ServerID: id}, cur
 }
 
 // ---------- favorite ----------
@@ -631,43 +577,6 @@ LIMIT 500`, userID, since)
 	return out, maxCur, rows.Err()
 }
 
-func (s *Service) pullMealTemplates(ctx context.Context, userID, since int64) ([]MealTemplateDTO, int64, error) {
-	rows, err := s.db.QueryContext(ctx, `
-SELECT client_id, name, payload_json, updated_at_ms, deleted_at_ms,
-       (EXTRACT(EPOCH FROM server_updated_at)*1000)::BIGINT AS cur
-FROM meal_templates
-WHERE user_id=$1 AND (EXTRACT(EPOCH FROM server_updated_at)*1000)::BIGINT > $2
-ORDER BY server_updated_at ASC
-LIMIT 500`, userID, since)
-	if err != nil {
-		return nil, 0, err
-	}
-	defer func() { _ = rows.Close() }()
-	var out []MealTemplateDTO
-	var maxCur int64
-	for rows.Next() {
-		var d MealTemplateDTO
-		var deleted sql.NullInt64
-		var payload []byte
-		var cur int64
-		if err := rows.Scan(&d.ClientID, &d.Name, &payload, &d.UpdatedAtMs, &deleted, &cur); err != nil {
-			return nil, 0, err
-		}
-		if deleted.Valid {
-			v := deleted.Int64
-			d.DeletedAtMs = &v
-		}
-		var anyVal any
-		_ = json.Unmarshal(payload, &anyVal)
-		d.PayloadJSON = anyVal
-		if cur > maxCur {
-			maxCur = cur
-		}
-		out = append(out, d)
-	}
-	return out, maxCur, rows.Err()
-}
-
 func (s *Service) pullFavorites(ctx context.Context, userID, since int64) ([]FavoriteDTO, int64, error) {
 	rows, err := s.db.QueryContext(ctx, `
 SELECT client_id, food_id, updated_at_ms, deleted_at_ms,
@@ -713,5 +622,5 @@ func currentCursorMs(ctx context.Context, tx *sql.Tx, table string, userID int64
 }
 
 func batchSize(p BatchPayload) int {
-	return len(p.Meals) + len(p.MealItems) + len(p.Recipes) + len(p.RecipeItems) + len(p.MealTemplates) + len(p.Favorites)
+	return len(p.Meals) + len(p.MealItems) + len(p.Recipes) + len(p.RecipeItems) + len(p.Favorites)
 }

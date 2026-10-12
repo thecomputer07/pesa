@@ -13,7 +13,6 @@ const DiaryPage = lazy(() => import("./pages/DiaryPage"));
 const RecipesPage = lazy(() => import("./pages/RecipesPage"));
 const RecipeEditorPage = lazy(() => import("./pages/RecipeEditorPage"));
 const FavoritesPage = lazy(() => import("./pages/FavoritesPage"));
-const MealTemplatesPage = lazy(() => import("./pages/MealTemplatesPage"));
 const ScanPage = lazy(() => import("./pages/ScanPage"));
 const SourcesDataPage = lazy(() => import("./pages/SourcesDataPage"));
 const SourcesImagesPage = lazy(() => import("./pages/SourcesImagesPage"));
@@ -148,16 +147,6 @@ export default function AppRoutes() {
             <RequireAuth>
               <Suspense fallback={<PageFallback />}>
                 <FavoritesPage />
-              </Suspense>
-            </RequireAuth>
-          }
-        />
-        <Route
-          path="template"
-          element={
-            <RequireAuth>
-              <Suspense fallback={<PageFallback />}>
-                <MealTemplatesPage />
               </Suspense>
             </RequireAuth>
           }

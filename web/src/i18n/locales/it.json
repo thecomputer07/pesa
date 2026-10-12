@@ -6,7 +6,6 @@
     "diary": "Diario",
     "recipes": "Ricette",
     "favorites": "Preferiti",
-    "templates": "Template",
     "scope": "Scopo",
     "about": "Chi siamo",
     "accessibility": "Accessibilità",
@@ -325,17 +324,6 @@
     "remove": "Rimuovi dai preferiti",
     "empty": "Nessun preferito ancora.",
     "cta": "Cerca alimenti"
-  },
-  "templates": {
-    "title": "Pasti ricorrenti",
-    "new": "Nuovo template",
-    "saveFromMeal": "Salva come template",
-    "pickFromTemplate": "Da template…",
-    "saved": "Template salvato",
-    "instantiated": "Pasto creato da template",
-    "nameLabel": "Nome template",
-    "delete": "Elimina template",
-    "empty": "Nessun template salvato."
   },
   "privacy": {
     "pageTitle": "Privacy e diritti dell'interessato",

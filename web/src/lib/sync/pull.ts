@@ -3,7 +3,6 @@ import type {
   LocalFavorite,
   LocalMeal,
   LocalMealItem,
-  LocalMealTemplate,
   LocalRecipe,
   LocalRecipeItem,
   PullResponse,
@@ -41,7 +40,6 @@ async function doPull(): Promise<void> {
       (body.meal_items?.length ?? 0) +
       (body.recipes?.length ?? 0) +
       (body.recipe_items?.length ?? 0) +
-      (body.meal_templates?.length ?? 0) +
       (body.favorites?.length ?? 0);
 
     if (rowCount === 0) break;
@@ -53,7 +51,6 @@ async function doPull(): Promise<void> {
         db.meal_items,
         db.recipes,
         db.recipe_items,
-        db.meal_templates,
         db.favorites,
         db.meta,
       ],
@@ -114,17 +111,6 @@ async function doPull(): Promise<void> {
             deleted_at_ms: ri.deleted_at_ms ?? null,
           }));
           await db.recipe_items.bulkPut(rows);
-        }
-        if (body.meal_templates) {
-          const rows: LocalMealTemplate[] = body.meal_templates.map((t) => ({
-            client_id: t.client_id,
-            user_id: 0,
-            name: t.name,
-            payload_json: JSON.stringify(t.payload_json),
-            updated_at_ms: t.updated_at_ms,
-            deleted_at_ms: t.deleted_at_ms ?? null,
-          }));
-          await db.meal_templates.bulkPut(rows);
         }
         if (body.favorites) {
           const rows: LocalFavorite[] = body.favorites.map((f) => ({

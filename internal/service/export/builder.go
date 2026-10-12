@@ -135,17 +135,6 @@ func CollectTables(db *sql.DB, userID int64) ([]TablePart, error) {
 	}
 	parts = append(parts, TablePart{"recipe_items.csv", header, rows})
 
-	// meal_templates
-	header = []string{"id", "name", "slot", "payload_json", "updated_at"}
-	rows, err = selectRows(db,
-		`SELECT id, name, slot, COALESCE(payload_json,''), updated_at
-		 FROM meal_templates WHERE user_id=$1 ORDER BY id`,
-		userID, len(header))
-	if err != nil {
-		return nil, err
-	}
-	parts = append(parts, TablePart{"meal_templates.csv", header, rows})
-
 	// favorites
 	header = []string{"id", "food_id", "created_at"}
 	rows, err = selectRows(db,
@@ -236,7 +225,6 @@ dell'export, ai sensi degli art. 15 e 20 del GDPR.
 - ` + "`meal_items.csv`" + ` — alimenti all'interno dei pasti
 - ` + "`recipes.csv`" + ` — ricette create
 - ` + "`recipe_items.csv`" + ` — ingredienti delle ricette
-- ` + "`meal_templates.csv`" + ` — modelli di pasto salvati
 - ` + "`favorites.csv`" + ` — alimenti preferiti
 - ` + "`sessions.csv`" + ` — metadati sessioni (solo prefisso anonimo, mai il token)
 

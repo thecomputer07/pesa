@@ -76,7 +76,6 @@ func (s *Service) Erase(ctx context.Context, userID int64, channel, notes string
 		`DELETE FROM meals WHERE user_id=$1`,
 		`DELETE FROM recipe_items USING recipes WHERE recipes.id=recipe_items.recipe_id AND recipes.user_id=$1`,
 		`DELETE FROM recipes WHERE user_id=$1`,
-		`DELETE FROM meal_templates WHERE user_id=$1`,
 		`DELETE FROM favorites WHERE user_id=$1`,
 		`DELETE FROM sessions WHERE user_id=$1`,
 		`DELETE FROM email_verifications WHERE user_id=$1`,

@@ -47,7 +47,6 @@ func TestKindConstants(t *testing.T) {
 		KindMealItem:     "meal_item",
 		KindRecipe:       "recipe",
 		KindRecipeItem:   "recipe_item",
-		KindMealTemplate: "meal_template",
 		KindFavorite:     "favorite",
 	}
 	for got, want := range cases {

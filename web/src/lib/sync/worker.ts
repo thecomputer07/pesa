@@ -116,8 +116,6 @@ function pluralOf(kind: OutboxKind): keyof BatchPayload {
       return "recipes";
     case "recipe_item":
       return "recipe_items";
-    case "meal_template":
-      return "meal_templates";
     case "favorite":
       return "favorites";
   }

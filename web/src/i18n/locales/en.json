@@ -6,7 +6,6 @@
     "diary": "Diary",
     "recipes": "Recipes",
     "favorites": "Favorites",
-    "templates": "Templates",
     "scope": "Scope",
     "about": "About",
     "accessibility": "Accessibility",
@@ -325,17 +324,6 @@
     "remove": "Remove from favorites",
     "empty": "No favorites yet.",
     "cta": "Search foods"
-  },
-  "templates": {
-    "title": "Meal templates",
-    "new": "New template",
-    "saveFromMeal": "Save as template",
-    "pickFromTemplate": "From template…",
-    "saved": "Template saved",
-    "instantiated": "Meal created from template",
-    "nameLabel": "Template name",
-    "delete": "Delete template",
-    "empty": "No templates yet."
   },
   "privacy": {
     "pageTitle": "Privacy & data rights",

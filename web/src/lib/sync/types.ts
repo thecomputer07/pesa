@@ -60,14 +60,6 @@ export interface RecipeItemDTO {
   snapshot_json: RecipeItemSnapshot;
 }
 
-export interface MealTemplateDTO {
-  client_id: string;
-  updated_at_ms: number;
-  deleted_at_ms?: number | null;
-  name: string;
-  payload_json: unknown;
-}
-
 export interface FavoriteDTO {
   client_id: string;
   updated_at_ms: number;
@@ -80,7 +72,6 @@ export interface BatchPayload {
   meal_items?: MealItemDTO[];
   recipes?: RecipeDTO[];
   recipe_items?: RecipeItemDTO[];
-  meal_templates?: MealTemplateDTO[];
   favorites?: FavoriteDTO[];
 }
 
@@ -111,7 +102,6 @@ export type OutboxKind =
   | "meal_item"
   | "recipe"
   | "recipe_item"
-  | "meal_template"
   | "favorite";
 
 export interface OutboxRow {
@@ -175,15 +165,6 @@ export interface LocalRecipeItem {
   name_snapshot: string;
   grams: number;
   snapshot_json: RecipeItemSnapshot;
-  updated_at_ms: number;
-  deleted_at_ms?: number | null;
-}
-
-export interface LocalMealTemplate {
-  client_id: string;
-  user_id: number;
-  name: string;
-  payload_json: string; // JSON-stringified for indexing simplicity
   updated_at_ms: number;
   deleted_at_ms?: number | null;
 }

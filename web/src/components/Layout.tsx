@@ -191,9 +191,6 @@ function AccountMenu({ email }: { email: string }) {
         <Link to="/miei-alimenti" className={item}>
           <Icon name="book" size={18} /> {t("nav.myFoods")}
         </Link>
-        <Link to="/template" className={item}>
-          <Icon name="diary" size={18} /> {t("nav.templates")}
-        </Link>
         <Link to="/ricette" className={`${item} md:hidden`}>
           <Icon name="recipe" size={18} /> {t("nav.recipes")}
         </Link>

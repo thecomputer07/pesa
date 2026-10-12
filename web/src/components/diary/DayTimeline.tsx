@@ -9,10 +9,9 @@ const SLOT_ORDER: Slot[] = ["colazione", "pranzo", "cena", "spuntino", "altro"];
 export interface DayTimelineProps {
   isoDate: string;
   onEdit: (meal: LocalMeal) => void;
-  onSaveAsTemplate?: (meal: LocalMeal) => void;
 }
 
-export default function DayTimeline({ isoDate, onEdit, onSaveAsTemplate }: DayTimelineProps) {
+export default function DayTimeline({ isoDate, onEdit }: DayTimelineProps) {
   const { t } = useTranslation();
   const data = useMealsForDay(isoDate);
   const grouped = useMemo(() => groupBySlot(data?.meals ?? [], data?.items ?? []), [data]);
@@ -65,17 +64,6 @@ export default function DayTimeline({ isoDate, onEdit, onSaveAsTemplate }: DayTi
                       {items.length > 2 ? ` +${items.length - 2}` : ""}
                     </p>
                   </button>
-                  {onSaveAsTemplate ? (
-                    <div className="px-3 pb-2 flex justify-end">
-                      <button
-                        type="button"
-                        className="text-xs underline"
-                        onClick={() => onSaveAsTemplate(meal)}
-                      >
-                        {t("templates.saveFromMeal")}
-                      </button>
-                    </div>
-                  ) : null}
                 </li>
               ))}
             </ul>

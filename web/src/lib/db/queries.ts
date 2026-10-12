@@ -117,7 +117,7 @@ export function useDayTotals(isoDate: string): Nutrients | undefined {
   return computeDayTotals(
     data.items.map((i) => ({
       grams: i.grams,
-      // Item row already carries snapshotted nutrients for recipe/template items.
+      // Item row already carries snapshotted nutrients for recipe items.
       snapshot:
         i.kcal != null || i.carb_g != null
           ? {
