@@ -55,11 +55,11 @@ Pesa is a **generic nutritional carb calculator** that computes carbohydrates (a
 
 Personal data are not disclosed to third parties for their own purposes. The following infrastructure providers are designated as **processors under Art. 28 GDPR**:
 
-- **OVH Italia S.r.l.** — primary hosting (VPS Milan, Italy) for application server and PostgreSQL database. Signed DPA archived in `.planning/legal/dpa/`.
+- **OVH Italia S.r.l.** — primary hosting (VPS Milan, Italy) for application server and PostgreSQL database.
 - **Hetzner Online GmbH** — the controller's dedicated server in Helsinki (Finland) that receives the encrypted backup copies and sends service emails (address verification, password reset).
 - **Cloudflare, Inc.** — DNS and reverse proxy/CDN in front of pesadia.com: all HTTPS traffic passes through the Cloudflare network, which sees IP address, User-Agent and request content to route it and protect it from abuse; it caches only public content that is the same for everyone (app files, photos and the food catalogue), never account or diary data.
 
-A data processing agreement under Art. 28 GDPR (DPA) is in place with each provider as part of its contractual terms. OVH and Hetzner process Pesa data in EU data centres only; for Cloudflare see §9.
+With OVH and Cloudflare the data processing agreement under Art. 28 GDPR (DPA) is part of their contractual terms. With Hetzner the relationship is governed by the general terms of the dedicated server service; the data stored there are encrypted backups (key not kept at Hetzner) and service emails. OVH and Hetzner process Pesa data in EU data centres only; for Cloudflare see §9.
 
 Both providers are established in the European Union; both operate exclusively on EU data centers; extra-EEA sub-transfers are not authorized for Pesa data.
 

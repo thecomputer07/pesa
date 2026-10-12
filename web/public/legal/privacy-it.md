@@ -57,7 +57,7 @@ I dati personali non sono comunicati a terzi per finalità proprie. Sono designa
 - **Hetzner Online GmbH** — server dedicato del titolare a Helsinki (Finlandia) che riceve le copie di backup cifrate e invia le email di servizio (verifica indirizzo, reset password).
 - **Cloudflare, Inc.** — DNS e reverse proxy/CDN davanti a pesadia.com: tutto il traffico HTTPS transita dalla rete Cloudflare, che vede indirizzo IP, User-Agent e contenuto delle richieste per instradarle e proteggerle da abusi; mette in cache solo contenuti pubblici uguali per tutti (file dell'app, foto e catalogo alimenti), mai dati dell'account o del diario.
 
-Con ciascun fornitore è in essere un accordo sul trattamento dei dati ex art. 28 GDPR (DPA) incluso nelle rispettive condizioni contrattuali. OVH e Hetzner trattano i dati Pesa esclusivamente in data center UE; per Cloudflare vedi §9.
+Con OVH e Cloudflare l'accordo sul trattamento dei dati ex art. 28 GDPR (DPA) è incluso nelle rispettive condizioni contrattuali. Con Hetzner il rapporto è regolato dalle condizioni generali del servizio di server dedicato; i dati che vi transitano sono backup cifrati (chiave non conservata presso Hetzner) ed email di servizio. OVH e Hetzner trattano i dati Pesa esclusivamente in data center UE; per Cloudflare vedi §9.
 
 **Nessun destinatario ulteriore.** Nessun broker pubblicitario, nessun fornitore di analytics terzo, nessuna piattaforma di marketing, nessun social login, nessun pixel. Le fonti dati terze (CREA, Open Food Facts) sono **consultate in uscita** — Pesa richiede loro informazioni pubbliche su alimenti, senza inviare dati utente.
 
