@@ -3,6 +3,7 @@ package repo
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"strings"
 	"unicode"
 
@@ -63,6 +64,7 @@ type FoodSibling struct {
 // LoadSiblings restituisce i food collegati via parent_food_id:
 //   - se foodID è un "child" (ha parent_food_id), include il parent e gli altri child
 //   - se foodID è un "parent", include tutti i suoi child
+//
 // Esclude sempre il food stesso e le righe superseded_by non nulle.
 func LoadSiblings(ctx context.Context, db *sql.DB, foodID int64, parentFoodID sql.NullInt64) ([]FoodSibling, error) {
 	var rootID int64
@@ -169,8 +171,20 @@ func stripAccents(s string) string {
 	return b.String()
 }
 
-// searchHaystack is the text each word is matched against (SQL, alias f).
-const searchHaystack = `pesa_unaccent(lower(coalesce(f.name_it,'') || ' ' || coalesce(f.name_en,'') || ' ' || coalesce(f.synonyms,'')))`
+// wordConds matches each word pattern against f.search_text (the unaccented
+// haystack, migration 00037), one condition per word so the trigram index can
+// filter. The first pattern is $first; the others follow from $extra on.
+func wordConds(first, extra, count int) string {
+	var b strings.Builder
+	for i := 0; i < count; i++ {
+		n := first
+		if i > 0 {
+			n = extra + i - 1
+		}
+		fmt.Fprintf(&b, "f.search_text ~ $%d AND ", n)
+	}
+	return b.String()
+}
 
 // SearchFoods runs pg_trgm ILIKE + ranking, excluding superseded rows.
 // Falls back to ILIKE-based search when the primary query returns no results
@@ -235,7 +249,7 @@ func SearchFoodsFiltered(ctx context.Context, db *sql.DB, userID int64, query, s
 	    CROSS JOIN LATERAL (SELECT CASE WHEN position(' — ' IN f.name_it) > 0
 	                                    THEN substr(f.name_it, position(' — ' IN f.name_it) + 3)
 	                                    ELSE f.name_it END AS pname) p
-	   WHERE NOT EXISTS (SELECT 1 FROM unnest($5::text[]) AS w(re) WHERE ` + searchHaystack + ` !~ w.re)
+	   WHERE ` + wordConds(5, 10, len(patterns)) + `true
 	     AND f.superseded_by IS NULL
 	     AND (f.user_id IS NULL OR f.user_id = $8)
 	     AND (($9 = '') OR ($9 = 'mine' AND f.user_id IS NOT NULL) OR (s.code = $9))
@@ -262,7 +276,11 @@ func SearchFoodsFiltered(ctx context.Context, db *sql.DB, userID int64, query, s
 	          length(pname) ASC, name_it ASC
 	 LIMIT $6 OFFSET $7`
 
-	rows, err := db.QueryContext(ctx, selectSQL, normQ, prefixLike, firstTok, wordLike, patterns, limit, offset, userID, source)
+	args := []interface{}{normQ, prefixLike, firstTok, wordLike, patterns[0], limit, offset, userID, source}
+	for _, p := range patterns[1:] {
+		args = append(args, p)
+	}
+	rows, err := db.QueryContext(ctx, selectSQL, args...)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -297,11 +315,15 @@ func SearchFoodsFiltered(ctx context.Context, db *sql.DB, userID int64, query, s
 	              THEN substr(f.name_it, position(' — ' IN f.name_it) + 3)
 	              ELSE f.name_it END), '\s+', ' ', 'g'))) FROM foods f
 	  JOIN food_sources s ON s.id = f.source_id
-	 WHERE NOT EXISTS (SELECT 1 FROM unnest($1::text[]) AS w(re) WHERE ` + searchHaystack + ` !~ w.re)
+	 WHERE ` + wordConds(1, 4, len(patterns)) + `true
 	   AND f.superseded_by IS NULL
 	   AND (f.user_id IS NULL OR f.user_id = $2)
 	   AND (($3 = '') OR ($3 = 'mine' AND f.user_id IS NOT NULL) OR (s.code = $3))`
-	if err := db.QueryRowContext(ctx, countSQL, patterns, userID, source).Scan(&total); err != nil {
+	countArgs := []interface{}{patterns[0], userID, source}
+	for _, p := range patterns[1:] {
+		countArgs = append(countArgs, p)
+	}
+	if err := db.QueryRowContext(ctx, countSQL, countArgs...).Scan(&total); err != nil {
 		return nil, 0, err
 	}
 
