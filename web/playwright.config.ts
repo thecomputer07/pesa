@@ -5,7 +5,7 @@ export default defineConfig({
   timeout: 30_000,
   reporter: [["list"]],
   use: {
-    baseURL: "http://localhost:8080",
+    baseURL: process.env.PLAYWRIGHT_BASE_URL ?? "http://localhost:8080",
     trace: "on-first-retry",
   },
   projects: [
@@ -28,6 +28,11 @@ export default defineConfig({
       name: "offline",
       testMatch: /offline\.spec\.ts/,
       use: { ...devices["Desktop Chrome"], offline: false },
+    },
+    {
+      name: "offline-catalog",
+      testMatch: /offline-catalog\.spec\.ts/,
+      use: { ...devices["Pixel 7"], locale: "it-IT" },
     },
   ],
 });
