@@ -34,10 +34,10 @@ type Config struct {
 	SMTPDisabled bool
 
 	// TLS / autocert
-	EnableTLS         bool
-	AutocertHosts     string
-	AutocertEmail     string
-	AutocertCacheDir  string
+	EnableTLS        bool
+	AutocertHosts    string
+	AutocertEmail    string
+	AutocertCacheDir string
 
 	// pprof gate
 	EnablePprof bool
@@ -45,6 +45,9 @@ type Config struct {
 
 	// Erasure log salt (read by the subject-rights tooling; bound here for surface visibility).
 	ErasureHashSalt string
+
+	// ExportTokenSecret signs the download tokens of personal-data exports.
+	ExportTokenSecret string
 
 	// Image cache (Phase 5 — plan-02).
 	ImageCacheDir      string
@@ -54,25 +57,26 @@ type Config struct {
 // Load reads env vars and validates.
 func Load() (*Config, error) {
 	c := &Config{
-		Env:              getenv("PESA_ENV", "dev"),
-		Addr:             getenv("PESA_ADDR", ":8080"),
-		DatabaseDSN:      os.Getenv("DATABASE_DSN"),
-		LogSalt:          os.Getenv("LOG_SALT"),
-		CookieDomain:     os.Getenv("COOKIE_DOMAIN"),
-		WebBaseURL:       os.Getenv("WEB_BASE_URL"),
-		SMTPHost:         os.Getenv("SMTP_HOST"),
-		SMTPUser:         os.Getenv("SMTP_USER"),
-		SMTPPassword:     os.Getenv("SMTP_PASSWORD"),
-		SMTPFrom:         getenv("SMTP_FROM", "no-reply@example.invalid"),
-		SMTPDisabled:     os.Getenv("SMTP_DISABLED") == "true",
-		EnableTLS:        os.Getenv("PESA_ENABLE_TLS") == "1",
-		AutocertHosts:    os.Getenv("AUTOCERT_HOSTS"),
-		AutocertEmail:    os.Getenv("AUTOCERT_EMAIL"),
-		AutocertCacheDir: getenv("AUTOCERT_CACHE_DIR", "/var/cache/pesa-autocert"),
-		EnablePprof:      os.Getenv("PESA_ENABLE_PPROF") == "1",
-		PprofToken:       os.Getenv("PPROF_TOKEN"),
-		ErasureHashSalt:  os.Getenv("PESA_ERASURE_HASH_SALT"),
-		ImageCacheDir:    getenv("PESA_IMAGE_CACHE_DIR", ".cache/images"),
+		Env:               getenv("PESA_ENV", "dev"),
+		Addr:              getenv("PESA_ADDR", ":8080"),
+		DatabaseDSN:       os.Getenv("DATABASE_DSN"),
+		LogSalt:           firstEnv("PESA_LOG_SALT", "LOG_SALT"),
+		CookieDomain:      os.Getenv("COOKIE_DOMAIN"),
+		WebBaseURL:        os.Getenv("WEB_BASE_URL"),
+		SMTPHost:          os.Getenv("SMTP_HOST"),
+		SMTPUser:          os.Getenv("SMTP_USER"),
+		SMTPPassword:      os.Getenv("SMTP_PASSWORD"),
+		SMTPFrom:          getenv("SMTP_FROM", "no-reply@example.invalid"),
+		SMTPDisabled:      os.Getenv("SMTP_DISABLED") == "true",
+		EnableTLS:         os.Getenv("PESA_ENABLE_TLS") == "1",
+		AutocertHosts:     os.Getenv("AUTOCERT_HOSTS"),
+		AutocertEmail:     os.Getenv("AUTOCERT_EMAIL"),
+		AutocertCacheDir:  getenv("AUTOCERT_CACHE_DIR", "/var/cache/pesa-autocert"),
+		EnablePprof:       os.Getenv("PESA_ENABLE_PPROF") == "1",
+		PprofToken:        os.Getenv("PPROF_TOKEN"),
+		ErasureHashSalt:   os.Getenv("PESA_ERASURE_HASH_SALT"),
+		ExportTokenSecret: os.Getenv("PESA_EXPORT_TOKEN_SECRET"),
+		ImageCacheDir:     getenv("PESA_IMAGE_CACHE_DIR", ".cache/images"),
 	}
 	if v := os.Getenv("PESA_IMAGE_CACHE_MAX_BYTES"); v != "" {
 		n, err := strconv.ParseInt(v, 10, 64)
@@ -101,6 +105,12 @@ func Load() (*Config, error) {
 		if c.LogSalt == "" {
 			return nil, errors.New("LOG_SALT is required in prod")
 		}
+		if c.ErasureHashSalt == "" {
+			return nil, errors.New("PESA_ERASURE_HASH_SALT is required in prod")
+		}
+		if len(c.ExportTokenSecret) < 32 {
+			return nil, errors.New("PESA_EXPORT_TOKEN_SECRET (32+ chars) is required in prod")
+		}
 		if !strings.Contains(c.DatabaseDSN, "sslmode=") || strings.Contains(c.DatabaseDSN, "sslmode=disable") {
 			return nil, errors.New("DATABASE_DSN must include sslmode=require (or stricter) in prod")
 		}
@@ -112,6 +122,16 @@ func Load() (*Config, error) {
 	}
 
 	return c, nil
+}
+
+// firstEnv returns the first non-empty value among the given variables.
+func firstEnv(keys ...string) string {
+	for _, k := range keys {
+		if v := os.Getenv(k); v != "" {
+			return v
+		}
+	}
+	return ""
 }
 
 func getenv(k, def string) string {

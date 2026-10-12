@@ -180,15 +180,16 @@ func runServe() {
 	}
 
 	// Phase 6: privacy surface wiring.
-	exportSecret := []byte(os.Getenv("PESA_EXPORT_TOKEN_SECRET"))
+	// In prod config.Load guarantees these are set; the fallbacks are dev-only.
+	exportSecret := []byte(cfg.ExportTokenSecret)
 	if len(exportSecret) == 0 {
 		exportSecret = []byte("dev-insecure-export-secret-change-me")
 	}
-	logSalt := []byte(os.Getenv("PESA_LOG_SALT"))
+	logSalt := []byte(cfg.LogSalt)
 	if len(logSalt) == 0 {
 		logSalt = []byte("dev-insecure-log-salt")
 	}
-	hashSalt := []byte(os.Getenv("PESA_ERASURE_HASH_SALT"))
+	hashSalt := []byte(cfg.ErasureHashSalt)
 	if len(hashSalt) == 0 {
 		hashSalt = []byte("dev-insecure-erasure-salt")
 	}

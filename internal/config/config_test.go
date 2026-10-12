@@ -32,3 +32,18 @@ func TestDevDefaults(t *testing.T) {
 		t.Fatalf("want :8080, got %q", c.Addr)
 	}
 }
+
+func TestExportSecretRequiredInProd(t *testing.T) {
+	t.Setenv("PESA_ENV", "prod")
+	t.Setenv("DATABASE_DSN", "postgres://u:p@h/db?sslmode=require")
+	t.Setenv("LOG_SALT", "deadbeef")
+	t.Setenv("PESA_ERASURE_HASH_SALT", "salt")
+	t.Setenv("PESA_EXPORT_TOKEN_SECRET", "")
+	if _, err := Load(); err == nil {
+		t.Fatal("expected missing export secret error, got nil")
+	}
+	t.Setenv("PESA_EXPORT_TOKEN_SECRET", "0123456789abcdef0123456789abcdef")
+	if _, err := Load(); err != nil {
+		t.Fatalf("unexpected: %v", err)
+	}
+}

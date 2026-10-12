@@ -7,6 +7,24 @@
 # Segreti reali in .env.milano (NON committare).
 
 services:
+  # Certificato TLS self-signed per Postgres, generato una volta sola nel volume
+  # pg_tls (chiave di proprieta' dell'utente postgres, uid 70 nell'immagine alpine).
+  db-certs:
+    image: alpine:3.20
+    container_name: pesa-db-certs
+    command:
+      - sh
+      - -c
+      - >-
+        test -s /tls/server.key ||
+        (apk add --no-cache openssl >/dev/null &&
+        openssl req -new -x509 -days 3650 -nodes -subj /CN=pesa-db
+        -keyout /tls/server.key -out /tls/server.crt);
+        chown 70:70 /tls/server.key /tls/server.crt && chmod 600 /tls/server.key
+    volumes:
+      - pg_tls:/tls
+    restart: "no"
+
   db:
     image: postgres:16-alpine
     container_name: pesa-db
@@ -16,9 +34,24 @@ services:
       POSTGRES_USER: pesa
       POSTGRES_PASSWORD: ${PESA_DB_PASSWORD:?set in .env.milano}
       LANG: it_IT.UTF-8
-    # DB solo tra container, mai esposto.
+    # DB solo tra container, mai esposto. Dalla rete Docker solo TLS (pg_hba).
+    command:
+      - postgres
+      - -c
+      - ssl=on
+      - -c
+      - ssl_cert_file=/tls/server.crt
+      - -c
+      - ssl_key_file=/tls/server.key
+      - -c
+      - hba_file=/etc/pesa/pg_hba.conf
     volumes:
       - pg_data:/var/lib/postgresql/data
+      - pg_tls:/tls:ro
+      - ./deploy/postgres/pg_hba.conf:/etc/pesa/pg_hba.conf:ro
+    depends_on:
+      db-certs:
+        condition: service_completed_successfully
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U pesa -d pesa"]
       interval: 5s
@@ -33,7 +66,7 @@ services:
     container_name: pesa-migrate
     command: ["/out/pesa", "migrate", "up"]
     environment:
-      DATABASE_DSN: postgres://pesa:${PESA_DB_PASSWORD}@db:5432/pesa?sslmode=disable
+      DATABASE_DSN: postgres://pesa:${PESA_DB_PASSWORD}@db:5432/pesa?sslmode=require
       PESA_ENV: dev
     depends_on:
       db:
@@ -47,13 +80,15 @@ services:
     container_name: pesa-backend
     restart: unless-stopped
     environment:
-      DATABASE_DSN: postgres://pesa:${PESA_DB_PASSWORD}@db:5432/pesa?sslmode=disable
-      # "dev" salta la validazione sslmode=require (Postgres interno senza TLS);
-      # comportamento cookie/URL governato dalle env sotto. TODO: TLS su pg + prod.
-      PESA_ENV: dev
+      # TLS verso Postgres (cert self-signed nel volume pg_tls): "require" cifra
+      # il traffico sulla rete Docker interna.
+      DATABASE_DSN: postgres://pesa:${PESA_DB_PASSWORD}@db:5432/pesa?sslmode=require
+      # "prod": cookie Secure, segreti obbligatori (vedi internal/config).
+      PESA_ENV: prod
       PESA_ADDR: :8080
       LOG_SALT: ${LOG_SALT:?set in .env.milano}
       PESA_ERASURE_HASH_SALT: ${PESA_ERASURE_HASH_SALT:?set in .env.milano}
+      PESA_EXPORT_TOKEN_SECRET: ${PESA_EXPORT_TOKEN_SECRET:?set in .env.milano}
       SESSION_SECRET: ${SESSION_SECRET:?set in .env.milano}
       WEB_BASE_URL: https://pesadia.com
       HTTP_BASE_URL: https://pesadia.com
@@ -81,5 +116,7 @@ services:
 volumes:
   pg_data:
     name: pesa_pg_data
+  pg_tls:
+    name: pesa_pg_tls
   pesa_cache:
     name: pesa_cache
