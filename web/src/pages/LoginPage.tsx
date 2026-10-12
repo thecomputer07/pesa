@@ -3,6 +3,7 @@ import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../lib/auth/AuthContext";
 import { ApiError } from "../lib/api";
+import { safeRedirect } from "../lib/safeRedirect";
 
 export default function LoginPage() {
   const { t } = useTranslation();
@@ -20,9 +21,7 @@ export default function LoginPage() {
     setSubmitting(true);
     try {
       await login(email.trim(), password);
-      const from = params.get("from");
-      const safeFrom = from && from.startsWith("/") ? from : "/diario";
-      navigate(safeFrom, { replace: true });
+      navigate(safeRedirect(params.get("from"), "/diario"), { replace: true });
     } catch (err) {
       if (err instanceof ApiError) {
         if (err.type === "email_not_verified") {

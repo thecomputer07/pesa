@@ -12,10 +12,10 @@
 
 **NON aprire issue pubbliche per vulnerabilità di sicurezza.**
 
-Invia una mail cifrata a:
+Scrivi a:
 
-- **Email:** `security@pesadia.com` (placeholder fino a deploy)
-- **GPG key fingerprint:** `{{GPG_FINGERPRINT}}` — chiave pubblica in `.well-known/pgp-key.txt`
+- **Email:** `security@pesadia.com`
+- **Cifratura:** nessuna chiave GPG pubblicata; non includere dati personali di terzi nella mail
 - **Disclosure window:** rispondiamo entro **7 giorni feriali**, fix entro **30 giorni** per HIGH/CRITICAL
 
 Includi:

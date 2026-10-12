@@ -1,0 +1,5 @@
+Contact: mailto:security@pesadia.com
+Expires: 2027-10-12T00:00:00.000Z
+Preferred-Languages: it, en
+Canonical: https://pesadia.com/.well-known/security.txt
+Policy: https://github.com/thecomputer07/pesa/security/policy
