@@ -1,0 +1,49 @@
+#!/usr/bin/env python3
+"""Tempi di risposta di pesadia.com dagli access log di Caddy.
+
+Uso: pesa-tempi [giorni]   (default 7)
+Legge /var/log/caddy/pesadia-access*.log (anche ruotati/compressi) e stampa,
+per giorno e tipo di richiesta, numero di richieste, p50/p95/p99 in ms ed errori 5xx.
+"""
+import glob, gzip, json, sys, time
+from collections import defaultdict
+
+days = int(sys.argv[1]) if len(sys.argv) > 1 else 7
+since = time.time() - days * 86400
+
+def kind(uri):
+    path = uri.split("?", 1)[0]
+    if path.startswith("/api/v1/foods/search"): return "ricerca"
+    if path.startswith("/api/v1/catalog"): return "catalogo"
+    if path.startswith("/api/v1/foods/"): return "scheda"
+    if path.startswith("/api/v1/sync"): return "sync"
+    if path.startswith("/api/"): return "api altro"
+    if path.startswith("/assets/"): return "asset"
+    if path.startswith("/static/images/"): return "foto"
+    return "pagine"
+
+stats = defaultdict(list)
+errors = defaultdict(int)
+for f in sorted(glob.glob("/var/log/caddy/pesadia-access*.log*")):
+    op = gzip.open if f.endswith(".gz") else open
+    with op(f, "rt", errors="replace") as fh:
+        for line in fh:
+            try:
+                e = json.loads(line)
+            except ValueError:
+                continue
+            ts = e.get("ts", 0)
+            if ts < since:
+                continue
+            key = (time.strftime("%Y-%m-%d", time.localtime(ts)), kind(e["request"]["uri"]))
+            stats[key].append(e.get("duration", 0) * 1000)
+            if e.get("status", 0) >= 500:
+                errors[key] += 1
+
+def pct(v, p):
+    return v[min(len(v) - 1, int(len(v) * p))]
+
+print(f"{'giorno':10}  {'tipo':10} {'n':>7} {'p50':>7} {'p95':>7} {'p99':>7} {'5xx':>5}")
+for (day, k), v in sorted(stats.items()):
+    v.sort()
+    print(f"{day:10}  {k:10} {len(v):7d} {pct(v,.5):7.1f} {pct(v,.95):7.1f} {pct(v,.99):7.1f} {errors[(day,k)]:5d}")

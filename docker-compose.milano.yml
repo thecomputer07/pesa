@@ -105,10 +105,13 @@ services:
       PESA_IMAGE_CACHE_DIR: /home/pesa/.cache/images
       PESA_CACHE_DIR: /home/pesa/.cache/exports
       AUTOCERT_ENABLED: "false"
+      # Log permanente (sopravvive ai deploy), ruotato dall'host: deploy/logrotate/pesa.
+      PESA_LOG_FILE: /var/log/pesa/backend.log
     ports:
       - "127.0.0.1:8080:8080"
     volumes:
       - pesa_cache:/home/pesa/.cache
+      - /var/log/pesa:/var/log/pesa
     depends_on:
       migrate:
         condition: service_completed_successfully

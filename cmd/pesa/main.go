@@ -13,6 +13,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"io"
 	"io/fs"
 	"log/slog"
 	stdhttp "net/http"
@@ -47,8 +48,7 @@ var (
 )
 
 func main() {
-	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
-	slog.SetDefault(logger)
+	slog.SetDefault(slog.New(slog.NewJSONHandler(logOutput(), nil)))
 
 	args := os.Args[1:]
 	cmd := "serve"
@@ -100,6 +100,21 @@ func openDB(cfg *config.Config) *sql.DB {
 	db.SetMaxIdleConns(5)
 	db.SetConnMaxLifetime(30 * time.Minute)
 	return db
+}
+
+// logOutput returns stdout, plus the file named by PESA_LOG_FILE when set so the
+// logs outlive the container (rotated on the host by logrotate, copytruncate).
+func logOutput() io.Writer {
+	path := os.Getenv("PESA_LOG_FILE")
+	if path == "" {
+		return os.Stdout
+	}
+	f, err := os.OpenFile(path, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0o640)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "PESA_LOG_FILE %s: %v (logging to stdout only)\n", path, err)
+		return os.Stdout
+	}
+	return io.MultiWriter(os.Stdout, f)
 }
 
 func runMigrate(args []string) {

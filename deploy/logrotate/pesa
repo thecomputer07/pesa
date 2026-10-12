@@ -1,22 +1,21 @@
-# PRIV-06: Application security logs retention policy (90-day target).
-# Install to /etc/logrotate.d/pesa on the production host.
-# Assumes pesa writes JSON slog output to /var/log/pesa/pesa.log via systemd
-# journald capture or direct file handler. Adjust path if your deployment
-# ships logs elsewhere (e.g. stdout → journalctl, container stdout).
+# Log di Pesa sul VPS Milano — retention 90 giorni (informativa privacy §6).
+# Installare in /etc/logrotate.d/pesa.
+#
+# /var/log/pesa/backend.log  — una riga JSON per richiesta (path, status,
+#                              duration_ms, pseudonimo utente) + errori;
+#                              scritto dal container via PESA_LOG_FILE.
+# Gli access log di Caddy (/var/log/caddy/pesadia-access.log) ruotano da soli
+# (roll_keep_for nel Caddyfile).
 
 /var/log/pesa/*.log {
     daily
     rotate 90
+    maxage 90
     missingok
     notifempty
     compress
     delaycompress
-    create 640 pesa pesa
-    sharedscripts
-    postrotate
-        # pesa logs to stdout when running under systemd; no signal needed.
-        # If a file handler is configured, uncomment the reload line below.
-        # systemctl kill --signal=SIGHUP pesa.service >/dev/null 2>&1 || true
-        :
-    endscript
+    # il backend tiene il file aperto in O_APPEND: copia + troncamento.
+    copytruncate
+    su root root
 }

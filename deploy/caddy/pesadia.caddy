@@ -1,0 +1,35 @@
+# Blocco pesadia.com in /etc/caddy/Caddyfile sul VPS Milano (copia di riferimento).
+# Dopo una modifica: `caddy reload --config /etc/caddy/Caddyfile --adapter caddyfile`
+# (NON `systemctl reload caddy`: l'unita' resta bloccata in "reloading").
+# Il file di log deve essere di caddy:caddy, altrimenti il reload fallisce.
+pesadia.com {
+	encode gzip
+	reverse_proxy 127.0.0.1:8080
+	header Strict-Transport-Security "max-age=31536000; includeSubDomains"
+	# Access log permanente (tempi di risposta): niente IP, header o token. 90 giorni.
+	log {
+		output file /var/log/caddy/pesadia-access.log {
+			roll_size 10MiB
+			roll_keep 1000
+			roll_keep_for 2160h
+		}
+		format filter {
+			wrap json
+			fields {
+				request>remote_ip delete
+				request>client_ip delete
+				request>remote_port delete
+				request>headers delete
+				request>tls delete
+				resp_headers delete
+				user_id delete
+				request>uri query {
+					delete t
+				}
+			}
+		}
+	}
+}
+www.pesadia.com {
+	redir https://pesadia.com{uri} permanent
+}
