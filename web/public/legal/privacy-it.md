@@ -1,7 +1,7 @@
 # Informativa Privacy — Pesa
 
-**Versione:** 1.0
-**Data ultimo aggiornamento:** 2026-04-13
+**Versione:** 1.1
+**Data ultimo aggiornamento:** 2026-10-12
 **Lingua autoritativa:** italiano
 
 La presente informativa è resa ai sensi degli artt. 13 e 14 del Regolamento (UE) 2016/679 (GDPR) agli utenti del servizio Pesa — calcolatore nutrizionale generico. Si applica al dominio pesadia.com, all'applicazione web (PWA) Pesa e all'API HTTP versionata `/api/v1/` erogate dallo stesso dominio.
@@ -31,7 +31,7 @@ Pesa è un **calcolatore nutrizionale generico** che calcola i carboidrati (e, c
 | **Export dati personali** (PRIV-01) | archivio ZIP con dump JSON/CSV dei dati dell'utente, token di download firmato HMAC | generati server-side su richiesta dell'utente | **7 giorni** dalla generazione; link download scade automaticamente |
 | **Sessioni** | session ID (cookie `HttpOnly`, `Secure`, `SameSite=Lax`), User-Agent, IP pseudonimizzato (hash SHA-256 salted), timestamp ultimo accesso | generati server-side all'autenticazione | 30gg rolling; revoca immediata al logout |
 | **Diario alimentare** | entries pasto (timestamp, food_id, peso in grammi, CHO/fibre/zuccheri/kcal calcolati, tipo pasto, nota testuale facoltativa dell'utente), ricette composte (nome, porzioni, ingredienti), preferiti | conferiti dall'utente | fino a cancellazione dell'account o cancellazione selettiva (soft-delete + hard-delete dopo 30gg) |
-| **Log di sicurezza** | IP pseudonimizzato, tipo evento (login ok/fallito, reset, rate-limit, 4xx/5xx, eventi sensibili: password/email change, 2FA, account delete, export), timestamp, req-ID | server-side | **90 giorni target**, applicata via `logrotate` a livello di deployment |
+| **Log di sicurezza** | IP pseudonimizzato, tipo evento (login ok/fallito, reset, rate-limit, 4xx/5xx, eventi sensibili: password/email change, 2FA, account delete, export), timestamp, req-ID | server-side | **90 giorni**, rotazione automatica sul server |
 | **Audit log eventi sensibili dedicato (SEC-16)** | tabella DB con storia eventi auth/account | server-side | **pianificato post-MVP v0.1.0 — nell'MVP non attivo**; gli eventi sono coperti dai log di sicurezza (riga sopra) con retention 90gg |
 
 **Nota importante:** nessuna categoria particolare ex **art. 9 GDPR** (dati sanitari, biometrici, genetici, ecc.) viene raccolta, inferita o dedotta. L'app **non chiede, non deduce, non memorizza** alcuna informazione sulla salute dell'utente. Il diario alimentare è contenuto generato dall'utente, equiparabile a un diario personale; il servizio non classifica utenti in base a condizioni di salute, non esegue pattern recognition clinico, non produce inferenze sanitarie.
@@ -53,12 +53,13 @@ Pesa è un **calcolatore nutrizionale generico** che calcola i carboidrati (e, c
 
 I dati personali non sono comunicati a terzi per finalità proprie. Sono designati **responsabili del trattamento ex art. 28 GDPR** i seguenti fornitori di infrastruttura:
 
-- **OVH Italia S.r.l.** — hosting primario (VPS Milano, Italia) per server applicativo e database PostgreSQL. DPA firmato, archiviato in `.planning/legal/dpa/`.
-- **Hetzner Online GmbH** — backup cifrati (server in Finlandia e/o Germania). DPA firmato, archiviato in `.planning/legal/dpa/`.
+- **OVH Italia S.r.l.** — hosting primario (VPS Milano, Italia) per server applicativo e database PostgreSQL.
+- **Hetzner Online GmbH** — server dedicato del titolare a Helsinki (Finlandia) che riceve le copie di backup cifrate e invia le email di servizio (verifica indirizzo, reset password).
+- **Cloudflare, Inc.** — DNS e reverse proxy/CDN davanti a pesadia.com: tutto il traffico HTTPS transita dalla rete Cloudflare, che vede indirizzo IP, User-Agent e contenuto delle richieste per instradarle e proteggerle da abusi; mette in cache solo contenuti pubblici uguali per tutti (file dell'app, foto e catalogo alimenti), mai dati dell'account o del diario.
 
-Entrambi i fornitori sono stabiliti nell'Unione Europea; entrambi operano esclusivamente su data center UE; non sono autorizzati sub-trasferimenti extra-SEE per i dati Pesa.
+Con ciascun fornitore è in essere un accordo sul trattamento dei dati ex art. 28 GDPR (DPA) incluso nelle rispettive condizioni contrattuali. OVH e Hetzner trattano i dati Pesa esclusivamente in data center UE; per Cloudflare vedi §9.
 
-**Nessun destinatario ulteriore.** Nessun broker pubblicitario, nessun fornitore di analytics terzo, nessun CDN con dati utente, nessuna piattaforma di marketing, nessun social login, nessun pixel. Le fonti dati terze (CREA, Open Food Facts) sono **consultate in uscita** — Pesa richiede loro informazioni pubbliche su alimenti, senza inviare dati utente.
+**Nessun destinatario ulteriore.** Nessun broker pubblicitario, nessun fornitore di analytics terzo, nessuna piattaforma di marketing, nessun social login, nessun pixel. Le fonti dati terze (CREA, Open Food Facts) sono **consultate in uscita** — Pesa richiede loro informazioni pubbliche su alimenti, senza inviare dati utente.
 
 Comunicazioni a autorità pubbliche: solo su richiesta formale motivata, nei limiti di legge, con notifica all'interessato quando consentito.
 
@@ -67,8 +68,8 @@ Comunicazioni a autorità pubbliche: solo su richiesta formale motivata, nei lim
 La tabella alla §3 indica i tempi per singola categoria. In sintesi:
 
 - Account e diario: **fino a cancellazione** richiesta dall'utente (self-service PRIV-05 dalla Phase 6, oppure email a `privacy@pesadia.com` secondo la procedura `.planning/legal/subject-rights-procedure.md`).
-- Backup Hetzner: snapshot cifrati con **retention 30 giorni**; un **tombstone catalog** (PRIV-04) garantisce che la cancellazione richiesta dall'utente si propaghi ai backup entro 30 giorni.
-- Log applicativi di sicurezza: **retention target 90 giorni** (proporzionalità ex art. 5(1)(c) GDPR), applicata via `logrotate` a livello di deployment.
+- Backup: copia giornaliera sul server Milano (**14 giorni**) e copia cifrata in Finlandia (**30 giorni**); un **tombstone catalog** (PRIV-04) garantisce che la cancellazione richiesta dall'utente si propaghi ai backup entro 30 giorni.
+- Log applicativi e di accesso (metodo, percorso, esito, tempo di risposta; IP pseudonimizzato o assente): **90 giorni** (proporzionalità ex art. 5(1)(c) GDPR), con rotazione automatica sul server.
 - Audit log eventi sensibili dedicato (SEC-16): **pianificato post-MVP v0.1.0**; nell'MVP gli eventi sono tracciati nei log applicativi slog con retention 90gg. Quando attivato, retention target **12 mesi** (Art. 17(3)(e) GDPR).
 - Archivio ticket istanze interessato: **3 anni** (evidenza compliance Garante), con hash dei dati identificativi — vedi procedura §8.
 - Token di verifica email: **24h**. Token di reset password: **1h**.
@@ -102,19 +103,19 @@ L'interessato ha diritto, nei limiti e con le modalità previste dagli artt. **1
 Il titolare adotta misure tecniche e organizzative adeguate ex art. 32 GDPR:
 
 - **Password** — hashing Argon2id con parametri OWASP 2025 (m=64 MiB, t=3, p=4), salt random per password; confronto timing-safe; policy NIST 800-63B 2024 (minimo 12 caratteri, nessuna scadenza forzata, blocco password comuni tramite HaveIBeenPwned offline).
-- **Trasporto** — TLS 1.3 only (TLS 1.2 solo fallback compat), HSTS preload, cipher suites Mozilla "modern", OCSP stapling.
+- **Trasporto** — HTTPS obbligatorio (TLS 1.2/1.3) con HSTS; certificati Let's Encrypt sul server e Cloudflare in ingresso.
 - **Application security** — CSP strict senza `unsafe-inline`/`unsafe-eval`, Permissions-Policy restrittiva, COOP/COEP/CORP, `X-Content-Type-Options: nosniff`.
-- **Database** — TLS interno Go↔PostgreSQL anche su localhost; at-rest encryption del cluster dati via LUKS; DB user least-privilege (`pesa_app`, `pesa_migration`, `pesa_backup`, `pesa_admin`).
+- **Database** — PostgreSQL raggiungibile solo dalla rete interna dei container, mai esposto su internet; connessioni applicazione↔database cifrate con TLS (le connessioni in chiaro sono rifiutate).
 - **Sessioni** — session ID opaque server-side (scs + PostgreSQL store); regenerate su privilege change; CSRF double-submit token.
 - **Autenticazione** — account lockout 5 tentativi falliti, rate limiting su signup/login/reset, prevenzione email enumeration.
-- **Backup** — pg_basebackup cifrato AES-256 con chiave separata, destinazione Hetzner (FI/DE), restore drill trimestrale documentato.
+- **Backup** — dump giornaliero verificato; la copia fuori sede (Finlandia) è cifrata AES-256 con chiave conservata separatamente; ripristino provato.
 - **Audit** — log sicurezza slog con retention target 90gg (IP pseudonimizzato) coprono anche gli eventi sensibili nell'MVP v0.1.0; audit log dedicato (SEC-16, retention 12 mesi) pianificato post-MVP.
 - **Sviluppo** — dependency scanning continuo (govulncheck, osv-scanner, npm audit), SAST (gosec, semgrep), secrets scanning (gitleaks), SBOM CycloneDX per release, release firmate GPG, `security.txt` ex RFC 9116.
 - **Operativa** — SSH key-based only, firewall restrittivo, unattended-upgrades, monitoring con alerting su 5xx spike, login failed spike, disk usage, backup failure.
 
 ## 9. Trasferimenti extra-SEE
 
-**Nessun trasferimento di dati personali avviene fuori dallo Spazio Economico Europeo.** Hosting OVH Milano (Italia), backup Hetzner (Finlandia/Germania) — entrambi UE. Le fonti dati terze consultate (CREA — ente pubblico italiano; Open Food Facts — Francia) sono anch'esse nell'UE; per OFF la chiamata barcode utilizza un User-Agent custom senza alcun identificatore utente.
+Hosting (OVH Milano, Italia) e backup/email (Hetzner, Finlandia) sono nell'UE. **Cloudflare, Inc.** ha sede negli Stati Uniti e gestisce una rete globale: il traffico può essere elaborato in data center fuori dallo SEE. Il trasferimento è fondato sulla decisione di adeguatezza UE-USA (EU-U.S. Data Privacy Framework, a cui Cloudflare aderisce) e, in via complementare, sulle clausole contrattuali tipo incluse nel DPA di Cloudflare (art. 46 GDPR). Le fonti dati terze consultate (CREA — ente pubblico italiano; Open Food Facts — Francia) sono anch'esse nell'UE; per OFF la chiamata barcode utilizza un User-Agent custom senza alcun identificatore utente.
 
 Qualora in futuro divenisse necessario un trasferimento extra-SEE, si applicheranno le garanzie ex artt. 45-49 GDPR (decisione di adeguatezza o clausole contrattuali tipo con valutazione complementare post-Schrems II) e questa informativa sarà aggiornata con preavviso minimo 30 giorni.
 

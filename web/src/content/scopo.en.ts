@@ -46,7 +46,7 @@ For every search result and every food detail page, Pesa shows a badge with the 
 - No third-party trackers, no Google Analytics, no advertising pixels.
 - No health data: Pesa does not ask for, and does not store, information about your health.
 - Only the necessary data: email, password (always hashed), food diary that you chose to save.
-- Hosting in Italy (OVH Milan), backup in the EU (Hetzner Finland/Germany).
+- Hosting in Italy (OVH Milan), encrypted backups in the EU (Hetzner Finland); traffic protected by Cloudflare.
 
 Read the [Privacy Policy](pesadia.com/privacy), the [Terms of Service](pesadia.com/terms) and the [Cookie Policy](pesadia.com/cookies) for the details. You can export or delete your account at any time.
 

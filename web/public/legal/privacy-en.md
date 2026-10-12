@@ -1,7 +1,7 @@
 # Privacy Policy — Pesa
 
-**Version:** 1.0
-**Last updated:** 2026-04-13
+**Version:** 1.1
+**Last updated:** 2026-10-12
 **Authoritative language:** Italian
 
 > *This is a convenience translation. In case of conflict with the Italian version (`privacy-policy.it.md`), the Italian version prevails.*
@@ -33,7 +33,7 @@ Pesa is a **generic nutritional carb calculator** that computes carbohydrates (a
 | **Personal data export** (PRIV-01) | ZIP archive with JSON/CSV dump of the user's data, HMAC-signed download token | server-generated on user request | **7 days** from generation; download link auto-expires |
 | **Sessions** | session ID (cookie `HttpOnly`, `Secure`, `SameSite=Lax`), User-Agent, pseudonymized IP (SHA-256 salted hash), last-access timestamp | server-generated on authentication | 30-day rolling; immediate revocation at logout |
 | **Food diary** | meal entries (timestamp, food_id, weight in grams, computed CHO/fiber/sugars/kcal, meal type, optional free-text note), composed recipes (name, servings, ingredients), favorites | provided by the user | until account deletion or selective deletion (soft-delete + hard-delete after 30 days) |
-| **Security logs** | pseudonymized IP, event type (login ok/failed, reset, rate-limit, 4xx/5xx, sensitive events: password/email change, 2FA, account delete, export), timestamp, req-ID | server-generated | **90-day target**, enforced via `logrotate` at deployment level |
+| **Security logs** | pseudonymized IP, event type (login ok/failed, reset, rate-limit, 4xx/5xx, sensitive events: password/email change, 2FA, account delete, export), timestamp, req-ID | server-generated | **90 days**, automatic rotation on the server |
 | **Dedicated sensitive-events audit log (SEC-16)** | DB table storing auth/account event history | server-generated | **planned post-MVP v0.1.0 — not active in the MVP**; events are covered by the security logs above (90-day retention) |
 
 **Important note:** no special category of data under **Art. 9 GDPR** (health, biometric, genetic, etc.) is collected, inferred, or deduced. The app **does not ask for, infer, or store** any information about the user's health. The food diary is user-generated content analogous to a personal diary; the service does not classify users by health condition, does not perform clinical pattern recognition, does not produce health inferences.
@@ -56,11 +56,14 @@ Pesa is a **generic nutritional carb calculator** that computes carbohydrates (a
 Personal data are not disclosed to third parties for their own purposes. The following infrastructure providers are designated as **processors under Art. 28 GDPR**:
 
 - **OVH Italia S.r.l.** — primary hosting (VPS Milan, Italy) for application server and PostgreSQL database. Signed DPA archived in `.planning/legal/dpa/`.
-- **Hetzner Online GmbH** — encrypted backups (servers in Finland and/or Germany). Signed DPA archived in `.planning/legal/dpa/`.
+- **Hetzner Online GmbH** — the controller's dedicated server in Helsinki (Finland) that receives the encrypted backup copies and sends service emails (address verification, password reset).
+- **Cloudflare, Inc.** — DNS and reverse proxy/CDN in front of pesadia.com: all HTTPS traffic passes through the Cloudflare network, which sees IP address, User-Agent and request content to route it and protect it from abuse; it caches only public content that is the same for everyone (app files, photos and the food catalogue), never account or diary data.
+
+A data processing agreement under Art. 28 GDPR (DPA) is in place with each provider as part of its contractual terms. OVH and Hetzner process Pesa data in EU data centres only; for Cloudflare see §9.
 
 Both providers are established in the European Union; both operate exclusively on EU data centers; extra-EEA sub-transfers are not authorized for Pesa data.
 
-**No other recipients.** No ad broker, no third-party analytics, no CDN carrying user data, no marketing platform, no social login, no pixel. Third-party data sources (CREA, Open Food Facts) are **consulted outbound** — Pesa fetches public food information from them without sending any user data.
+**No other recipients.** No ad broker, no third-party analytics, no marketing platform, no social login, no pixel. Third-party data sources (CREA, Open Food Facts) are **consulted outbound** — Pesa fetches public food information from them without sending any user data.
 
 Communications to public authorities: only upon formal motivated request, within the limits of law, with notice to the data subject where permitted.
 
@@ -69,8 +72,8 @@ Communications to public authorities: only upon formal motivated request, within
 The table in §3 provides category-level retention. In summary:
 
 - Account and diary: **until deletion** is requested by the user (self-service PRIV-05 from Phase 6 onward, or email to `privacy@pesadia.com` per `.planning/legal/subject-rights-procedure.md`).
-- Hetzner backups: encrypted snapshots with **30-day retention**; a **tombstone catalog** (PRIV-04) guarantees that deletion requests propagate to backups within 30 days.
-- Application security logs: **90-day target** (proportionality, Art. 5(1)(c) GDPR), enforced via `logrotate` at deployment level.
+- Backups: daily copy on the Milan server (**14 days**) and encrypted copy in Finland (**30 days**); a **tombstone catalog** (PRIV-04) guarantees that deletion requests propagate to backups within 30 days.
+- Application and access logs (method, path, outcome, response time; IP pseudonymized or absent): **90 days** (proportionality, Art. 5(1)(c) GDPR), with automatic rotation on the server.
 - Dedicated sensitive-events audit log (SEC-16): **planned post-MVP v0.1.0**; in the MVP, sensitive events are tracked in the application slog logs with 90-day retention. When activated, target retention is **12 months** (Art. 17(3)(e) GDPR).
 - Subject-rights ticket archive: **3 years** (compliance evidence for Garante), with hashed identifiers — see procedure §8.
 - Email verification token: **24h**. Password reset token: **1h**.
@@ -104,19 +107,19 @@ Within the limits of Articles **15-22 GDPR**, the data subject has the right to:
 The controller adopts technical and organizational measures appropriate under Art. 32 GDPR:
 
 - **Passwords** — Argon2id hashing with OWASP 2025 parameters (m=64 MiB, t=3, p=4), random per-password salt; constant-time comparison; NIST 800-63B 2024 policy (min 12 chars, no forced expiration, common-password block via offline HaveIBeenPwned).
-- **Transport** — TLS 1.3 only (TLS 1.2 fallback for compatibility only), HSTS preload, Mozilla "modern" cipher suites, OCSP stapling.
+- **Transport** — mandatory HTTPS (TLS 1.2/1.3) with HSTS; Let's Encrypt certificates on the server and Cloudflare at the edge.
 - **Application security** — strict CSP with no `unsafe-inline`/`unsafe-eval`, restrictive Permissions-Policy, COOP/COEP/CORP, `X-Content-Type-Options: nosniff`.
-- **Database** — internal TLS Go↔PostgreSQL even on localhost; at-rest data cluster encryption via LUKS; least-privilege DB users (`pesa_app`, `pesa_migration`, `pesa_backup`, `pesa_admin`).
+- **Database** — PostgreSQL reachable only from the internal container network, never exposed to the internet; application↔database connections encrypted with TLS (plaintext connections are rejected).
 - **Sessions** — opaque server-side session IDs (scs + PostgreSQL store); regenerated on privilege change; CSRF double-submit tokens.
 - **Authentication** — account lockout after 5 failed attempts, rate limiting on signup/login/reset, email-enumeration prevention.
-- **Backups** — AES-256 encrypted pg_basebackup with separated key, destination Hetzner (FI/DE), quarterly documented restore drill.
+- **Backups** — verified daily dump; the off-site copy (Finland) is AES-256 encrypted with a separately stored key; restore tested.
 - **Audit** — slog security logs with 90-day target retention (pseudonymized IP) also cover sensitive events in the MVP v0.1.0; dedicated audit log (SEC-16, 12-month retention) planned post-MVP.
 - **Development** — continuous dependency scanning (govulncheck, osv-scanner, npm audit), SAST (gosec, semgrep), secrets scanning (gitleaks), CycloneDX SBOM per release, GPG-signed releases, RFC 9116 `security.txt`.
 - **Operations** — SSH key-based only, restrictive firewall, unattended-upgrades, monitoring with alerting on 5xx spikes, failed-login spikes, disk usage, backup failures.
 
 ## 9. Extra-EEA transfers
 
-**No personal data transfer occurs outside the European Economic Area.** Hosting OVH Milan (Italy), backups Hetzner (Finland/Germany) — both EU. The consulted third-party sources (CREA — Italian public body; Open Food Facts — France) are also EU-based; for OFF, the barcode call uses a custom User-Agent with no user identifier.
+Hosting (OVH Milan, Italy) and backups/email (Hetzner, Finland) are in the EU. **Cloudflare, Inc.** is based in the United States and runs a global network: traffic may be processed in data centres outside the EEA. The transfer relies on the EU-US adequacy decision (EU-U.S. Data Privacy Framework, in which Cloudflare participates) and, additionally, on the standard contractual clauses included in Cloudflare's DPA (Art. 46 GDPR). The consulted third-party sources (CREA — Italian public body; Open Food Facts — France) are also EU-based; for OFF, the barcode call uses a custom User-Agent with no user identifier.
 
 Should an extra-EEA transfer become necessary in the future, the safeguards under Arts. 45-49 GDPR will apply (adequacy decision or standard contractual clauses with post-Schrems II complementary assessment), and this policy will be updated with at least 30 days' notice.
 

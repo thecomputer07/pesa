@@ -44,7 +44,7 @@ Per ogni risultato di ricerca e per ogni scheda alimento, Pesa mostra un badge c
 - Nessun tracker di terze parti, nessun Google Analytics, nessun pixel pubblicitario.
 - Nessun dato sanitario: Pesa non chiede né memorizza informazioni sulla tua salute.
 - Solo i dati necessari: email, password (sempre hashata), diario alimentare che hai scelto di salvare.
-- Hosting in Italia (OVH Milano), backup in UE (Hetzner Finlandia/Germania).
+- Hosting in Italia (OVH Milano), backup cifrati in UE (Hetzner Finlandia); traffico protetto da Cloudflare.
 
 Leggi l'[Informativa Privacy](pesadia.com/privacy), i [Termini di Servizio](pesadia.com/terms) e la [Cookie Policy](pesadia.com/cookies) per i dettagli. Puoi in qualunque momento esportare o cancellare il tuo account.
 
