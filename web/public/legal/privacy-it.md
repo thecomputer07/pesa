@@ -18,7 +18,7 @@ Il titolare è persona fisica singola stabilita in Italia; non sono presenti con
 
 ## 2. Natura del servizio
 
-Pesa è un **calcolatore nutrizionale generico** che calcola i carboidrati (e, come contorno, fibre/zuccheri/kcal) di alimenti presenti in banche dati italiane certificate (CREA) e in Open Food Facts. Per il posizionamento esteso si rimanda al documento `.planning/legal/scope.md` (versione utente: pagina "Chi siamo / Scopo" del servizio).
+Pesa è un **calcolatore nutrizionale generico** che calcola i carboidrati (e, come contorno, fibre/zuccheri/kcal) di alimenti presenti in banche dati italiane certificate (CREA) e in Open Food Facts. Per il posizionamento esteso si rimanda alla pagina "Chi siamo / Scopo" del servizio.
 
 **Pesa NON è uno strumento medico, non è un dispositivo medico ai sensi del Regolamento UE 2017/745, non fornisce diagnosi, terapie, consigli clinici.** Coerentemente, il servizio **NON tratta dati di cui all'art. 9 GDPR** (dati sanitari, biometrici, genetici, relativi alla vita sessuale, all'origine etnica, alle convinzioni religiose, all'appartenenza sindacale, alle opinioni politiche). Nessuna di queste categorie viene raccolta, elaborata, inferita o dedotta.
 
@@ -67,7 +67,7 @@ Comunicazioni a autorità pubbliche: solo su richiesta formale motivata, nei lim
 
 La tabella alla §3 indica i tempi per singola categoria. In sintesi:
 
-- Account e diario: **fino a cancellazione** richiesta dall'utente (self-service PRIV-05 dalla Phase 6, oppure email a `privacy@pesadia.com` secondo la procedura `.planning/legal/subject-rights-procedure.md`).
+- Account e diario: **fino a cancellazione** richiesta dall'utente (self-service PRIV-05 dalla Phase 6, oppure email a `privacy@pesadia.com` secondo la procedura interna del titolare).
 - Backup: copia giornaliera sul server Milano (**14 giorni**) e copia cifrata in Finlandia (**30 giorni**); un **tombstone catalog** (PRIV-04) garantisce che la cancellazione richiesta dall'utente si propaghi ai backup entro 30 giorni.
 - Log applicativi e di accesso (metodo, percorso, esito, tempo di risposta; IP pseudonimizzato o assente): **90 giorni** (proporzionalità ex art. 5(1)(c) GDPR), con rotazione automatica sul server.
 - Audit log eventi sensibili dedicato (SEC-16): **pianificato post-MVP v0.1.0**; nell'MVP gli eventi sono tracciati nei log applicativi slog con retention 90gg. Quando attivato, retention target **12 mesi** (Art. 17(3)(e) GDPR).
@@ -90,7 +90,7 @@ L'interessato ha diritto, nei limiti e con le modalità previste dagli artt. **1
 
 **Revoca del consenso:** non applicabile nell'MVP, poiché nessun trattamento è fondato su art. 6(1)(a).
 
-**Esercizio dei diritti:** l'utente scrive a `privacy@pesadia.com`. La procedura è documentata in `.planning/legal/subject-rights-procedure.md`. SLA ordinario **30 giorni** dalla ricezione; prorogabile a 60 giorni aggiuntivi (totale 90) con notifica motivata entro i primi 30 giorni ex art. 12(3) GDPR.
+**Esercizio dei diritti:** l'utente scrive a `privacy@pesadia.com`. SLA ordinario **30 giorni** dalla ricezione; prorogabile a 60 giorni aggiuntivi (totale 90) con notifica motivata entro i primi 30 giorni ex art. 12(3) GDPR.
 
 **Reclamo al Garante:** l'interessato ha diritto di proporre reclamo all'Autorità di controllo ex art. 77 GDPR:
 
@@ -158,4 +158,4 @@ Modifiche editoriali minori (refusi, chiarimenti linguistici senza effetti sosta
 
 - **v1.0** — 2026-04-13 — prima pubblicazione (Phase 0).
 
-Diff tracciato integralmente nel repository pubblico https://github.com/thecomputer07/pesa sotto `.planning/legal/privacy-policy.it.md`.
+Diff tracciato integralmente nel repository pubblico https://github.com/thecomputer07/pesa sotto `web/public/legal/privacy-it.md`.

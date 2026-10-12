@@ -8,7 +8,6 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 TARGETS=(
-  "$ROOT/.planning/legal"
   "$ROOT/MARKETING-RULES.md"
   "$ROOT/README.md"
   "$ROOT/SECURITY.md"

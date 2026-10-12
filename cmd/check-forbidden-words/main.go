@@ -2,15 +2,17 @@
 // repository. See §5 of MARKETING-RULES.md for the binding contract.
 //
 // Usage:
-//   check-forbidden-words                              # scan repo, exit 1 on HARD match
-//   check-forbidden-words --scan-file path             # scan a single file (fixtures)
-//   check-forbidden-words --list-patterns              # print pattern id -> regex map
-//   check-forbidden-words --parser-check               # only verify MARKETING-RULES.md parses
+//
+//	check-forbidden-words                              # scan repo, exit 1 on HARD match
+//	check-forbidden-words --scan-file path             # scan a single file (fixtures)
+//	check-forbidden-words --list-patterns              # print pattern id -> regex map
+//	check-forbidden-words --parser-check               # only verify MARKETING-RULES.md parses
 //
 // Exit codes (§5.8):
-//   0 = no HARD matches (SOFT allowed)
-//   1 = at least one HARD match
-//   2 = internal error
+//
+//	0 = no HARD matches (SOFT allowed)
+//	1 = at least one HARD match
+//	2 = internal error
 package main
 
 import (
@@ -93,10 +95,10 @@ func loadPatterns(path string) ([]pattern, error) {
 	defer func() { _ = f.Close() }()
 
 	var (
-		inSection  bool
-		blocks     [][]string
-		current    []string
-		inFence    bool
+		inSection bool
+		blocks    [][]string
+		current   []string
+		inFence   bool
 	)
 	sc := bufio.NewScanner(f)
 	sc.Buffer(make([]byte, 1024*1024), 1024*1024)
@@ -197,8 +199,6 @@ func walkTargets() []string {
 		}
 	}
 
-	out = append(out, walkSuffixes(filepath.Join(".planning", "legal", "scope"), []string{".md"}, nil)...)
-
 	return out
 }
 
@@ -251,7 +251,7 @@ func isAllowlistPath(p string) bool {
 	if strings.HasSuffix(p, ".lock") || strings.HasSuffix(p, ".sum") {
 		return true
 	}
-	if strings.HasPrefix(p, ".planning/") && !strings.HasPrefix(p, ".planning/legal/scope/") {
+	if strings.HasPrefix(p, ".planning/") {
 		return true
 	}
 	if strings.HasPrefix(p, "tests/forbidden-words/") {

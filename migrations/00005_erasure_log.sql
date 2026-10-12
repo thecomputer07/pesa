@@ -1,5 +1,5 @@
 -- +goose Up
--- Verbatim from .planning/legal/subject-rights-procedure.md Appendice A.
+-- Schema from the subject-rights procedure (erasure log, Appendix A).
 -- Do NOT modify columns without updating the procedure document in lockstep.
 CREATE TABLE erasure_log (
   id                   BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,

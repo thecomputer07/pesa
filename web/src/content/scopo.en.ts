@@ -1,6 +1,5 @@
 /**
  * Inline content of the /scopo page (EN).
- * Canonical source: `.planning/legal/scope/scope.en.md`.
  * TODO(phase-4): replace with `vite-plugin-md` import to avoid drift.
  */
 export const scopoEN = `# About Pesa / Scope

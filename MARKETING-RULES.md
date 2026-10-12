@@ -2,11 +2,11 @@
 
 **Version:** 1.0
 **Authority:** canonical — this file is the contract for the CI anti-word scanner (Phase 1 plan-06).
-**Scope anchor:** `.planning/legal/scope.md`
+**Scope anchor:** `web/src/content/scopo.it.ts`
 
 ## 1. Purpose
 
-Pesa is a **generic nutritional carb calculator**. Any language that suggests medical, diagnostic, therapeutic, curative, preventive, or "medical device"-style claims is **forbidden** in: source code (`web/src/**/*.{ts,tsx,js,jsx}`, `internal/**/*.go`, `cmd/**/*.go`), translation files (`web/src/i18n/**/*.json`), marketing copy (`README.md`, `.planning/legal/scope/**`, any future `docs/marketing/**`), user-facing release notes (`CHANGELOG.md`). Commit messages are a soft check only.
+Pesa is a **generic nutritional carb calculator**. Any language that suggests medical, diagnostic, therapeutic, curative, preventive, or "medical device"-style claims is **forbidden** in: source code (`web/src/**/*.{ts,tsx,js,jsx}`, `internal/**/*.go`, `cmd/**/*.go`), translation files (`web/src/i18n/**/*.json`), marketing copy (`README.md`, `web/src/content/scopo.*.ts`, any future `docs/marketing/**`), user-facing release notes (`CHANGELOG.md`). Commit messages are a soft check only.
 
 This file defines **what is forbidden, which regex patterns express it, which severity applies, and what the scanner contract looks like**. Phase 1 plan-06 implements the scanner as pure engineering work: no interpretation decisions at scan time.
 
@@ -189,12 +189,10 @@ A **second fenced block** in §4 (under the "Soft-severity subset" sub-heading) 
 - `docs/**/*.md` (excluding `docs/legal/**` and `docs/reference/**`)
 - `README.md`
 - `CHANGELOG.md`
-- `.planning/legal/scope/*.md`
 
 ### 5.4 Explicitly NOT scanned (allow-list paths)
 
 - `MARKETING-RULES.md` itself (contains the words by definition)
-- `.planning/**` except `.planning/legal/scope/`
 - `LICENSE`, `LICENSE.*`
 - `*.lock`, `*.sum`, `go.mod`, `package.json`, `pnpm-lock.yaml`, `package-lock.json`, `yarn.lock`
 - `tests/forbidden-words/**` (intentional negative test fixtures)
@@ -265,7 +263,7 @@ Use these phrasings in UI copy and documentation:
 
 ## 7. Maintenance
 
-- Additions to the patterns in §4 MUST be accompanied by: (a) a rationale added to §2 or §3, (b) a commit at repo root touching this file, (c) a negative test fixture in `.planning/legal/marketing-rules-fixtures.md` (and eventually `tests/forbidden-words/**` when the scanner ships).
+- Additions to the patterns in §4 MUST be accompanied by: (a) a rationale added to §2 or §3, (b) a commit at repo root touching this file, (c) a negative test fixture in `scripts/test/anti-word-fixtures/` (and eventually `tests/forbidden-words/**` when the scanner ships).
 - Removals from the patterns require an issue/PR with justification; must be reviewed by the titolare.
 - The scanner in Phase 1 plan-06 MUST fail CI if `MARKETING-RULES.md` is modified in a PR but the pattern block cannot be parsed (regex syntax error, missing fenced block, etc.) — this "parser smoke-test" ensures the contract remains machine-consumable.
 - Version bump (`v1.0` → `v1.1` for additions, `v2.0` for breaking changes to scanner contract) is required on every substantive edit; recorded in the version history footer.

@@ -1,5 +1,4 @@
 // Wire-level DTOs — MUST mirror internal/service/sync/types.go exactly.
-// See .planning/phases/04-diary-sync/04-plan-02-SUMMARY.md for the contract.
 
 export type Slot = "colazione" | "pranzo" | "cena" | "spuntino" | "altro";
 

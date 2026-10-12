@@ -20,4 +20,3 @@ labels: enhancement
 
 - [ ] Compatibile con scope generic carb calculator (NON medical, NON dati Art. 9)
 - [ ] Compatibile con MARKETING-RULES.md
-- [ ] Allineato a `.planning/ROADMAP.md`

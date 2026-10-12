@@ -2,7 +2,7 @@
 
 Calcolatore nutrizionale generico (carboidrati / CHO) basato su fonti alimentari italiane (CREA + BDA IEO).
 
-> **Disclaimer importante:** Pesa NON è un dispositivo medico, NON sostituisce il parere di un professionista sanitario, NON tratta dati di categoria particolare (GDPR Art. 9). Vedi `.planning/legal/scope.md` per la dichiarazione completa.
+> **Disclaimer importante:** Pesa NON è un dispositivo medico, NON sostituisce il parere di un professionista sanitario, NON tratta dati di categoria particolare (GDPR Art. 9). Vedi la pagina [Scopo](https://pesadia.com/scopo) per la dichiarazione completa.
 
 ---
 
@@ -37,7 +37,7 @@ cd web && npm install && npm run dev
 | `web/` | Vite + React + TS skeleton |
 | `deploy/` | systemd + docker-compose + backup |
 | `docs/deploy/` | Runbook produzione |
-| `.planning/legal/` | Documenti legali (privacy, ToS, RoPA, CREA outreach) |
+| `web/public/legal/` | Informativa privacy e cookie policy pubblicate |
 | `MARKETING-RULES.md` | Lista parole proibite (CI scanner) |
 | `scripts/` | render-placeholders, anti-word-scan, reproducible-build |
 
@@ -51,4 +51,4 @@ Vulnerabilità → `SECURITY.md` (GPG-encrypted email, SLA 7gg).
 
 ## Status
 
-Pre-MVP. Vedi `.planning/ROADMAP.md` per milestone v0.1.0.
+In produzione su https://pesadia.com.

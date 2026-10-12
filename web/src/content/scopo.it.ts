@@ -1,6 +1,5 @@
 /**
  * Contenuto inline della pagina /scopo (IT).
- * Sorgente canonica: `.planning/legal/scope/scope.it.md`.
  * TODO(phase-4): sostituire con import da `vite-plugin-md` per evitare drift.
  */
 export const scopoIT = `# Chi siamo / Scopo

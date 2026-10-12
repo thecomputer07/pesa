@@ -20,7 +20,7 @@ The controller is a single natural person established in Italy; there are no joi
 
 ## 2. Nature of the service
 
-Pesa is a **generic nutritional carb calculator** that computes carbohydrates (and, contextually, fiber/sugars/kcal) of foods contained in certified Italian databases (CREA) and in Open Food Facts. Extended positioning is documented in `.planning/legal/scope.md` (user-facing version: "About / Scope" page).
+Pesa is a **generic nutritional carb calculator** that computes carbohydrates (and, contextually, fiber/sugars/kcal) of foods contained in certified Italian databases (CREA) and in Open Food Facts. Extended positioning is on the "About / Scope" page.
 
 **Pesa is NOT a medical tool, is NOT a medical device under Regulation (EU) 2017/745 (MDR), does not provide diagnosis, therapy, or clinical advice.** Consistently, the service **does NOT process Art. 9 GDPR data** (health, biometric, genetic, sexual life, racial/ethnic origin, religious belief, trade-union membership, political opinion). None of these categories are collected, processed, inferred, or deduced.
 
@@ -71,7 +71,7 @@ Communications to public authorities: only upon formal motivated request, within
 
 The table in §3 provides category-level retention. In summary:
 
-- Account and diary: **until deletion** is requested by the user (self-service PRIV-05 from Phase 6 onward, or email to `privacy@pesadia.com` per `.planning/legal/subject-rights-procedure.md`).
+- Account and diary: **until deletion** is requested by the user (self-service PRIV-05 from Phase 6 onward, or email to `privacy@pesadia.com` per the controller's internal procedure).
 - Backups: daily copy on the Milan server (**14 days**) and encrypted copy in Finland (**30 days**); a **tombstone catalog** (PRIV-04) guarantees that deletion requests propagate to backups within 30 days.
 - Application and access logs (method, path, outcome, response time; IP pseudonymized or absent): **90 days** (proportionality, Art. 5(1)(c) GDPR), with automatic rotation on the server.
 - Dedicated sensitive-events audit log (SEC-16): **planned post-MVP v0.1.0**; in the MVP, sensitive events are tracked in the application slog logs with 90-day retention. When activated, target retention is **12 months** (Art. 17(3)(e) GDPR).
@@ -94,7 +94,7 @@ Within the limits of Articles **15-22 GDPR**, the data subject has the right to:
 
 **Consent withdrawal:** not applicable in the MVP, as no processing is based on Art. 6(1)(a).
 
-**Exercising rights:** the user writes to `privacy@pesadia.com`. The procedure is documented in `.planning/legal/subject-rights-procedure.md`. Ordinary SLA **30 days** from receipt; extendable by 60 additional days (total 90) with motivated notice within the first 30 days under Art. 12(3) GDPR.
+**Exercising rights:** the user writes to `privacy@pesadia.com`. Ordinary SLA **30 days** from receipt; extendable by 60 additional days (total 90) with motivated notice within the first 30 days under Art. 12(3) GDPR.
 
 **Complaint to the supervisory authority:** the data subject always has the right to lodge a complaint under Art. 77 GDPR:
 
@@ -162,4 +162,4 @@ Minor editorial changes (typos, linguistic clarifications without substantive ef
 
 - **v1.0** — 2026-04-13 — first publication (Phase 0).
 
-Full diff tracked in the public repository https://github.com/thecomputer07/pesa under `.planning/legal/privacy-policy.en.md`.
+Full diff tracked in the public repository https://github.com/thecomputer07/pesa under `web/public/legal/privacy-en.md`.

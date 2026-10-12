@@ -2,6 +2,7 @@ package srt
 
 import (
 	"context"
+	_ "embed"
 	"errors"
 	"fmt"
 	"os"
@@ -17,21 +18,24 @@ type Mailer interface {
 }
 
 // Notifier sends the subject-rights ACK mail from a markdown template.
+// defaultAck is the acknowledgement email, built into the binary; a
+// TemplatesDir (PESA_LEGAL_TEMPLATES_DIR) with 00-ack.md overrides it.
+//
+//go:embed ack.md
+var defaultAck string
+
 type Notifier struct {
 	TemplatesDir string
 	Mailer       Mailer
 
-	once     sync.Once
-	tplErr   error
-	tplBody  string
+	once    sync.Once
+	tplErr  error
+	tplBody string
 }
 
 // NewNotifier constructs a Notifier; the template file is loaded lazily on
 // first use so missing-file errors surface immediately on the first call.
 func NewNotifier(templatesDir string, mailer Mailer) *Notifier {
-	if templatesDir == "" {
-		templatesDir = ".planning/legal/subject-rights-templates"
-	}
 	return &Notifier{TemplatesDir: templatesDir, Mailer: mailer}
 }
 
@@ -66,6 +70,10 @@ func Render(tpl string, vars map[string]string) string {
 }
 
 func (n *Notifier) loadTemplate() {
+	if n.TemplatesDir == "" {
+		n.tplBody = defaultAck
+		return
+	}
 	path := filepath.Join(n.TemplatesDir, "00-ack.md")
 	body, err := os.ReadFile(path)
 	if err != nil {
